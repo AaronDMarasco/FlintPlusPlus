@@ -17,7 +17,6 @@ Upcoming Features
 * RPM packaging
 * No binaries checked in
 * Makefile tweaks
-* Fix parsing error in BOOST headers (comments in #, UTF-8)
 
 Future Ideas
 ------------

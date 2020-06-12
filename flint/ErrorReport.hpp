@@ -57,7 +57,7 @@ namespace flint {
 				return;
 			}
 
-			std::cout << typeStr[m_type] << path << ':' 
+			std::cout << typeStr[m_type] << path << ':'
 				 << std::to_string(m_line) << ": " << m_title << std::endl;
 		};
 	};
@@ -70,7 +70,7 @@ namespace flint {
 		// Members
 		uint m_errors, m_warnings, m_advice;
 	public:
-		
+
 		ErrorBase() : m_errors(0), m_warnings(0), m_advice(0) {};
 
 		uint getErrors() const {
@@ -100,7 +100,7 @@ namespace flint {
 
 		explicit ErrorFile(std::string path) : ErrorBase(), m_path(move(path)) {};
 
-		void addError(ErrorObject error) {
+		void addError(ErrorObject&& error) {
 			if (error.getType() == Lint::ERROR) {
 				++m_errors;
 			}
@@ -140,7 +140,7 @@ namespace flint {
 
 				return;
 			}
-			
+
 			for (size_t i = 0, size = m_objs.size(); i < size; ++i) {
 				m_objs[i].print(m_path);
 			}
@@ -165,14 +165,14 @@ namespace flint {
 		};
 
 		/*
-		* Prints an entire report in either 
+		* Prints an entire report in either
 		* JSON or Pretty Printed format
 		*
 		* @return
 		*		Returns a string containing the report output
 		*/
 		void print() const {
-			
+
 			if (Options.JSON) {
 				std::cout << "{\n"
 					"	\"errors\"   : " << std::to_string(getErrors())   << ",\n"

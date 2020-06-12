@@ -29,7 +29,7 @@ namespace std {
 namespace flint {
 
 	namespace { // Anonymous Namespace for Tokenizing and munching functions
-		
+
 		// Black magic code expansion from Token Definitions
 		// See header...
 		static unordered_map<StringFragment, TokenType> initializeKeywords() {
@@ -41,7 +41,7 @@ namespace flint {
 		#undef CPPLINT_ASSIGN
 
 			for (const auto& item : root) {
-				auto& key = item.first;				
+				auto& key = item.first;
 				result[StringFragment{key.begin(), key.end()}] = item.second;
 			}
 
@@ -78,7 +78,7 @@ namespace flint {
 		* from pc and returns it.
 		*/
 		static StringFragment munchIdentifier(string::const_iterator &pc, string::const_iterator inputEnd) {
-			
+
 			size_t size = distance(pc, inputEnd);
 			for (size_t i = 0; i < size; ++i) {
 				assert(i < size);
@@ -232,7 +232,7 @@ namespace flint {
 		static StringFragment munchString(string::const_iterator &pc, size_t &line, bool isIncludeLiteral = false) {
 			char stringEnd = (isIncludeLiteral ? '>' : '"');
 
-			assert(pc[0] == (isIncludeLiteral ? '<' : '"'));			
+			assert(pc[0] == (isIncludeLiteral ? '<' : '"'));
 			for (size_t i = 1;; ++i) {
 				auto const c = pc[i];
 				if (c == stringEnd) {
@@ -273,13 +273,17 @@ namespace flint {
 	size_t tokenize(const string &input, const string &file, vector<Token> &output, vector<size_t> &structures, ErrorFile &errors) {
 		output.clear();
 		structures.clear();
-		
+
 		static const string eof("\0");
 		static const string empty("");
 		static const StringFragment nothing{begin(empty), end(empty)};
 
 		auto pc = input.begin();
 		size_t line = 1;
+		if (startsWith(pc, "\xEF\xBB\xBF")) { // UTF-8 BOM
+			pc += 3;
+			errors.addError(ErrorObject(Lint::WARNING, line, "UTF-8 BOM found", "The Unicode Standard permits this, but does not require nor recommend its use"));
+		}
 
 		TokenType t;
 		size_t tokenLen;
@@ -290,7 +294,7 @@ namespace flint {
 
 			if (output.size() > 0) {
 				const TokenType tok = output.back().type_;
-				if ((tok == TK_CLASS || tok == TK_STRUCT || tok == TK_UNION) && 
+				if ((tok == TK_CLASS || tok == TK_STRUCT || tok == TK_UNION) &&
 					(structures.empty() || structures.back() != output.size() - 1)) {
 					// If the last token added was the start of a structure push it onto
 					// the list of structures
@@ -368,7 +372,7 @@ namespace flint {
 							// *** multi-line comments
 			case '/':
 				if (pc[1] == '*') {
-					const auto& comment = munchComment(pc, line); 
+					const auto& comment = munchComment(pc, line);
 					whitespace.append(comment.begin(), comment.end());
 					break;
 				}
@@ -491,7 +495,7 @@ namespace flint {
 			}
 				break;
 			case '#': {
-				// Skip ws
+				// Skip leading ws
 				auto pc1 = pc + 1;
 				tokenLen = 1 + munchSpaces(pc1).size();
 				// The entire #line line is the token value
@@ -532,6 +536,12 @@ namespace flint {
 				}
 				else if (startsWith(pc1, "#")) {
 					t = TK_DOUBLEPOUND; tokenLen += 2; // strlen("##");
+				}
+				else if (startsWith(pc1, "/*")) { // Empty preprocessor directive but multi-line comment
+					t = TK_POUND; tokenLen += munchComment(pc1, line).size();
+				}
+				else if (startsWith(pc1, "//")) { // Empty preprocessor directive but single line comment
+					t = TK_POUND; tokenLen += munchSingleLineComment(pc1, input.end(), line).size();
 				}
 				else {
 					// We can only assume this is inside a macro definition
