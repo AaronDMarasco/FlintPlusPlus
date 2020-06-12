@@ -7,10 +7,10 @@ This project was motivated by a desire for a modern and extendable C++ Linter th
 
 The original `flint` is published on [Github](https://github.com/facebook/flint); and for discussions, there is a [Google group](https://groups.google.com/d/forum/facebook-flint).
 
-@AaronDMarasco forked from @JossWhittle in 2020 with no activity since 2018 (but most in 2014). Cleaned up a little, manually merged in the following forks (closing all PRs that were open at the time), and then it's "as-is":
-	* @vix597 - more sane makefile, debian packaging, and cleaning up headers (don't import `std` namespace in headers)
-	* @warmsocks - allow spaces
+[@AaronDMarasco]( https://github.com/AaronDMarasco/FlintPlusPlus ) forked from the [@kanielc]( https://github.com/kanielc/FlintPlusPlus ) fork of the [@JossWhittle]( https://github.com/JossWhittle/FlintPlusPlus ) fork in 2020 (with no activity since 2014). Cleaned up a little, manually merged in the following forks (closing all JossWhittle PRs that were open at the time), and then it's "as-is":
 
+* [@vix597]( https://github.com/vix597/FlintPlusPlus ) - more sane makefile, debian packaging, return values (#63)
+* [@warmsocks]( https://github.com/warmsocks/FlintPlusPlus ) - allow spaces (#60)
 
 Upcoming Features
 -----------------
