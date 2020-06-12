@@ -7,9 +7,20 @@ This project was motivated by a desire for a modern and extendable C++ Linter th
 
 The original `flint` is published on [Github](https://github.com/facebook/flint); and for discussions, there is a [Google group](https://groups.google.com/d/forum/facebook-flint).
 
+@AaronDMarasco forked from @JossWhittle in 2020 with no activity since 2018 (but most in 2014). Cleaned up a little, manually merged in the following forks (closing all PRs that were open at the time), and then it's "as-is":
+	* @vix597 - more sane makefile, debian packaging, and cleaning up headers (don't import `std` namespace in headers)
+	* @warmsocks - allow spaces
+
+
 Upcoming Features
 -----------------
+* RPM packaging
+* No binaries checked in
+* Makefile tweaks
+* Fix parsing error in BOOST headers (comments in #, UTF-8)
 
+Future Ideas
+------------
 * More lint tests!
 * Visual Studio Integration!
 * JSON Config files to allow project dependent Lint settings
@@ -64,11 +75,11 @@ Usage
 
 	-h, --help		      : Print usage.
 
-Does it pass Linting itself? 
+Does it pass Linting itself?
 -------------------------
 
 ### Yes!
-	
+
 	$ flint++ ./
 
 	Lint Summary: 14 files
@@ -91,16 +102,13 @@ Dependencies
 
 **None!** You're good to go! Happy linting :)
 
-*Edit:* It's not really a dependency, but it's worth noting that this project makes extensive use of the C++11 Feature Set. You probably won't be able to compile it on a Pre-C++11 version of your compiler. 
+*Edit:* It's not really a dependency, but it's worth noting that this project makes extensive use of the C++11 Feature Set. You won't be able to compile it on a Pre-C++11 version of your compiler.
 
 Tested On
 ---------
+Previous maintainers managed to compile and test `Flint++` on Windows 7/8/8.1, Ubuntu 14.10, and Raspbian Wheezy; compiling under MSVC++ '13 and G++ 4.8 respectively. We also have word people have successfully compiled under OSX with Clang 3.5.
 
-So far I've managed to compile and test `Flint++` on Windows 7/8/8.1, Ubuntu 14.10, and Raspbian Wheezy; compiling under MSVC++ '13 and G++ 4.8 respectively. Edit: We also have word people have successfully compiled under OSX with Clang 3.5
-
----
-
-Lead Contributers: @L2Program (Joss Whittle) & @kanielc (Denton Cockburn) 
+Current maintainer @AaronDMarasco only tested G++ 10.1.1 (Fedora 32), sorry!
 
 ---
 
