@@ -15,7 +15,6 @@ The original `flint` is published on [Github](https://github.com/facebook/flint)
 Upcoming Features
 -----------------
 * RPM packaging
-* No binaries checked in
 
 Future Ideas
 ------------
