@@ -119,7 +119,7 @@ namespace flint {
 						printHelp();
 					}
 
-					int val = atoi(argv[i]) + 1;
+					int val = atoi(argv[i]) - 1;
 					*arg = val;
 					continue;
 				}
