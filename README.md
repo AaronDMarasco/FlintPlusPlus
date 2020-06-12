@@ -16,7 +16,6 @@ Upcoming Features
 -----------------
 * RPM packaging
 * No binaries checked in
-* Makefile tweaks
 
 Future Ideas
 ------------
