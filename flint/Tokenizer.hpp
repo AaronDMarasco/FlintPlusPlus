@@ -225,7 +225,7 @@ namespace flint {
 	std::string toString(TokenType t);
 
 	/**
-	 * Defines a substd::string of an existing string.  Lifetime is limited to the lifetime of the enclosing string
+	 * Defines a substring of an existing string.  Lifetime is limited to the lifetime of the enclosing string
 	 * In other words, a StringFragment will take no ownership of any memory.
 	 *
 	 * Note: Remember to respect the range of most C++ iterators, which operate on [begin, end) (so end expected to be out of range)
@@ -235,7 +235,7 @@ namespace flint {
 		typedef char value_type;
 		typedef const char& const_reference;
 		typedef size_t size_type;
-		
+
 		iterator begin_;
 		iterator end_;
 
@@ -245,7 +245,7 @@ namespace flint {
 		iterator begin() const { return begin_; }
 		iterator end() const { return end_; }
 		const_reference operator[](size_type pos) const { return *(begin_ + pos); }
-		const_reference operator[](size_type pos) { return *(begin_ + pos); } 
+		const_reference operator[](size_type pos) { return *(begin_ + pos); }
 		size_type size() const { return end_ - begin_; }
 		void append(iterator startPos, iterator endPos) {
 			assert(begin_ == end_ || end_ == startPos);
