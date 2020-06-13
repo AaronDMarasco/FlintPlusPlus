@@ -23,8 +23,6 @@ compiler:
   - clang
 
 jobs:
-    include:
-        - os: windows
     exclude:
         - os: osx
           compiler: gcc
