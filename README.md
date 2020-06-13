@@ -14,7 +14,6 @@ The original `flint` is published on [Github](https://github.com/facebook/flint)
 
 Upcoming Features
 -----------------
-* RPM packaging
 * Command line options for level of error in return values
 
 Future Ideas

@@ -1,4 +1,3 @@
-# This is just fooling around at this point ;)
 # See https://config.travis-ci.com/explore
 
 language: cpp
@@ -16,6 +15,9 @@ arch:
 
 dist: bionic
 
+env:
+  - VERBOSE: 1
+
 compiler:
   - gcc
   - clang
@@ -28,6 +30,7 @@ jobs:
           compiler: clang
 
 script:
+  - make dist
   - cd flint
   - make check
 

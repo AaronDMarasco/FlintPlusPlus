@@ -29,7 +29,7 @@ clean:
 dist:
 	git ls-tree -r --name-only -z HEAD | tar --null --files-from=- --owner=0 --group=0 --transform 's/^/flint++-$(VERSION)\//' -cJf flint++.tar
 	ls -halF flint++.tar
-	# tar tvf flint++.tar
+	$(and $(VERBOSE),tar tvf flint++.tar)
 
 .PHONY: rpm
 .SILENT: rpm
