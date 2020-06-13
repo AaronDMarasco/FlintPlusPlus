@@ -1,4 +1,6 @@
 # `Flint++`
+![](https://img.shields.io/travis/com/aarondmarasco/FlintPlusPlus)
+
 ## A Cross Platform Port of Facebook's C++ Linter
 
 `Flint++` is cross-platform, zero-dependency port of `flint`, a lint program for C++ developed and used at Facebook.

@@ -62,7 +62,6 @@ before_install:
         ;;
     esac
 
-
 before_cache:
 - |-
     case $TRAVIS_OS_NAME in
