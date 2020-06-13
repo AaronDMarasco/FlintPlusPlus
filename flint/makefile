@@ -1,6 +1,19 @@
+define HELP
+Flint++ building Makefile options:
+
+all     - (default) builds flint++ (respecting CXXFLAGS)
+check   - run built-in tests
+clean   - clean up
+install - install into /usr/bin (respecting DESTDIR)
+format  - run clang-format on source code
+
+Packaging options available at top-level
+
+endef
+
 # We always set the c++11 and optimization flags in addition
-# to anything the make invokation has set. this makes it possible
-# for users to specify their own flags with "make CXXFLAGS=.... "
+# to anything the make invokation has set. This makes it possible
+# for users or build systems to specify their own CXXFLAGS.
 EXTRA_CXXFLAGS := -O3 -std=c++11
 
 HEADERS := $(sort $(wildcard *.hpp))
@@ -8,7 +21,7 @@ HEADERS := $(sort $(wildcard *.hpp))
 SOURCES := $(sort $(wildcard *.cpp))
 OBJS := $(SOURCES:.cpp=.o)
 
-# Output to binary
+# Output binary
 BINF := flint++
 
 # Test files
@@ -23,6 +36,7 @@ all: $(BINF)
 $(BINF): $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $(BINF) $(OBJS)
 
+# More standard alias
 check: tests
 
 tests: $(BINF)
@@ -30,7 +44,7 @@ tests: $(BINF)
 	diff -u $(EXPECTED) $(ACTUAL) || (echo "Output DOES NOT MATCH EXPECTED!" && false)
 	echo "Output matches expected"
 
-# NOTE: Lazy handling of headers - don't do this in a "real" project
+# NOTE: Lazy handling of headers - don't do this in a "real" project ;)
 $(OBJS): $(HEADERS)
 
 .cpp.o: $<
@@ -39,8 +53,17 @@ $(OBJS): $(HEADERS)
 clean:
 	-rm -rf *.o $(BINF) $(ACTUAL)
 
+.PHONY: install
+INSTALL ?= install
+install: $(BINF)
+	mkdir -p $(DESTDIR)/usr/bin/
+	$(INSTALL) -m 755 flint++ $(DESTDIR)/usr/bin/
+
 .PHONY: format
 .SILENT: format
-
 format:
 	clang-format -fallback-style=none -i --verbose $(HEADERS) $(SOURCES)
+
+.PHONY: help
+help: $(and $(filter help,$(MAKECMDGOALS)),$(info $(HELP)))
+	@false
