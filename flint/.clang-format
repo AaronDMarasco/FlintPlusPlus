@@ -1,0 +1,12 @@
+Language: Cpp
+BasedOnStyle: Google
+AlignConsecutiveAssignments: true
+# AlignConsecutiveBitFields: true
+AlignConsecutiveDeclarations: true
+AlignConsecutiveMacros: true
+AllowShortBlocksOnASingleLine: Empty
+AllowShortFunctionsOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: true
+ColumnLimit: 100
+DerivePointerAlignment: false
+PointerAlignment: Left

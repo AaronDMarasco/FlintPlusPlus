@@ -15,6 +15,7 @@ The original `flint` is published on [Github](https://github.com/facebook/flint)
 Upcoming Features
 -----------------
 * RPM packaging
+* Command line options for level of error in return values
 
 Future Ideas
 ------------
@@ -52,6 +53,7 @@ Current Lint Checks
 	* Check `exception` inheritance
 	* Check for `virtual` destructors
 	* function level `throws`
+	* UTF-8 BOM
 * Advice
 	* `nullptr` over `NULL`
 
