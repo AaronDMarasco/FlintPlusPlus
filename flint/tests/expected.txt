@@ -51,8 +51,9 @@
 [Error  ] Throw.cpp:8: Heap-allocated exception: throw new MyException(); This is usually a mistake in c++.
 [Error  ] Throw.cpp:10: Heap-allocated exception: throw new (MyException)(); This is usually a mistake in c++.
 [Error  ] Throw.cpp:12: Heap-allocated exception: throw new MyException(); This is usually a mistake in c++.
+[Warning] UTF8.cpp:1: UTF-8 BOM found
 
-Lint Summary: 15 files
-Errors: 23 Warnings: 29 Advice: 1
+Lint Summary: 16 files
+Errors: 23 Warnings: 30 Advice: 1
 
-Estimated Lines of Code: 330
+Estimated Lines of Code: 332

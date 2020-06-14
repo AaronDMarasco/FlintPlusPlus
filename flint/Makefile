@@ -51,10 +51,10 @@ $(BINF): $(OBJS)
 check: tests
 
 tests: $(BINF)
-	-./$(BINF) ./tests > $(ACTUAL)
+	-./$(BINF) -r ./tests > $(ACTUAL)
 	diff -u $(EXPECTED) $(ACTUAL) || (echo "Plaintext output DOES NOT MATCH EXPECTED!" && false)
 	echo "Plaintext output matches expected"
-	-./$(BINF) -j ./tests > $(JACTUAL)
+	-./$(BINF) -j -r ./tests > $(JACTUAL)
 	diff -u $(JEXPECTED) $(JACTUAL) || (echo "JSON output DOES NOT MATCH EXPECTED!" && false)
 	echo "JSON output matches expected"
 

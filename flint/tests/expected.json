@@ -1,6 +1,6 @@
 {
 	"errors"   : 23,
-	"warnings" : 29,
+	"warnings" : 30,
 	"advice"   : 1,
 	"files"    : [
     {
@@ -441,6 +441,20 @@
 	        "line"     : 12,
 	        "title"    : "Heap-allocated exception: throw new MyException(); This is usually a mistake in c++.",
 	        "desc"     : ""
+        }
+      ]
+    },
+    {
+	    "path"     : "UTF8.cpp",
+	    "errors"   : 0,
+	    "warnings" : 1,
+	    "advice"   : 0,
+	    "reports"  : [
+        {
+	        "level"    : "Warning",
+	        "line"     : 1,
+	        "title"    : "UTF-8 BOM found",
+	        "desc"     : "The Unicode Standard permits this, but does not require nor recommend its use"
         }
       ]
     }
