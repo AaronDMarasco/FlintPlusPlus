@@ -45,7 +45,7 @@ namespace flint {
 			if (Options.LEVEL < m_type) {
 				return;
 			}
-
+// clang-format off
 			if (Options.JSON) {
 				std::cout <<	"        {\n"
 					"	        \"level\"    : \"" << typeStr[m_type + 3u]  << "\",\n"
@@ -56,7 +56,7 @@ namespace flint {
 
 				return;
 			}
-
+// clang-format on
 			std::cout << typeStr[m_type] << path << ':'
 				 << std::to_string(m_line) << ": " << m_title << std::endl;
 		};
@@ -118,7 +118,7 @@ namespace flint {
 		* JSON or Pretty Printed format
 		*/
 		void print() const {
-
+// clang-format off
 			if (Options.JSON) {
 				std::cout << "    {\n"
 					"	    \"path\"     : \"" << escapeString(m_path)     << "\",\n"
@@ -126,7 +126,7 @@ namespace flint {
 					"	    \"warnings\" : "   << std::to_string(getWarnings()) << ",\n"
 					"	    \"advice\"   : "   << std::to_string(getAdvice())   << ",\n"
 					"	    \"reports\"  : [\n";
-
+// clang-format on
 				for (size_t i = 0, size = m_objs.size(); i < size; ++i) {
 					if (i > 0) {
 						std::cout <<  ',' << std::endl;
@@ -174,12 +174,13 @@ namespace flint {
 		void print() const {
 
 			if (Options.JSON) {
+// clang-format off
 				std::cout << "{\n"
 					"	\"errors\"   : " << std::to_string(getErrors())   << ",\n"
 					"	\"warnings\" : " << std::to_string(getWarnings()) << ",\n"
 					"	\"advice\"   : " << std::to_string(getAdvice())   << ",\n"
 					"	\"files\"    : [\n";
-
+// clang-format on
 				for (size_t i = 0, size = m_files.size(); i < size; ++i) {
 					if (i > 0) {
 						std::cout << ',' << std::endl;

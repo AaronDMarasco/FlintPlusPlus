@@ -9,7 +9,7 @@
 #include "ErrorReport.hpp"
 
 namespace flint {
-
+// clang-format off
 	/**
 	* Higher-order macro that applies "apply" (which itself is usually a
 	* macro) to each C++ token that consists of one character and is not
@@ -218,7 +218,7 @@ namespace flint {
 		TK_UNEXPECTED,
 		NUM_TOKENS
 	};
-
+// clang-format on
 	/**
 	* Converts e.g. TK_VIRTUAL to "TK_VIRTUAL".
 	*/

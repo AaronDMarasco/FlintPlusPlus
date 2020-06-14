@@ -23,7 +23,7 @@ namespace flint {
 			   "			          2 : Errors & Warnings\n"
 			   "			          3 : All feedback\n\n"
 			   "\t-h, --help		    : Print usage.\n\n");
-#ifdef _DEBUG 
+#ifdef _DEBUG
 		// Stop visual studio from closing the window...
 		system("PAUSE");
 #endif
@@ -73,7 +73,7 @@ namespace flint {
 		Arg argL1 = { ArgType::BOOL, &l1 };
 		Arg argL2 = { ArgType::BOOL, &l2 };
 		Arg argL3 = { ArgType::BOOL, &l3 };
-
+// clang-format off
 		static const unordered_map<string, Arg &> params = {
 			{ "-h", argHelp },
 			{ "--help", argHelp },
@@ -96,15 +96,15 @@ namespace flint {
 			{ "-v", argVerbose },
 			{ "--verbose", argVerbose }
 		};
-
+// clang-format on
 		// Loop over the given argument list
 		for (int i = 1; i < argc; ++i) {
-			
+
 			// If the current argument is in the map
 			// then set its value to true
 			auto it = params.find(string(argv[i]));
 			if (it != params.end()) {
-				
+
 				if (it->second.type == ArgType::BOOL) {
 					bool *arg = (bool*)it->second.ptr;
 					*arg = true;
