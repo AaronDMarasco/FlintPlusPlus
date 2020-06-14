@@ -6,9 +6,10 @@ VERSION := 0.5
 define HELP
 Flint++ $(VERSION) top-level Makefile options:
 
-dist  - create tarball
-rpm   - create RPM
-clean - clean tarballs and RPMs
+dist    - create tarball
+rpm     - create RPM
+manpage - regenerate man page (requires asciidoc)
+clean   - clean tarballs and RPMs
 
 For other options, try "make help" in flint subdirectory
 
@@ -48,3 +49,16 @@ rpm: dist
   --define="_topdir     $(RPM_TEMP)" \
   packaging/flint++.spec
 	find $(RPM_TEMP)/ -name '*.rpm' | xargs cp -v --target-directory=.
+
+.PHONY: manpage
+.SILENT: manpage
+manpage: flint++.1
+
+.SILENT: flint++.1
+flint++.1: manpage.txt
+	type -t a2x &>/dev/null || (echo "Could not find a2x!" && false)
+	type -t asciidoc &>/dev/null || (echo "Could not find asciidoc!" && false)
+	type -t xmllint &>/dev/null || (echo "Could not find xmllint!" && false)
+	type -t xsltproc &>/dev/null || (echo "Could not find xsltproc!" && false)
+	rm -rf $@
+	a2x --format=manpage -v $^

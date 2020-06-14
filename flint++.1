@@ -1,38 +1,105 @@
-.\"                                      Hey, EMACS: -*- nroff -*-
-.\" (C) Copyright 2014 Paul Dreik <github@pauldreik.se>,
-.TH FLINT++ "1" "December 2014" "flint++ " "User Commands"
-.SH NAME
+'\" t
+.\"     Title: flint++
+.\"    Author: [see the "AUTHORS" section]
+.\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
+.\"      Date: 06/13/2020
+.\"    Manual: \ \&
+.\"    Source: \ \&
+.\"  Language: English
+.\"
+.TH "FLINT++" "1" "06/13/2020" "\ \&" "\ \&"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
 flint++ \- static code analyzer for c++
-.SH SYNOPSIS
-.B flint++
-[\fI\,options\/\fR] [\fI\,files\/\fR]
-.SH DESCRIPTION
-.TP
-\fB\-r\fR, \fB\-\-recursive\fR
-: Search subfolders for files.
-.TP
-\fB\-c\fR, \fB\-\-cmode\fR
-: Only perform C based lint checks.
-.TP
-\fB\-j\fR, \fB\-\-json\fR
-: Output report in JSON format.
-.TP
-\fB\-v\fR, \fB\-\-verbose\fR
-: Print full file paths.
-.TP
-\fB\-l\fR, \fB\-\-level\fR [def=3] : Set the lint level.
-1 : Errors only
-2 : Errors & Warnings
-3 : All feedback
-.TP
-\fB\-h\fR, \fB\-\-help\fR
-: Print usage.
+.SH "SYNOPSIS"
+.sp
+\fBflint++\fR [\fIOPTIONS\fR] [\fIFILES\fR]
+.SH "DESCRIPTION"
+.sp
+The flint(1) command is a cross\-platform, zero\-dependency port of flint, a lint program for C developed and used at Facebook\&.
+.SH "OPTIONS"
 .PP
-
-
-See /usr/share/doc/flintplusplus/README.md for full details.
-
+\fB\-r, \-\-recursive\fR
+.RS 4
+Search subfolders for files\&.
+.RE
+.PP
+\fB\-c, \-\-cmode\fR
+.RS 4
+Only perform C\-based lint checks\&.
+.RE
+.PP
+\fB\-j, \-\-json\fR
+.RS 4
+Output report in JSON format\&.
+.RE
+.PP
+\fB\-v, \-\-verbose\fR
+.RS 4
+Print full file paths\&.
+.RE
+.PP
+\fB\-l, \-\-level [def=3]\fR
+.RS 4
+Set the lint level\&.
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+1 : Errors only 2 : Errors & Warnings 3 : All feedback
+.fi
+.if n \{\
+.RE
+.\}
+.RE
+.PP
+\fB\-h, \-\-help\fR
+.RS 4
+Print usage\&.
+.RE
+.sp
+See /usr/share/doc/flint++/README\&.md for full details\&.
+.SH "EXIT STATUS"
+.PP
+\fB0\fR
+.RS 4
+Success
+.RE
+.PP
+\fB1\fR
+.RS 4
+Linting errors detected
+.RE
+.SH "RESOURCES"
+.sp
+GitHub: https://github\&.com/AaronDMarasco/FlintPlusPlus/
 .SH "SEE ALSO"
-.BR cppcheck (1),
-.BR scan-build (1).
-.br
+.sp
+\fBcppcheck\fR(1) \fBscan\-build\fR(1)
+.SH "AUTHORS"
+.sp
+Various Contributors; see GitHub history\&.
+.SH "COPYING"
+.sp
+Copyright (C) 2014\-2020 Flint and Flint++ Contributors\&.
+.sp
+Free use of this software is granted under the terms of the Boost Software License\&.
