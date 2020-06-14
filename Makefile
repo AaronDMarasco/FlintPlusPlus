@@ -16,7 +16,7 @@ For other options, try "make help" in flint subdirectory
 endef
 
 .PHONY: help
-help: $(and $(filter help,$(MAKECMDGOALS)),$(info $(HELP))) $(or $(MAKECMDGOALS),$(info $(HELP)))
+help: $(and $(filter help,$(MAKECMDGOALS)),$(info $(HELP))) $(or $(filter-out help,$(MAKECMDGOALS)),$(info $(HELP)))
 	@false
 
 .PHONY: clean
