@@ -22,7 +22,7 @@ namespace flint {
 template <class S, class T>
 inline bool cmpStr(const S &a, const T &b) { return equal(a.begin(), a.end(), b.begin()); }
 inline bool cmpStr(const StringFragment &a, const StringFragment& b) { return (a == b); }
-inline bool cmpStr(const StringFragment &a, const char* b) { return (a.size() == strlen(b)) && startsWith(a.begin(), b); }  
+inline bool cmpStr(const StringFragment &a, const char* b) { return (a.size() == strlen(b)) && startsWith(a.begin(), b); }
 inline bool cmpStr(const string &a, const string &b) { return a == b; }
 inline bool cmpToks(const Token &a, const Token &b) { return cmpStr(a.value_, b.value_); };
 
@@ -33,7 +33,7 @@ inline bool isTok(const Token &token, TokenType type) { return token.type_ == ty
 using TokenIter = vector<Token>::const_iterator;
 
 	namespace { // Anonymous Namespace for Token stream traversal functions
-		
+
 		const string emptyString;
 
 		/*
@@ -78,10 +78,10 @@ using TokenIter = vector<Token>::const_iterator;
 		*/
 		template <class Container>
 		bool atSequence(const vector<Token> &tokens, size_t pos, const Container &list) {
-			return equal(begin(list), end(list), begin(tokens) + pos, [](TokenType type, const Token &token) 
-			{ 
-				return type == token.type_; 
-			}); 
+			return equal(begin(list), end(list), begin(tokens) + pos, [](TokenType type, const Token &token)
+			{
+				return type == token.type_;
+			});
 			};
 
 		/**
@@ -207,7 +207,7 @@ using TokenIter = vector<Token>::const_iterator;
 		*/
 		inline bool atBuiltinType(const vector<Token> &tokens, size_t pos) {
 
-			static const array<TokenType, 11> builtIns = {{
+			static constexpr array<TokenType, 11> builtIns {
 				TK_DOUBLE,
 				TK_FLOAT,
 				TK_INT,
@@ -219,7 +219,7 @@ using TokenIter = vector<Token>::const_iterator;
 				TK_BOOL,
 				TK_WCHAR_T,
 				TK_CHAR
-			}};
+			};
 
 			return find(begin(builtIns), end(builtIns), tokens[pos].type_) != end(builtIns);
 		};
@@ -334,13 +334,12 @@ using TokenIter = vector<Token>::const_iterator;
 		*		The current index position inside the token list
 		* @param callback
 		*		The function to run on each code object
-		
+
 		template<class Callback>
 		void iterateClasses(ErrorFile &errors, const vector<Token> &tokens, const Callback &callback) {
 
-			static const array<TokenType, 2> template_types = {
-				{ TK_TEMPLATE, TK_LESS }
-			};
+			static constexpr array<TokenType, 2> template_types
+				{ TK_TEMPLATE, TK_LESS };
 
 			for (size_t pos = 0; pos < tokens.size() - 1; ++pos) {
 				// Skip template sequence if we find ... template< ...
@@ -423,7 +422,7 @@ using TokenIter = vector<Token>::const_iterator;
 				}
 
 				const auto &val = tokens[pos].value_;
-				result.append(val.begin(), val.end()); 
+				result.append(val.begin(), val.end());
 			}
 			return result;
 		};
@@ -554,7 +553,7 @@ using TokenIter = vector<Token>::const_iterator;
 			func.first = pos;
 			++pos;
 
-			const size_t size = tokens.size(); 
+			const size_t size = tokens.size();
 			if (pos < size && isTok(tokens[pos], TK_LESS)) {
 				pos = skipTemplateSpec(tokens, pos);
 
@@ -569,9 +568,8 @@ using TokenIter = vector<Token>::const_iterator;
 
 
 		inline TokenIter getEndOfClass(TokenIter start, TokenIter maxPos) {
-			static const array<TokenType, 3> classMarkers = {
-				{ TK_EOF, TK_LCURL, TK_SEMICOLON }	
-			};
+			static constexpr array<TokenType, 3> classMarkers
+				{ TK_EOF, TK_LCURL, TK_SEMICOLON };
 
 			return find_first_of(start, maxPos, begin(classMarkers), end(classMarkers), isTok);
 		};
@@ -609,12 +607,10 @@ using TokenIter = vector<Token>::const_iterator;
 	void checkInitializeFromItself(ErrorFile &errors, const string &path, const vector<Token> &tokens) {
 
 		// Token Sequences for parameter initializers
-		static const array<TokenType, 5> firstInitializer = {
-			{ TK_COLON, TK_IDENTIFIER, TK_LPAREN, TK_IDENTIFIER, TK_RPAREN }
-		};
-		static const array<TokenType, 5> nthInitializer = {
-			{ TK_COMMA, TK_IDENTIFIER, TK_LPAREN, TK_IDENTIFIER, TK_RPAREN }
-		};
+		static constexpr array<TokenType, 5> firstInitializer
+			{ TK_COLON, TK_IDENTIFIER, TK_LPAREN, TK_IDENTIFIER, TK_RPAREN };
+		static constexpr array<TokenType, 5> nthInitializer
+			{ TK_COMMA, TK_IDENTIFIER, TK_LPAREN, TK_IDENTIFIER, TK_RPAREN };
 
 		for (size_t pos = 0, size = tokens.size(); pos < size; ++pos) {
 			if (atSequence(tokens, pos, firstInitializer) || atSequence(tokens, pos, nthInitializer)) {
@@ -735,7 +731,7 @@ using TokenIter = vector<Token>::const_iterator;
 	};
 
 	/**
-	* Check for conflicting namespace usages 
+	* Check for conflicting namespace usages
 	*
 	* @param errors
 	*		Struct to track how many errors/warnings/advice occured
@@ -748,12 +744,11 @@ using TokenIter = vector<Token>::const_iterator;
 		vector<StringFragment> namespaces;
 		stack<size_t> scopes;
 
-		static const array<TokenType, 2> usingNamespace = {
-			{TK_USING, TK_NAMESPACE}
-		};
+		static constexpr array<TokenType, 2> usingNamespace
+			{TK_USING, TK_NAMESPACE};
 
 		static const vector<string> exclusive {
-  			"std", "std::tr1", "boost", "::std", "::std::tr1", "::boost" 
+  			"std", "std::tr1", "boost", "::std", "::std::tr1", "::boost"
 		};
 
 		static const vector<StringFragment> exclusiveFragments = []()->vector<StringFragment> {
@@ -762,7 +757,7 @@ using TokenIter = vector<Token>::const_iterator;
 			return out;
 		}();
 
-		for (size_t pos = 0, size = tokens.size(); pos < size; ++pos) {	
+		for (size_t pos = 0, size = tokens.size(); pos < size; ++pos) {
 			if (isTok(tokens[pos], TK_LCURL)) {
 				scopes.push(namespaces.size());
 				continue;
@@ -779,10 +774,10 @@ using TokenIter = vector<Token>::const_iterator;
 				continue;
 			}
 
-			if (atSequence(tokens, pos, usingNamespace)) {				
+			if (atSequence(tokens, pos, usingNamespace)) {
 				pos += 2;
-				
-				auto isExclusive = find_if(begin(exclusiveFragments), end(exclusiveFragments), [=](const StringFragment &frag) { return matchAcrossTokens(frag, begin(tokens) + pos, end(tokens)); }); 
+
+				auto isExclusive = find_if(begin(exclusiveFragments), end(exclusiveFragments), [=](const StringFragment &frag) { return matchAcrossTokens(frag, begin(tokens) + pos, end(tokens)); });
 				if (isExclusive == end(exclusiveFragments)) {
 					continue;
 				}
@@ -791,10 +786,10 @@ using TokenIter = vector<Token>::const_iterator;
 				if (conflict != end(namespaces)) {
 					lintWarning(errors, tokens[pos], "Conflicting namespaces: " + to_string(*isExclusive) + " and " + to_string(*conflict));
 				}
-					
+
 				namespaces.push_back(*isExclusive);
 				continue;
-			}			
+			}
 		}
 	};
 
@@ -812,18 +807,15 @@ using TokenIter = vector<Token>::const_iterator;
 		if (!isHeader(path)) {
 			return;
 		}
-		
-		static const array<TokenType, 3> regularNamespace = {
-			{TK_NAMESPACE, TK_IDENTIFIER, TK_LCURL}
-		};
 
-		static const array<TokenType, 2> unnamedNamespace = {
-			{TK_NAMESPACE, TK_LCURL}
-		};
+		static constexpr array<TokenType, 3> regularNamespace
+			{TK_NAMESPACE, TK_IDENTIFIER, TK_LCURL};
 
-		static const array<TokenType, 2> usingNamespace = {
-			{TK_USING, TK_NAMESPACE}
-		};
+		static constexpr array<TokenType, 2> unnamedNamespace
+			{TK_NAMESPACE, TK_LCURL};
+
+		static constexpr array<TokenType, 2> usingNamespace
+			{TK_USING, TK_NAMESPACE};
 
 		for (size_t pos = 0, size = tokens.size(); pos < size; ++pos) {
 			if (atSequence(tokens, pos, regularNamespace)) {
@@ -855,7 +847,7 @@ using TokenIter = vector<Token>::const_iterator;
 
 	/**
 	* Check for public non-virtual destructors in classes with virtual functions
-	* 
+	*
 	* @param errors
 	*		Struct to track how many errors/warnings/advice occured
 	* @param path
@@ -864,9 +856,8 @@ using TokenIter = vector<Token>::const_iterator;
 	*		The token list for the file
 	*/
 	void checkVirtualDestructors(ErrorFile &errors, const string &path, const vector<Token> &tokens, const vector<size_t> &structures) {
-		static const array<TokenType, 3> accessSpecifiers = {
-			{ TK_PUBLIC, TK_PRIVATE, TK_PROTECTED }	
-		};
+		static constexpr array<TokenType, 3> accessSpecifiers
+			{ TK_PUBLIC, TK_PRIVATE, TK_PROTECTED };
 
 		static const string msg = "Classes with virtual functions should not have a public non-virtual destructor.";
 
@@ -876,7 +867,7 @@ using TokenIter = vector<Token>::const_iterator;
 			auto startIter = begin(tokens) + structures[i];
 			auto endIter = (i == penultimate) ? end(tokens) : begin(tokens) + structures[i + 1];
 
-			auto &tok = *startIter; 
+			auto &tok = *startIter;
 
 			if (isTok(tok, TK_UNION)) {
 				continue;
@@ -923,7 +914,7 @@ using TokenIter = vector<Token>::const_iterator;
 
 	/**
 	* Check for non-public std::exception inheritance
-	* 
+	*
 	* @param errors
 	*		Struct to track how many errors/warnings/advice occured
 	* @param path
@@ -932,13 +923,11 @@ using TokenIter = vector<Token>::const_iterator;
 	*		The token list for the file
 	*/
 	void checkExceptionInheritance(ErrorFile &errors, const string &path, const vector<Token> &tokens, const vector<size_t> &structures) {
-		static const array<TokenType, 4> classMarkersWithColon = {
-			{ TK_EOF, TK_LCURL, TK_SEMICOLON, TK_COLON }	
-		};
+		static constexpr array<TokenType, 4> classMarkersWithColon
+			{ TK_EOF, TK_LCURL, TK_SEMICOLON, TK_COLON };
 
-		static const array<TokenType, 3> accessSpecifiers = {
-			{ TK_PUBLIC, TK_PRIVATE, TK_PROTECTED }	
-		};
+		static constexpr array<TokenType, 3> accessSpecifiers
+			{ TK_PUBLIC, TK_PRIVATE, TK_PROTECTED };
 
 		for (size_t i = 0, struct_size = structures.size(); i < struct_size; ++i) {
 
@@ -1182,13 +1171,11 @@ using TokenIter = vector<Token>::const_iterator;
 		auto numTokens = tokens.size();
 		auto posLimit = numTokens - 1;
 
-		static const array<TokenType, 7> destructorSequence = {
-			{ TK_TILDE, TK_IDENTIFIER, TK_LPAREN, TK_RPAREN, TK_THROW, TK_LPAREN, TK_RPAREN }
-		};
-		static const array<TokenType, 6> whatSequence = {
-			{ TK_LPAREN, TK_RPAREN, TK_CONST, TK_THROW, TK_LPAREN, TK_RPAREN }
-		};
-		
+		static constexpr array<TokenType, 7> destructorSequence
+			{ TK_TILDE, TK_IDENTIFIER, TK_LPAREN, TK_RPAREN, TK_THROW, TK_LPAREN, TK_RPAREN };
+		static constexpr array<TokenType, 6> whatSequence
+			{ TK_LPAREN, TK_RPAREN, TK_CONST, TK_THROW, TK_LPAREN, TK_RPAREN };
+
 		// Check for throw specifications inside classes
 		for (size_t i = 0, size = structures.size(); i < size; ++i) {
 			size_t pos = structures[i];
@@ -1290,7 +1277,7 @@ using TokenIter = vector<Token>::const_iterator;
 	*		The path to the file currently being linted
 	* @param tokens
 	*		The token list for the file
-	
+
 	void checkIncrementers(ErrorFile &errors, const string &path, const vector<Token> &tokens) {
 
 		const vector<TokenType> iteratorPlus = {
@@ -1376,13 +1363,13 @@ using TokenIter = vector<Token>::const_iterator;
 
 		static const string lintOverride = "/* implicit */";
 
-		static const array<TokenType, 4> stdInitializerSequence = {
+		static constexpr array<TokenType, 4> stdInitializerSequence {
 			TK_IDENTIFIER, TK_DOUBLE_COLON, TK_IDENTIFIER, TK_LESS
 		};
-		static const array<TokenType, 2> constructorSequence = {
+		static constexpr array<TokenType, 2> constructorSequence {
 			TK_IDENTIFIER, TK_LPAREN
 		};
-		static const array<TokenType, 4> voidConstructorSequence = {
+		static constexpr array<TokenType, 4> voidConstructorSequence {
 			TK_IDENTIFIER, TK_LPAREN, TK_VOID, TK_RPAREN
 		};
 
@@ -1726,23 +1713,23 @@ using TokenIter = vector<Token>::const_iterator;
 
 		static const string lintOverride = "/* implicit */";
 
-		static const array<TokenType, 3> explicitConstOperator = {
+		static constexpr array<TokenType, 3> explicitConstOperator {
 			TK_EXPLICIT, TK_CONSTEXPR, TK_OPERATOR
 		};
-		static const array<TokenType, 2> explicitOperator = {
+		static constexpr array<TokenType, 2> explicitOperator {
 			TK_EXPLICIT, TK_OPERATOR
 		};
-		static const array<TokenType, 2> doubleColonOperator = {
+		static constexpr array<TokenType, 2> doubleColonOperator {
 			TK_DOUBLE_COLON, TK_OPERATOR
 		};
 
-		static const array<TokenType, 4> boolOperator = {
+		static constexpr array<TokenType, 4> boolOperator {
 			TK_OPERATOR, TK_BOOL, TK_LPAREN, TK_RPAREN
 		};
-		static const array<TokenType, 2> operatorDelete = {
+		static constexpr array<TokenType, 2> operatorDelete {
 			TK_ASSIGN, TK_DELETE
 		};
-		static const array<TokenType, 3> operatorConstDelete = {
+		static constexpr array<TokenType, 3> operatorConstDelete {
 			TK_CONST, TK_ASSIGN, TK_DELETE
 		};
 
@@ -1994,9 +1981,8 @@ using TokenIter = vector<Token>::const_iterator;
 	*/
 	void checkProtectedInheritance(ErrorFile &errors, const string &path, const vector<Token> &tokens, const vector<size_t> &structures) {
 
-		static const array<TokenType, 3> protectedSequence = {
-			{ TK_COLON, TK_PROTECTED, TK_IDENTIFIER }
-		};
+		static constexpr array<TokenType, 3> protectedSequence
+			{ TK_COLON, TK_PROTECTED, TK_IDENTIFIER };
 
 		const size_t toksize = tokens.size();
 		for (size_t i = 0, size = structures.size(); i < size; ++i) {
@@ -2029,7 +2015,7 @@ using TokenIter = vector<Token>::const_iterator;
 	*		The path to the file currently being linted
 	* @param tokens
 	*		The token list for the file
-	
+
 	void checkUpcaseNull(ErrorFile &errors, const string &path, const vector<Token> &tokens) {
 
 		for (size_t pos = 0; pos < tokens.size(); ++pos) {
@@ -2063,7 +2049,7 @@ using TokenIter = vector<Token>::const_iterator;
 
 			auto const ident = readQualifiedIdentifier(tokens, pos);
 
-			if (!((ident.size() == 1 && cmpStr(ident[0], "unique_ptr")) || 
+			if (!((ident.size() == 1 && cmpStr(ident[0], "unique_ptr")) ||
 				  (ident.size() == 2 && cmpStr(ident[0], "std") && cmpStr(ident[1], "unique_ptr")))) {
 				continue;
 			}
@@ -2136,14 +2122,14 @@ using TokenIter = vector<Token>::const_iterator;
 						++i;
 					}
 				}
-				while (isTok(tokens[i], TK_STAR) || 
-					   isTok(tokens[i], TK_CONST) || 
+				while (isTok(tokens[i], TK_STAR) ||
+					   isTok(tokens[i], TK_CONST) ||
 					   isTok(tokens[i], TK_VOLATILE)) {
 					++i;
 				}
 
 				if (isTok(tokens[i], TK_LSQUARE) != uniquePtrHasArray) {
-					lintError(errors, tokens[uniquePtrIt], 
+					lintError(errors, tokens[uniquePtrIt],
 						(uniquePtrHasArray
 						? "unique_ptr<T[]> should be used with an array type."
 						: "unique_ptr<T> should be unique_ptr<T[]> when used with an array."));
@@ -2180,9 +2166,8 @@ using TokenIter = vector<Token>::const_iterator;
 	*/
 	void checkSmartPtrUsage(ErrorFile &errors, const string &path, const vector<Token> &tokens) {
 
-		static const array<TokenType, 2> funcSignature = {
-			{ TK_IDENTIFIER, TK_LPAREN }
-		};
+		static constexpr array<TokenType, 2> funcSignature
+			{ TK_IDENTIFIER, TK_LPAREN };
 
 		for (size_t pos = 0, size = tokens.size(); pos < size - 1; ++pos) {
 
@@ -2220,9 +2205,9 @@ using TokenIter = vector<Token>::const_iterator;
 				continue;
 			}
 
-			if (isTok(tokens[i], TK_RPAREN) && 
-				isTok(tokens[i + 1], TK_SEMICOLON) && 
-				(args.size() > 0) && 
+			if (isTok(tokens[i], TK_RPAREN) &&
+				isTok(tokens[i + 1], TK_SEMICOLON) &&
+				(args.size() > 0) &&
 				(isTok(tokens[(args[0].first)], TK_NEW))) {
 
 				// identifies what to suggest:
@@ -2230,7 +2215,7 @@ using TokenIter = vector<Token>::const_iterator;
 				// case an allocator is used and thus suggests allocate_shared.
 				const string newFn = (args.size() == 3) ? "allocate_shared" : "make_shared";
 
-				lintWarning(errors, tokens[sharedPtrIt], "Consider using '" + newFn + 
+				lintWarning(errors, tokens[sharedPtrIt], "Consider using '" + newFn +
 					"' which performs better with fewer allocations.");
 			}
 		}
@@ -2255,17 +2240,17 @@ using TokenIter = vector<Token>::const_iterator;
 
 		static const string mutexHolder = "lock_guard";
 
-		static const array<TokenType, 2> mutexSequence = {
+		static constexpr array<TokenType, 2> mutexSequence {
 			TK_IDENTIFIER, TK_LESS
 		};
 
-		static const array<TokenType, 2> mutexConstructor = {
+		static constexpr array<TokenType, 2> mutexConstructor {
 			TK_GREATER, TK_LPAREN
 		};
 
 		for (size_t pos = 0, size = tokens.size(); pos < size - 1; ++pos) {
 
-			if (atSequence(tokens, pos, mutexSequence) && 
+			if (atSequence(tokens, pos, mutexSequence) &&
 				cmpTok(tokens[pos], mutexHolder)) {
 
 				pos = skipTemplateSpec(tokens, ++pos);
