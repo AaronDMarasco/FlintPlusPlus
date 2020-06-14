@@ -5,11 +5,11 @@
 
 `Flint++` is cross-platform, zero-dependency port of `flint`, a lint program for C++ developed and used at Facebook.
 
-This project was motivated by a desire for a modern and extendable C++ Linter that just worked. Facebook had already done a fantastic job with their `flint` project; but through an unnecessarily high number of dependencies, poor documentation, and OS dependent coding the project is almost unusable. `Flint++` aims to solve these problems by only using the C++11 std::library along with a minimal number of polyfill functions developed to bridge the gaps in the needed functionality.
+This project was motivated by a desire for a modern and extendable C++ Linter that just worked. Facebook had already done a fantastic job with their `flint` project; but through an unnecessarily high number of dependencies, poor documentation, and OS-dependent coding, the project was almost unusable. `Flint++` aims to solve these problems by only using the C++11 std::library along with a minimal number of functions developed to bridge the gaps in the needed functionality.
 
 The original `flint` is published on [Github](https://github.com/facebook/flint); and for discussions, there is a [Google group](https://groups.google.com/d/forum/facebook-flint).
 
-[@AaronDMarasco]( https://github.com/AaronDMarasco/FlintPlusPlus ) forked from the [@kanielc]( https://github.com/kanielc/FlintPlusPlus ) fork of the [@JossWhittle]( https://github.com/JossWhittle/FlintPlusPlus ) fork in 2020 (with no activity since 2014). Cleaned up a little, manually merged in the following forks (closing all JossWhittle PRs that were open at the time), and then it's "as-is":
+[@AaronDMarasco]( https://github.com/AaronDMarasco/FlintPlusPlus ) forked from the [@kanielc]( https://github.com/kanielc/FlintPlusPlus ) fork of the [@JossWhittle]( https://github.com/JossWhittle/FlintPlusPlus ) fork in 2020 (with no activity since 2014). Cleaned up a little, manually merged in the following forks (closing all JossWhittle PRs that were open at the time), added RPM building and CI abilities, and now it's "as-is":
 
 * [@vix597]( https://github.com/vix597/FlintPlusPlus ) - more sane makefile, debian packaging, return values (#63)
 * [@warmsocks]( https://github.com/warmsocks/FlintPlusPlus ) - allow spaces (#60)
@@ -20,8 +20,8 @@ Upcoming Features
 
 Future Ideas
 ------------
-* More lint tests!
-* Visual Studio Integration!
+* More lint tests
+* Visual Studio Integration
 * JSON Config files to allow project dependent Lint settings
 	* Set custom blacklisted identifiers/token sequences/includes
 	* Enable/Disable certain tests
@@ -85,10 +85,12 @@ Does it pass Linting itself?
 	Lint Summary: 14 files
 	Errors: 0 Warnings: 0 Advice: 0
 
+	Estimated Lines of Code: 4395
+
 Compiling `Flint++` from source
 -------------------------------
 
-From the flint subdirectory, use `make` with the included makefile to build on a Posix based system using G++ > v4.7. To run the simple output test case run `make tests` after compilation. This will run `Flint++` on the test directory and compare its output to the text stored in `tests/expected.txt`.
+From the `flint` subdirectory, use `make` with the included makefile to build using G++ or clang. To run the simple output test case run `make check` after compilation. This will run `Flint++` on the test directory and compare its output to the text stored in `tests/expected.txt`.
 
 Why Lint?
 ---------
@@ -97,19 +99,14 @@ Linting is a form of *static-code analysis* by which common errors and bad pract
 
 Dependencies
 ------------
-
-### Windows, Unix, Linux, OSX
-
 **None!** You're good to go! Happy linting :)
 
-*Edit:* It's not really a dependency, but it's worth noting that this project makes extensive use of the C++11 Feature Set. You won't be able to compile it on a Pre-C++11 version of your compiler.
+*Edit:* It's not really a dependency, but it's worth noting that this project makes extensive use of C\+\+11. You won't be able to compile it on a Pre-C\+\+11 version of your compiler.
 
 Tested On
 ---------
-Previous maintainers managed to compile and test `Flint++` on Windows 7/8/8.1, Ubuntu 14.10, and Raspbian Wheezy; compiling under MSVC++ '13 and G++ 4.8 respectively. We also have word people have successfully compiled under OSX with Clang 3.5.
+Current maintainer develops with G++ 10.1.1 (Fedora 32) and Travis CI currently tests [10 different configurations](https://travis-ci.com/github/AaronDMarasco/FlintPlusPlus/) using gcc and clang on Linux, MacOS X, and Windows.
 
-Current maintainer @AaronDMarasco only tested G++ 10.1.1 (Fedora 32), sorry!
 
 ---
-
-##Pull Requests Welcome!
+## Pull Requests Welcome!
