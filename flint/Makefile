@@ -15,8 +15,14 @@ endef
 # to anything the caller has set. This makes it possible
 # for users or build systems to specify their own CXXFLAGS.
 EXTRA_CXXFLAGS := -O3 -std=c++11 -Wall -Werror=format-security
+# Extra strict when building RPMs
 ifdef RPM_BUILD_ROOT
 EXTRA_CXXFLAGS += -Werror
+endif
+# Undocumented feature if you are trying to ensure things are clean export USEASAN=1
+ifdef USEASAN
+EXTRA_CXXFLAGS += -fsanitize=address
+ASANLINK := -lasan
 endif
 
 HEADERS := $(sort $(wildcard *.hpp))
@@ -39,7 +45,7 @@ JEXPECTED = tests/expected.json
 all: $(BINF)
 
 $(BINF): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $(BINF) $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $(BINF) $(OBJS) $(ASANLINK)
 
 # More standard alias
 check: tests
@@ -75,3 +81,11 @@ format:
 .PHONY: help
 help: $(and $(filter help,$(MAKECMDGOALS)),$(info $(HELP)))
 	@false
+
+# Undocumented syntax checker to ensure GCC and clang both like what's been done
+.PHONY: scheck
+scheck: clean
+	$(MAKE) -j
+	$(MAKE) clean
+	CXX=clang++ $(MAKE) -j
+	$(MAKE) check
