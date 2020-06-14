@@ -49,13 +49,14 @@ using TokenIter = vector<Token>::const_iterator;
 		*
 		*/
 
-		void lintError(ErrorFile &errors, const Token &tok, const string &title, const string &desc = emptyString) {
+		// C++17 these should be tagged [[maybe_unused]]
+		void  __attribute__((unused)) lintError(ErrorFile &errors, const Token &tok, const string &title, const string &desc = emptyString) {
 			errors.addError(ErrorObject(Lint::ERROR, tok.line_, title, desc));
 		};
-		void lintWarning(ErrorFile &errors, const Token &tok, const string &title, const string &desc = emptyString) {
+		void  __attribute__((unused)) lintWarning(ErrorFile &errors, const Token &tok, const string &title, const string &desc = emptyString) {
 			errors.addError(ErrorObject(Lint::WARNING, tok.line_, title, desc));
 		};
-		void lintAdvice(ErrorFile &errors, const Token &tok, const string &title, const string &desc = emptyString) {
+		void  __attribute__((unused)) lintAdvice(ErrorFile &errors, const Token &tok, const string &title, const string &desc = emptyString) {
 			errors.addError(ErrorObject(Lint::ADVICE, tok.line_, title, desc));
 		};
 
@@ -101,6 +102,7 @@ using TokenIter = vector<Token>::const_iterator;
 			return (pos < size && isTok(tokens[pos], target));
 		};
 
+#if 0 // unused
 		/**
 		* Strips the ""'s or <>'s from an #include path
 		*
@@ -112,7 +114,7 @@ using TokenIter = vector<Token>::const_iterator;
 		string getIncludedPath(const string &path) {
 			return path.substr(1, path.size() - 2);
 		};
-
+#endif
 		/**
 		* Strips the ""'s or <>'s from an #include path
 		*
@@ -282,6 +284,7 @@ using TokenIter = vector<Token>::const_iterator;
 			return pos;
 		};
 
+#if 0 // unused
 		/**
 		* Traverses the token list until the whole parentheses chunk has passed
 		*
@@ -318,7 +321,7 @@ using TokenIter = vector<Token>::const_iterator;
 
 			return pos;
 		};
-
+#endif
 		/**
 		* Traverses the token list and runs a Callback function on each
 		* class/struct/union it finds

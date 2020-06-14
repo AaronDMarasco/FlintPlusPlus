@@ -11,10 +11,13 @@ Packaging options available at top-level
 
 endef
 
-# We always set the c++11 and optimization flags in addition
-# to anything the make invokation has set. This makes it possible
+# We always set the C++11 and optimization flags in addition
+# to anything the caller has set. This makes it possible
 # for users or build systems to specify their own CXXFLAGS.
-EXTRA_CXXFLAGS := -O3 -std=c++11
+EXTRA_CXXFLAGS := -O3 -std=c++11 -Wall -Werror=format-security
+ifdef RPM_BUILD_ROOT
+EXTRA_CXXFLAGS += -Werror
+endif
 
 HEADERS := $(sort $(wildcard *.hpp))
 # Inputs (grab all .cpp files, and assume change to .o)
