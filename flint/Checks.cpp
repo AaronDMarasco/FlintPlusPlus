@@ -22,11 +22,12 @@ namespace flint {
 template <class S, class T>
 inline bool cmpStr(const S &a, const T &b) { return equal(a.begin(), a.end(), b.begin()); }
 inline bool cmpStr(const StringFragment &a, const StringFragment& b) { return (a == b); }
-inline bool cmpStr(const StringFragment &a, const char* b) { return (a.size() == strlen(b)) && startsWith(a.begin(), b); }
+inline bool cmpStr(const StringFragment &a, const char* b) { return (a == StringFragment(b)); }
 inline bool cmpStr(const string &a, const string &b) { return a == b; }
 inline bool cmpToks(const Token &a, const Token &b) { return cmpStr(a.value_, b.value_); };
 
-#define cmpTok(a,b) cmpStr((a).value_, (b))
+template <class S, class T>
+inline bool cmpTok(const S& a, const T& b) { return cmpStr(a.value_, b); };
 
 // Shorthand for comparing a Token and TokenType
 inline bool isTok(const Token &token, TokenType type) { return token.type_ == type; }
@@ -1070,7 +1071,7 @@ using TokenIter = vector<Token>::const_iterator;
 
 			size_t focal = pos + 1;
 			if (!isTok(tokens[focal], TK_LPAREN)) { // a "(" comes always after catch
-				throw runtime_error(path + ':' + to_string(tokens[focal].line_)
+				throw runtime_error(path + ':' + std::to_string(tokens[focal].line_)
 					+ ": Invalid C++ source code, please compile before lint.");
 			}
 			++focal;
@@ -1108,7 +1109,7 @@ using TokenIter = vector<Token>::const_iterator;
 			// catch (Ex<(1 + 1)> & e).
 			for (size_t parens = 1;; ++focal) {
 				if (focal >= size - 1) {
-					throw runtime_error(path + ':' + to_string(tokens[focal].line_)
+					throw runtime_error(path + ':' + std::to_string(tokens[focal].line_)
 						+ ": Invalid C++ source code, please compile before lint.");
 				}
 				if (isTok(tokens[focal], TK_RPAREN)) {

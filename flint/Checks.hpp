@@ -19,7 +19,7 @@ namespace flint {
 	// Merged into banned identifiers
 	//X(UpcaseNull);
 
-	// These checks get access to a list of identified 
+	// These checks get access to a list of identified
 	// structs/class/unions's
 	X_struct(ThrowSpecification);
 	X_struct(Constructors);
@@ -51,7 +51,10 @@ namespace flint {
 	// Pointer Errors
 	X(SmartPtrUsage);
 	X(UniquePtrUsage);
-	
+
 	// To be implemented...
-	X(UsingNamespaceDirectives);	
+	X(UsingNamespaceDirectives);
+
+#undef X_struct
+#undef X
 };

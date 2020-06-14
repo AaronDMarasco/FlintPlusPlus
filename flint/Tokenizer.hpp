@@ -203,7 +203,7 @@ namespace flint {
 
 	/**
 	* Defines all token types TK_XYZ.
-	* Basically black magic... Stand in awe of it's prowess.
+	* If this is hard to follow, see https://en.wikipedia.org/wiki/X_Macro
 	*/
 	enum TokenType {
 #define CPPLINT_X1(c1, t1) t1,
@@ -222,13 +222,15 @@ namespace flint {
 	/**
 	* Converts e.g. TK_VIRTUAL to "TK_VIRTUAL".
 	*/
-	std::string toString(TokenType t);
+	std::string toString(const TokenType t);
 
 	/**
 	 * Defines a substring of an existing string.  Lifetime is limited to the lifetime of the enclosing string
 	 * In other words, a StringFragment will take no ownership of any memory.
 	 *
 	 * Note: Remember to respect the range of most C++ iterators, which operate on [begin, end) (so end expected to be out of range)
+	 *
+	 * TODO: Compare to std::string_view
 	 */
 	struct StringFragment {
 		typedef std::string::const_iterator iterator;
@@ -240,6 +242,7 @@ namespace flint {
 		iterator end_;
 
 		inline StringFragment(iterator begin, iterator end) NOEXCEPT : begin_(begin), end_(end) {}
+		explicit StringFragment(const char *instr) : begin_(instr), end_(instr+strlen(instr)) {}
 
 		value_type back() const { return *(end_ - 1); }
 		iterator begin() const { return begin_; }
@@ -259,7 +262,6 @@ namespace flint {
 		bool empty() const { return begin_ == end_; }
 	};
 
-	using std::to_string;
 	inline std::string to_string(const StringFragment &fragment) {
 		return std::string(fragment.begin(), fragment.end());
 	}
@@ -286,7 +288,7 @@ namespace flint {
 			: type_(type), value_(std::move(value)), precedingWhitespace_(std::move(whitespace)), line_(line) {};
 
 		std::string toString() const {
-			std::string result = std::string("Line:" + to_string(line_) + ':');
+			std::string result = std::string("Line:" + std::to_string(line_) + ':');
 			result.append(value_.begin(), value_.end());
 			return result;
 		};

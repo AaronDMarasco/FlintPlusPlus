@@ -396,7 +396,7 @@ namespace flint {
 					whitespace.append(spaces.begin(), spaces.end());
 				}
 				// Take the case into account where a comment comes after a macro backslash
-				ENFORCE(pc[1] == '\n' || pc[1] == '\r' || (pc[1] == '/' && (pc[2] == '/' || pc[2] == '*')), "Misplaced backslash in " + file + ":" + to_string(line));
+				ENFORCE(pc[1] == '\n' || pc[1] == '\r' || (pc[1] == '/' && (pc[2] == '/' || pc[2] == '*')), "Misplaced backslash in " + file + ":" + std::to_string(line));
 				++line;
 				whitespace.append(pc, pc + 2);
 				advance(pc, 2);
@@ -575,7 +575,7 @@ namespace flint {
 				}
 				else {
 					// what could this be? (BOM?)
-					FBEXCEPTION("Unrecognized character in " + file + ":" + to_string(line));
+					FBEXCEPTION("Unrecognized character in " + file + ":" + std::to_string(line));
 				}
 				break;
 				// *** All
@@ -594,10 +594,9 @@ namespace flint {
 
 	/**
 	* Converts e.g. TK_VIRTUAL to "TK_VIRTUAL".
-	* More black magic...
 	*/
-	string toString(TokenType t) {
-
+	string toString(const TokenType t) {
+// Build up macros that take 2, 4, 6, or 8 inputs
 #define CPPLINT_X1(c1, t1) if ((t1) == t) return (#t1);
 #define CPPLINT_X2(c1, t1, c2, t2) CPPLINT_X1(c1, t1) CPPLINT_X1(c2, t2)
 #define CPPLINT_X3(c1, t1, c2, t2, c3, t3)      \
@@ -608,13 +607,11 @@ namespace flint {
 
 		// Expansion
 		CPPLINT_FOR_ALL_TOKENS(CPPLINT_X1, CPPLINT_X2, CPPLINT_X3, CPPLINT_X4)
-
 #undef CPPLINT_X1
 #undef CPPLINT_X2
 #undef CPPLINT_X3
 #undef CPPLINT_X4
-
-			FBEXCEPTION("Unknown token type: " + toString(t));
+		FBEXCEPTION("Unknown token type given to toString()");
 	};
 
 };
