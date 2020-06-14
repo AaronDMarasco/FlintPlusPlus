@@ -53,12 +53,12 @@ namespace flint {
 	*/
 	bool fsContainsNoLint(const string &path) {
 
-		string fileName = path + FS_SEP + ".nolint";
+		const string fileName{path + FS_SEP + ".nolint"};
 		return (fsObjectExists(fileName) == FSType::IS_FILE);
 	};
 
 	/**
-	* Parses a directory and returns a list of it's contents
+	* Parses a directory and returns a list of its contents
 	*
 	* @param path
 	*		The path to search
@@ -95,16 +95,11 @@ namespace flint {
 		//
 		// dirent.h Implementation of directory traversal for POSIX systems
 		//
-		DIR *pDIR;
-		struct dirent *entry;
-		if ((pDIR = opendir(path.c_str()))) {
-			while ((entry = readdir(pDIR))) {
+		if (DIR *pDIR = opendir(path.c_str())) {
+			while (struct dirent *entry = readdir(pDIR)) {
 				const string fsObj = entry->d_name;
-				if (FS_ISNOT_LINK(fsObj) && FS_ISNOT_GIT(fsObj)) {
-
-					const string fileName = path + FS_SEP + fsObj;
-					dirs.push_back(move(fileName));
-				}
+				if (FS_ISNOT_LINK(fsObj) && FS_ISNOT_GIT(fsObj))
+					dirs.emplace_back(path + FS_SEP + fsObj);
 			}
 			closedir(pDIR);
 		}
@@ -136,7 +131,7 @@ namespace flint {
 		}
 		return false;
 	};
-
+#if 0
 	/**
 	* Tests if a given string starts with a prefix
 	*
@@ -145,13 +140,13 @@ namespace flint {
 	* @param prefix
 	*		The prefix to search for
 	* @return
-	*		Returns true if str ends with an instance of prefix
+	*		Returns true if str starts with an instance of prefix
 	*/
 	template <class T>
 	bool startsWith(const T &str, const T &prefix) {
 		return equal(begin(prefix), end(prefix), begin(str));
 	};
-
+#endif
 	/**
 	* Tests if a given string starts with a C-string prefix
 	*
@@ -160,7 +155,7 @@ namespace flint {
 	* @param prefix
 	*		The prefix (C-string) to search for
 	* @return
-	*		Returns true if str ends with an instance of prefix
+	*		Returns true if str starts with an instance of prefix
 	*/
 	bool startsWith(string::const_iterator str_iter, const char *prefix) {
 		while (*prefix != '\0' && *prefix == *str_iter) {
@@ -184,22 +179,22 @@ namespace flint {
 		string output;
 		output.reserve(input.length());
 
-		for (char c : input) {
+		for (const auto c : input) {
 			switch (c) {
 			case '\n':
-				output += "\\n";
+				output += R"(\n)";
 				break;
 			case '\t':
-				output += "\\t";
+				output += R"(\t)";
 				break;
 			case '\r':
-				output += "\\r";
+				output += R"(\r)";
 				break;
 			case '\\':
-				output += "\\\\";
+				output += R"(\\)";
 				break;
 			case '"':
-				output += "\\\"";
+				output += R"(\")";
 				break;
 
 			default:

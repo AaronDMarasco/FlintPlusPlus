@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * This file contains many of the definitions and utility functions 
+ * This file contains many of the definitions and utility functions
  * that were hidden away in boost or facebooks folly library
  */
 
@@ -10,7 +10,7 @@
 
 typedef unsigned int uint;
 
-#ifdef _MSC_VER  
+#ifdef _MSC_VER
 #define FS_SEP "\\"
 #define NOEXCEPT
 #else
@@ -24,7 +24,7 @@ typedef unsigned int uint;
 #define FS_ISNOT_GIT(file) (file.compare(".git") != 0)
 
 namespace flint {
-	
+
 	// File System object types
 	enum class FSType {
 		NO_ACCESS,
@@ -39,9 +39,9 @@ namespace flint {
 	bool fsGetDirContents(const std::string &path, std::vector<std::string> &dir);
 
 	bool getFileContents(const std::string &path, std::string &file);
-
+#if 0
 	bool startsWith(const std::string &str, const std::string &prefix);
-
+#endif
 	bool startsWith(std::string::const_iterator str_iter, const char *prefix);
 
 	std::string escapeString(const std::string &input);

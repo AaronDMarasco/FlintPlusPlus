@@ -645,8 +645,8 @@ using TokenIter = vector<Token>::const_iterator;
 			vector<TokenType> tokens;
 			string title, descr;
 			bool cpponly;
-			BlacklistEntry(vector<TokenType> t, string h, string d, bool cpponly)
-				: tokens(move(t)), title(move(h)), descr(move(d)), cpponly(cpponly) {};
+			BlacklistEntry(vector<TokenType> t, string h, string d, bool cpponly_)
+				: tokens(move(t)), title(move(h)), descr(move(d)), cpponly(cpponly_) {};
 		};
 
 		static const vector<BlacklistEntry> blacklist {
