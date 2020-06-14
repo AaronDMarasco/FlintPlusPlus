@@ -649,7 +649,7 @@ using TokenIter = vector<Token>::const_iterator;
 				: tokens(move(t)), title(move(h)), descr(move(d)), cpponly(cpponly) {};
 		};
 
-		static const vector<BlacklistEntry> blacklist = {
+		static const vector<BlacklistEntry> blacklist {
 			{ { TK_VOLATILE },
 			"'volatile' is not thread-safe.",
 			"If multiple threads are sharing data, use std::atomic or locks. In addition, 'volatile' may "
@@ -660,7 +660,7 @@ using TokenIter = vector<Token>::const_iterator;
 			}
 		};
 
-		static const array< vector<TokenType>, 1 > exceptions = {
+		static const array< vector<TokenType>, 1 > exceptions {
 			{ { TK_ASM, TK_VOLATILE } }
 		};
 
@@ -706,7 +706,7 @@ using TokenIter = vector<Token>::const_iterator;
 	void checkBlacklistedIdentifiers(ErrorFile &errors, const string &path, const vector<Token> &tokens) {
 
 
-		static const unordered_map<string, pair<Lint,string>> blacklist = {
+		static const unordered_map<string, pair<Lint,string>> blacklist {
 			{ "strtok",
 				{ Lint::ERROR, "'strtok' is not thread safe. Consider 'strtok_r'." }
 			},
@@ -859,7 +859,7 @@ using TokenIter = vector<Token>::const_iterator;
 		static constexpr array<TokenType, 3> accessSpecifiers
 			{ TK_PUBLIC, TK_PRIVATE, TK_PROTECTED };
 
-		static const string msg = "Classes with virtual functions should not have a public non-virtual destructor.";
+		static const string msg("Classes with virtual functions should not have a public non-virtual destructor.");
 
 		auto size = structures.size();
 		auto penultimate = size - 1;
@@ -995,7 +995,7 @@ using TokenIter = vector<Token>::const_iterator;
 	void checkDefinedNames(ErrorFile &errors, const string &path, const vector<Token> &tokens) {
 
 		// Exceptions to the check
-		static const unordered_set<string> okNames = {
+		static const unordered_set<string> okNames {
 			"__STDC_LIMIT_MACROS",
 			"__STDC_FORMAT_MACROS",
 			"_GNU_SOURCE",
@@ -1361,7 +1361,7 @@ using TokenIter = vector<Token>::const_iterator;
 			return;
 		}
 
-		static const string lintOverride = "/* implicit */";
+		static const string lintOverride("/* implicit */");
 
 		static constexpr array<TokenType, 4> stdInitializerSequence {
 			TK_IDENTIFIER, TK_DOUBLE_COLON, TK_IDENTIFIER, TK_LESS
@@ -1711,7 +1711,7 @@ using TokenIter = vector<Token>::const_iterator;
 			return;
 		}
 
-		static const string lintOverride = "/* implicit */";
+		static const string lintOverride("/* implicit */");
 
 		static constexpr array<TokenType, 3> explicitConstOperator {
 			TK_EXPLICIT, TK_CONSTEXPR, TK_OPERATOR
@@ -1889,7 +1889,7 @@ using TokenIter = vector<Token>::const_iterator;
 
 		// Set storing the deprecated includes. Add new headers here if you'd like
 		// to deprecate them
-		static const unordered_set<string> deprecatedIncludes = {
+		static const unordered_set<string> deprecatedIncludes{
 			"common/base/Base.h",
 			"common/base/StringUtil.h",
 		};
@@ -1926,7 +1926,7 @@ using TokenIter = vector<Token>::const_iterator;
 	*/
 	void checkInlHeaderInclusions(ErrorFile &errors, const string &path, const vector<Token> &tokens) {
 
-		static const vector<TokenType> includeSequence = {
+		static const vector<TokenType> includeSequence{
 			TK_INCLUDE, TK_STRING_LITERAL
 		};
 
@@ -2238,7 +2238,7 @@ using TokenIter = vector<Token>::const_iterator;
 			return;
 		}
 
-		static const string mutexHolder = "lock_guard";
+		static const string mutexHolder("lock_guard");
 
 		static constexpr array<TokenType, 2> mutexSequence {
 			TK_IDENTIFIER, TK_LESS

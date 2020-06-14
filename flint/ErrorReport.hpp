@@ -32,15 +32,14 @@ namespace flint {
 		};
 
 		/*
-		* Prints an single error of the report in either
+		* Prints a single error of the report in either
 		* JSON or Pretty Printed format
 		*
 		*/
 		void print(const std::string &path) const {
 
-			static const std::array<std::string, 6> typeStr = {
-				{ "[Error  ] ", "[Warning] ", "[Advice ] ", "Error", "Warning", "Advice" }
-			};
+			static const std::array<std::string, 6> typeStr
+				{ "[Error  ] ", "[Warning] ", "[Advice ] ", "Error", "Warning", "Advice" };
 
 			if (Options.LEVEL < m_type) {
 				return;

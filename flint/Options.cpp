@@ -74,7 +74,7 @@ namespace flint {
 		Arg argL2 = { ArgType::BOOL, &l2 };
 		Arg argL3 = { ArgType::BOOL, &l3 };
 // clang-format off
-		static const unordered_map<string, Arg &> params = {
+		static const unordered_map<string, Arg &> params {
 			{ "-h", argHelp },
 			{ "--help", argHelp },
 
@@ -114,7 +114,7 @@ namespace flint {
 
 					++i;
 					if (i >= argc) {
-						printf("Missing (int) value for parameter: %s\n\n", 
+						printf("Missing (int) value for parameter: %s\n\n",
 							it->first.c_str());
 						printHelp();
 					}
@@ -145,10 +145,10 @@ namespace flint {
 		}
 
 		// Make sure level was given a correct value
-		Options.LEVEL = ((Options.LEVEL > Lint::ADVICE) ? 
-			Lint::ADVICE : 
-			((Options.LEVEL < Lint::ERROR) ? 
-				Lint::ERROR : 
+		Options.LEVEL = ((Options.LEVEL > Lint::ADVICE) ?
+			Lint::ADVICE :
+			((Options.LEVEL < Lint::ERROR) ?
+				Lint::ERROR :
 				Options.LEVEL));
 
 		if (paths.size() == 0) {
