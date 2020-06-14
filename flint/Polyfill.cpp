@@ -1,10 +1,11 @@
 #include "Polyfill.hpp"
 
-#include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+
+#include <algorithm>
 #include <fstream>
 #include <sstream>
-#include <algorithm>
 
 // Conditional includes for folder traversal
 #ifdef _WIN32
@@ -17,190 +18,183 @@ using namespace std;
 
 namespace flint {
 
-	/**
-	* Checks if a given path is a file or directory
-	*
-	* @param path
-	*		The path to test
-	* @return
-	*		Returns a flag representing what the path was
-	*/
-	FSType fsObjectExists(const string &path) {
+/**
+ * Checks if a given path is a file or directory
+ *
+ * @param path
+ *        The path to test
+ * @return
+ *        Returns a flag representing what the path was
+ */
+FSType fsObjectExists(const string& path) {
+  struct stat info;
+  if (stat(path.c_str(), &info) != 0) {
+    // Cannot Access
+    return FSType::NO_ACCESS;
+  } else if (info.st_mode & S_IFDIR) {
+    // Is a Directory
+    return FSType::IS_DIR;
+  } else if (info.st_mode & S_IFREG) {
+    // Is a File
+    return FSType::IS_FILE;
+  }
+  return FSType::NO_ACCESS;
+};
 
-		struct stat info;
-		if (stat(path.c_str(), &info) != 0) {
-			// Cannot Access
-			return FSType::NO_ACCESS;
-		}
-		else if (info.st_mode & S_IFDIR) {
-			// Is a Directory
-			return FSType::IS_DIR;
-		}
-		else if (info.st_mode & S_IFREG) {
-			// Is a File
-			return FSType::IS_FILE;
-		}
-		return FSType::NO_ACCESS;
-	};
+/**
+ * Checks if a given path contains a .nolint file
+ *
+ * @param path
+ *        The path to test
+ * @return
+ *        Returns a bool of whether a .nolint file was found or not
+ */
+bool fsContainsNoLint(const string& path) {
+  const string fileName{path + FS_SEP + ".nolint"};
+  return (fsObjectExists(fileName) == FSType::IS_FILE);
+};
 
-	/**
-	* Checks if a given path contains a .nolint file
-	*
-	* @param path
-	*		The path to test
-	* @return
-	*		Returns a bool of whether a .nolint file was found or not
-	*/
-	bool fsContainsNoLint(const string &path) {
-
-		const string fileName{path + FS_SEP + ".nolint"};
-		return (fsObjectExists(fileName) == FSType::IS_FILE);
-	};
-
-	/**
-	* Parses a directory and returns a list of its contents
-	*
-	* @param path
-	*		The path to search
-	* @param dirs
-	*		A vector to fill with objects
-	* @return
-	*		Returns true if any valid objects were found
-	*/
-	bool fsGetDirContents(const string &path, vector<string> &dirs) {
-		dirs.clear();
+/**
+ * Parses a directory and returns a list of its contents
+ *
+ * @param path
+ *        The path to search
+ * @param dirs
+ *        A vector to fill with objects
+ * @return
+ *        Returns true if any valid objects were found
+ */
+bool fsGetDirContents(const string& path, vector<string>& dirs) {
+  dirs.clear();
 
 #ifdef _WIN32
-		//
-		// windows.h Implementation of directory traversal for Windows systems
-		//
-		HANDLE dir;
-		WIN32_FIND_DATA fileData;
+  //
+  // windows.h Implementation of directory traversal for Windows systems
+  //
+  HANDLE          dir;
+  WIN32_FIND_DATA fileData;
 
-		if ((dir = FindFirstFile((path + FS_SEP + "*").c_str(), &fileData)) == INVALID_HANDLE_VALUE) {
-			return false; /* No files found */
-		}
+  if ((dir = FindFirstFile((path + FS_SEP + "*").c_str(), &fileData)) == INVALID_HANDLE_VALUE) {
+    return false; /* No files found */
+  }
 
-		do {
-			const string fsObj = fileData.cFileName;
+  do {
+    const string fsObj = fileData.cFileName;
 
-			if (FS_ISNOT_LINK(fsObj) && FS_ISNOT_GIT(fsObj)) {
-				const string fileName = path + FS_SEP + fsObj;
-				dirs.push_back(move(fileName));
-			}
-		} while (FindNextFile(dir, &fileData));
+    if (FS_ISNOT_LINK(fsObj) && FS_ISNOT_GIT(fsObj)) {
+      const string fileName = path + FS_SEP + fsObj;
+      dirs.push_back(move(fileName));
+    }
+  } while (FindNextFile(dir, &fileData));
 
-		FindClose(dir);
+  FindClose(dir);
 #else
-		//
-		// dirent.h Implementation of directory traversal for POSIX systems
-		//
-		if (DIR *pDIR = opendir(path.c_str())) {
-			while (struct dirent *entry = readdir(pDIR)) {
-				const string fsObj = entry->d_name;
-				if (FS_ISNOT_LINK(fsObj) && FS_ISNOT_GIT(fsObj))
-					dirs.emplace_back(path + FS_SEP + fsObj);
-			}
-			closedir(pDIR);
-		}
+  //
+  // dirent.h Implementation of directory traversal for POSIX systems
+  //
+  if (DIR* pDIR = opendir(path.c_str())) {
+    while (struct dirent* entry = readdir(pDIR)) {
+      const string fsObj = entry->d_name;
+      if (FS_ISNOT_LINK(fsObj) && FS_ISNOT_GIT(fsObj)) dirs.emplace_back(path + FS_SEP + fsObj);
+    }
+    closedir(pDIR);
+  }
 
-		stable_sort(dirs.begin(), dirs.end());
+  stable_sort(dirs.begin(), dirs.end());
 #endif
-		return !dirs.empty();
-	};
-
-	/**
-	* Attempts to load a file into a std::string
-	*
-	* @param path
-	*		The file to load
-	* @param file
-	*		The string to load into
-	* @return
-	*		Returns a bool of whether the load was successful
-	*/
-	bool getFileContents(const string &path, string &file) {
-
-		ifstream in(path);
-		if (in) {
-			stringstream buffer;
-			buffer << in.rdbuf();
-			file = buffer.str();
-
-			return true;
-		}
-		return false;
-	};
-#if 0
-	/**
-	* Tests if a given string starts with a prefix
-	*
-	* @param str
-	*		The string to search
-	* @param prefix
-	*		The prefix to search for
-	* @return
-	*		Returns true if str starts with an instance of prefix
-	*/
-	template <class T>
-	bool startsWith(const T &str, const T &prefix) {
-		return equal(begin(prefix), end(prefix), begin(str));
-	};
-#endif
-	/**
-	* Tests if a given string starts with a C-string prefix
-	*
-	* @param str_iter
-	*		The string position to start search
-	* @param prefix
-	*		The prefix (C-string) to search for
-	* @return
-	*		Returns true if str starts with an instance of prefix
-	*/
-	bool startsWith(string::const_iterator str_iter, const char *prefix) {
-		while (*prefix != '\0' && *prefix == *str_iter) {
-			++prefix;
-			++str_iter;
-		}
-
-		return *prefix == '\0';
-	};
-
-	/**
-	* Escapes a C++ std::string
-	*
-	* @param input
-	*		The string to sanitize
-	* @return
-	*		Returns a string with no escape characters
-	*/
-	string escapeString(const string &input) {
-
-		string output;
-		output.reserve(input.length());
-
-		for (const auto c : input) {
-			switch (c) {
-			case '\n':
-				output += R"(\n)";
-				break;
-			case '\t':
-				output += R"(\t)";
-				break;
-			case '\r':
-				output += R"(\r)";
-				break;
-			case '\\':
-				output += R"(\\)";
-				break;
-			case '"':
-				output += R"(\")";
-				break;
-
-			default:
-				output += c;
-			}
-		}
-		return output;
-	};
+  return !dirs.empty();
 };
+
+/**
+ * Attempts to load a file into a std::string
+ *
+ * @param path
+ *        The file to load
+ * @param file
+ *        The string to load into
+ * @return
+ *        Returns a bool of whether the load was successful
+ */
+bool getFileContents(const string& path, string& file) {
+  ifstream in(path);
+  if (in) {
+    stringstream buffer;
+    buffer << in.rdbuf();
+    file = buffer.str();
+
+    return true;
+  }
+  return false;
+};
+#if 0
+/**
+ * Tests if a given string starts with a prefix
+ *
+ * @param str
+ *        The string to search
+ * @param prefix
+ *        The prefix to search for
+ * @return
+ *        Returns true if str starts with an instance of prefix
+ */
+template <class T>
+bool startsWith(const T& str, const T& prefix) {
+  return equal(begin(prefix), end(prefix), begin(str));
+};
+#endif
+/**
+ * Tests if a given string starts with a C-string prefix
+ *
+ * @param str_iter
+ *        The string position to start search
+ * @param prefix
+ *        The prefix (C-string) to search for
+ * @return
+ *        Returns true if str starts with an instance of prefix
+ */
+bool startsWith(string::const_iterator str_iter, const char* prefix) {
+  while (*prefix != '\0' && *prefix == *str_iter) {
+    ++prefix;
+    ++str_iter;
+  }
+
+  return *prefix == '\0';
+};
+
+/**
+ * Escapes a C++ std::string
+ *
+ * @param input
+ *        The string to sanitize
+ * @return
+ *        Returns a string with no escape characters
+ */
+string escapeString(const string& input) {
+  string output;
+  output.reserve(input.length());
+
+  for (const auto c : input) {
+    switch (c) {
+      case '\n':
+        output += R"(\n)";
+        break;
+      case '\t':
+        output += R"(\t)";
+        break;
+      case '\r':
+        output += R"(\r)";
+        break;
+      case '\\':
+        output += R"(\\)";
+        break;
+      case '"':
+        output += R"(\")";
+        break;
+
+      default:
+        output += c;
+    }
+  }
+  return output;
+};
+};  // namespace flint

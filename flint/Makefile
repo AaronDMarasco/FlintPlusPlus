@@ -77,6 +77,7 @@ install: $(BINF)
 .SILENT: format
 format:
 	clang-format -fallback-style=none -i --verbose $(HEADERS) $(SOURCES)
+	-git grep -P "\t" *.hpp *.cpp
 
 .PHONY: help
 help: $(and $(filter help,$(MAKECMDGOALS)),$(info $(HELP)))
