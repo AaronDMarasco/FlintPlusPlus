@@ -20,8 +20,8 @@ typedef unsigned int uint;
 
 
 // Quick checks for path names
-#define FS_ISNOT_LINK(file) ((file.compare(".") != 0) && (file.compare("..") != 0))
-#define FS_ISNOT_GIT(file) (file.compare(".git") != 0)
+#define FS_ISNOT_LINK(file) (((file).compare(".") != 0) && ((file).compare("..") != 0))
+#define FS_ISNOT_GIT(file) ((file).compare(".git") != 0)
 
 namespace flint {
 

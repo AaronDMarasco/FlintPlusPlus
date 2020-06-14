@@ -515,7 +515,7 @@ using TokenIter = vector<Token>::const_iterator;
 				if (tok == TK_COMMA) {
 					if (parenCount == 1) {
 						// end an argument of the function we are looking at
-						args.push_back(Argument(argStart, pos));
+						args.emplace_back(argStart, pos);
 						argStart = pos + 1;
 					}
 					continue;
@@ -527,7 +527,7 @@ using TokenIter = vector<Token>::const_iterator;
 			}
 
 			if (argStart != pos) {
-				args.push_back(Argument(argStart, pos));
+				args.emplace_back(argStart, pos);
 			}
 			return true;
 		};
@@ -717,13 +717,13 @@ using TokenIter = vector<Token>::const_iterator;
 			}
 		};
 
-		for (size_t pos = 0, size = tokens.size(); pos < size; ++pos) {
+		for (const auto & token : tokens) {
 
-			if (isTok(tokens[pos], TK_IDENTIFIER)) {
+			if (isTok(token, TK_IDENTIFIER)) {
 				for (const auto &entry : blacklist) {
-					if (cmpTok(tokens[pos], entry.first.c_str())) {
+					if (cmpTok(token, entry.first.c_str())) {
 						auto& desc = entry.second;
-						lint(errors, tokens[pos], desc.first, desc.second);
+						lint(errors, token, desc.first, desc.second);
 						continue;
 					}
 				}
@@ -754,7 +754,7 @@ using TokenIter = vector<Token>::const_iterator;
 
 		static const vector<StringFragment> exclusiveFragments = []()->vector<StringFragment> {
 			vector<StringFragment> out;
-			for_each(begin(exclusive), end(exclusive), [&](const string &str) { out.push_back(StringFragment{begin(str), end(str)}); });
+			for_each(begin(exclusive), end(exclusive), [&](const string &str) { out.emplace_back(begin(str), end(str)); });
 			return out;
 		}();
 
@@ -930,10 +930,10 @@ using TokenIter = vector<Token>::const_iterator;
 		static constexpr array<TokenType, 3> accessSpecifiers
 			{ TK_PUBLIC, TK_PRIVATE, TK_PROTECTED };
 
-		for (size_t i = 0, struct_size = structures.size(); i < struct_size; ++i) {
+		for (unsigned long structure : structures) {
 
 			// Start pos at the index of each identified structure
-			auto pos = begin(tokens) + structures[i];
+			auto pos = begin(tokens) + structure;
 			const auto &tok = *pos;
 
 			if (isTok(tok, TK_UNION)) {
@@ -1178,10 +1178,8 @@ using TokenIter = vector<Token>::const_iterator;
 			{ TK_LPAREN, TK_RPAREN, TK_CONST, TK_THROW, TK_LPAREN, TK_RPAREN };
 
 		// Check for throw specifications inside classes
-		for (size_t i = 0, size = structures.size(); i < size; ++i) {
-			size_t pos = structures[i];
-
-			// Skip to opening '{'
+		for (unsigned long pos : structures) {
+				// Skip to opening '{'
 			if (!skipToToken(tokens, pos, TK_LCURL)) {
 				continue;
 			}
@@ -1315,10 +1313,8 @@ using TokenIter = vector<Token>::const_iterator;
 
 		// Return after the first found error, because otherwise
 		// even one missed #if can be cause of a lot of errors.
-		for (size_t pos = 0, size = tokens.size(); pos < size; ++pos) {
-			const Token &tok = tokens[pos];
-
-			if (isTok(tok, TK_IFNDEF)
+		for (const auto & tok : tokens) {
+				if (isTok(tok, TK_IFNDEF)
 				|| isTok(tok, TK_IFDEF)
 				|| isTok(tok, TK_POUNDIF)) {
 
@@ -1376,10 +1372,8 @@ using TokenIter = vector<Token>::const_iterator;
 
 		// Check for constructor specifications inside classes
 		const size_t toksize = tokens.size();
-		for (size_t i = 0, size = structures.size(); i < size; ++i) {
-			size_t pos = structures[i];
-
-			if (!(isTok(tokens[pos], TK_STRUCT) || isTok(tokens[pos], TK_CLASS))) {
+		for (unsigned long pos : structures) {
+				if (!(isTok(tokens[pos], TK_STRUCT) || isTok(tokens[pos], TK_CLASS))) {
 				continue;
 			}
 
@@ -1736,10 +1730,8 @@ using TokenIter = vector<Token>::const_iterator;
 
 		// Check for constructor specifications inside classes
 		const size_t toksize = tokens.size();
-		for (size_t i = 0, size = structures.size(); i < size; ++i) {
-			size_t pos = structures[i];
-
-			if (!(isTok(tokens[pos], TK_STRUCT) || isTok(tokens[pos], TK_CLASS))) {
+		for (unsigned long pos : structures) {
+				if (!(isTok(tokens[pos], TK_STRUCT) || isTok(tokens[pos], TK_CLASS))) {
 				continue;
 			}
 
@@ -1986,10 +1978,8 @@ using TokenIter = vector<Token>::const_iterator;
 			{ TK_COLON, TK_PROTECTED, TK_IDENTIFIER };
 
 		const size_t toksize = tokens.size();
-		for (size_t i = 0, size = structures.size(); i < size; ++i) {
-			size_t pos = structures[i];
-
-			for (; pos < toksize - 2; ++pos) {
+		for (unsigned long pos : structures) {
+				for (; pos < toksize - 2; ++pos) {
 
 				if (isTok(tokens[pos], TK_LCURL) || isTok(tokens[pos], TK_SEMICOLON)) {
 					break;

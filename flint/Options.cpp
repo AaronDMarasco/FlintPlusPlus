@@ -152,7 +152,7 @@ namespace flint {
 				Options.LEVEL));
 
 		if (paths.size() == 0) {
-			paths.push_back(".");
+			paths.emplace_back(".");
 		}
 
 		if (HELP) {

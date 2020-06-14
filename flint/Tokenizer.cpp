@@ -16,7 +16,7 @@ namespace std {
 	struct hash<flint::StringFragment> {
 
 		typedef flint::StringFragment argument_type;
-		typedef uint64_t value_type;
+		using value_type = uint64_t;
 
 		inline value_type operator()(const argument_type &fragment) const {
 			return accumulate(fragment.begin(), fragment.end(), uint64_t(5381), [](uint64_t curr, char next) {
@@ -176,7 +176,7 @@ namespace flint {
 						return munchChars(pc, i);
 					}
 				}
-				else if (!sawExp && !sawSuffix && !sawX && (c == 'e' || c == 'E')) {
+				else if (!sawX && !sawExp && !sawSuffix && (c == 'e' || c == 'E')) {
 					sawExp = true;
 				}
 				else if (sawX && !sawExp && !sawSuffix && (c == 'p' || c == 'P')) {
@@ -304,8 +304,8 @@ namespace flint {
 					// Special case for parsing #include <...>
 					// Previously the include path would not be captured as a string literal
 					auto str = munchString(pc, line, true);
-					output.push_back(Token(TK_STRING_LITERAL, move(str), line,
-						whitespace));
+					output.emplace_back(TK_STRING_LITERAL, move(str), line,
+						whitespace);
 					whitespace = nothing;
 					continue;
 				}
@@ -444,12 +444,12 @@ namespace flint {
 			case '\0':
 				//assert(pc.size() == 0);
 				// Push last token, the EOF
-				output.push_back(Token(TK_EOF, StringFragment{eof.begin(), eof.end()}, line, whitespace));
+				output.emplace_back(TK_EOF, StringFragment{eof.begin(), eof.end()}, line, whitespace);
 				return line;
 				// *** Verboten characters (do allow '@' and '$' as extensions)
 			case '`':
 				errors.addError(ErrorObject(Lint::ERROR, line, "Invalid character found: Back-tick `", ""));
-				output.push_back(Token(TK_UNEXPECTED, StringFragment{ pc, pc + 1 }, line, whitespace));
+				output.emplace_back(TK_UNEXPECTED, StringFragment{ pc, pc + 1 }, line, whitespace);
 				++pc;
 				//cerr << ("Invalid character: " + string(1, c) + " in " + string(file + ":" + to_string(line))) << endl;
 				break;
@@ -459,7 +459,7 @@ namespace flint {
 			ITS_A_NUMBER : {
 				auto symbol = munchNumber(pc);
 				assert(symbol.size() > 0);
-				output.push_back(Token(TK_NUMBER, move(symbol), line, whitespace));
+				output.emplace_back(TK_NUMBER, move(symbol), line, whitespace);
 				whitespace = nothing;
 			}
 				break;
@@ -481,16 +481,16 @@ namespace flint {
 				// *** Character literal
 			case '\'': {
 				auto charLit = munchCharLiteral(pc, line);
-				output.push_back(Token(TK_CHAR_LITERAL, move(charLit), line,
-					whitespace));
+				output.emplace_back(TK_CHAR_LITERAL, move(charLit), line,
+					whitespace);
 				whitespace = nothing;
 			}
 				break;
 				// *** String literal
 			case '"': {
 				auto str = munchString(pc, line);
-				output.push_back(Token(TK_STRING_LITERAL, move(str), line,
-					whitespace));
+				output.emplace_back(TK_STRING_LITERAL, move(str), line,
+					whitespace);
 				whitespace = nothing;
 			}
 				break;
@@ -561,15 +561,15 @@ namespace flint {
 					auto iter = keywords.find(symbol);
 					if (iter != keywords.end()) {
 						// keyword, baby
-						output.push_back(Token(iter->second, move(symbol), line,
-							whitespace));
+						output.emplace_back(iter->second, move(symbol), line,
+							whitespace);
 						whitespace = nothing;
 					}
 					else {
 						// Some identifier
 						assert(symbol.size() > 0);
-						output.push_back(Token(TK_IDENTIFIER, move(symbol), line,
-							whitespace));
+						output.emplace_back(TK_IDENTIFIER, move(symbol), line,
+							whitespace);
 						whitespace = nothing;
 					}
 				}
@@ -580,14 +580,14 @@ namespace flint {
 				break;
 				// *** All
 			INSERT_TOKEN:
-				output.push_back(Token(t, munchChars(pc, tokenLen), line,
-					whitespace));
+				output.emplace_back(t, munchChars(pc, tokenLen), line,
+					whitespace);
 				whitespace = nothing;
 				break;
 			}
 		}
 
-		output.push_back(Token(TK_EOF, StringFragment{eof.begin(), eof.end()}, line, nothing));
+		output.emplace_back(TK_EOF, StringFragment{eof.begin(), eof.end()}, line, nothing);
 
 		return line;
 	};

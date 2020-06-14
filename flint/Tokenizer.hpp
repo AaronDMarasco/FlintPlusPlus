@@ -234,9 +234,9 @@ namespace flint {
 	 */
 	struct StringFragment {
 		typedef std::string::const_iterator iterator;
-		typedef char value_type;
-		typedef const char& const_reference;
-		typedef size_t size_type;
+		using value_type = char;
+		using const_reference = const char &;
+		using size_type = size_t;
 
 		iterator begin_;
 		iterator end_;

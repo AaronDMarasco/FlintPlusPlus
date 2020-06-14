@@ -70,10 +70,10 @@ namespace flint {
 	class ErrorBase {
 	protected:
 		// Members
-		uint m_errors, m_warnings, m_advice;
+		uint m_errors{0}, m_warnings{0}, m_advice{0};
 	public:
 
-		ErrorBase() : m_errors(0), m_warnings(0), m_advice(0) {};
+		ErrorBase()  {};
 
 		uint getErrors() const {
 			return m_errors;
@@ -143,8 +143,8 @@ namespace flint {
 				return;
 			}
 
-			for (size_t i = 0, size = m_objs.size(); i < size; ++i) {
-				m_objs[i].print(m_path);
+			for (const auto & m_obj : m_objs) {
+				m_obj.print(m_path);
 			}
 		};
 	};
@@ -194,9 +194,9 @@ namespace flint {
 				return;
 			}
 
-			for (size_t i = 0, size = m_files.size(); i < size; ++i) {
-				if (m_files[i].getTotal() > 0) {
-					m_files[i].print();
+			for (const auto & m_file : m_files) {
+				if (m_file.getTotal() > 0) {
+					m_file.print();
 				}
 			}
 

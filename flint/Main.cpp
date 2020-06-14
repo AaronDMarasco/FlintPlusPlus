@@ -46,8 +46,8 @@ void checkEntry(ErrorReport &errors, const string &path, size_t &loc, uint depth
 			return;
 		}
 
-		for (size_t i = 0; i < dirs.size(); ++i) {
-			checkEntry(errors, dirs[i], loc, depth + 1);
+		for (auto & dir : dirs) {
+			checkEntry(errors, dir, loc, depth + 1);
 		}
 		return;
 	}
@@ -141,8 +141,8 @@ int main(int argc, char *argv[]) {
 	size_t totalLOC = 0;
 	// Check each file
 	ErrorReport errors;
-	for (size_t i = 0; i < paths.size(); ++i) {
-		checkEntry(errors, paths[i], totalLOC);
+	for (auto & path : paths) {
+		checkEntry(errors, path, totalLOC);
 	}
 
 	// Print summary
