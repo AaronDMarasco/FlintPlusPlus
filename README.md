@@ -14,14 +14,11 @@ The original `flint` is published on [Github](https://github.com/facebook/flint)
 * [@vix597]( https://github.com/vix597/FlintPlusPlus ) - more sane makefile, debian packaging, return values (#63)
 * [@warmsocks]( https://github.com/warmsocks/FlintPlusPlus ) - allow spaces (#60)
 
-Upcoming Features
------------------
-* Command line options for level of error in return values
-
 Future Ideas
 ------------
 * More lint tests
 * Visual Studio Integration
+* Command line options for level of error in return values
 * JSON Config files to allow project dependent Lint settings
 	* Set custom blacklisted identifiers/token sequences/includes
 	* Enable/Disable certain tests
