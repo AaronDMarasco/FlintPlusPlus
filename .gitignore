@@ -1,6 +1,6 @@
 *.o
 flint++
-flint/tests/actual.txt
+flint/tests/actual.*
 *.tar
 *.rpm
 rpmbuild-tmpdir

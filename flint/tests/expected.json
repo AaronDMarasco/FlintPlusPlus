@@ -1,0 +1,448 @@
+{
+	"errors"   : 23,
+	"warnings" : 29,
+	"advice"   : 1,
+	"files"    : [
+    {
+	    "path"     : "Blacklist.cpp",
+	    "errors"   : 1,
+	    "warnings" : 1,
+	    "advice"   : 1,
+	    "reports"  : [
+        {
+	        "level"    : "Error",
+	        "line"     : 21,
+	        "title"    : "'strtok' is not thread safe. Consider 'strtok_r'.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Advice",
+	        "line"     : 23,
+	        "title"    : "Prefer `nullptr' to `NULL' in new C++ code.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 8,
+	        "title"    : "'volatile' is not thread-safe.",
+	        "desc"     : "If multiple threads are sharing data, use std::atomic or locks. In addition, 'volatile' may force the compiler to generate worse code than it could otherwise. For more about why 'volatile' doesn't do what you think it does, see http://www.kernel.org/doc/Documentation/volatile-considered-harmful.txt."
+        }
+      ]
+    },
+    {
+	    "path"     : "Comments.cpp",
+	    "errors"   : 0,
+	    "warnings" : 0,
+	    "advice"   : 0,
+	    "reports"  : [
+
+      ]
+    },
+    {
+	    "path"     : "Constructor.cpp",
+	    "errors"   : 4,
+	    "warnings" : 4,
+	    "advice"   : 0,
+	    "reports"  : [
+        {
+	        "level"    : "Error",
+	        "line"     : 24,
+	        "title"    : "Single - argument constructor 'Foo(int i)' may inadvertently be used as a type conversion constructor.",
+	        "desc"     : "Prefix the function with the 'explicit' keyword to avoid this, or add an /* implicit */ comment to suppress this warning."
+        },
+        {
+	        "level"    : "Error",
+	        "line"     : 29,
+	        "title"    : "Move constructors should not take a const argument: Foo(const Foo&& other)",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Error",
+	        "line"     : 30,
+	        "title"    : "Copy constructors should take a const argument: Foo(Foo &other)",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Error",
+	        "line"     : 21,
+	        "title"    : "Single - argument constructor 'FooU(char i)' may inadvertently be used as a type conversion constructor.",
+	        "desc"     : "Prefix the function with the 'explicit' keyword to avoid this, or add an /* implicit */ comment to suppress this warning."
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 9,
+	        "title"    : "Protected inheritance is sometimes not a good idea.",
+	        "desc"     : "Read http://stackoverflow.com/questions/6484306/effective-c-discouraging-protected-inheritance for more information."
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 12,
+	        "title"    : "Throw specifications on functions are deprecated.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 18,
+	        "title"    : "Throw specifications on functions are deprecated.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 5,
+	        "title"    : "Throw specifications on functions are deprecated.",
+	        "desc"     : ""
+        }
+      ]
+    },
+    {
+	    "path"     : "Define.hpp",
+	    "errors"   : 1,
+	    "warnings" : 1,
+	    "advice"   : 0,
+	    "reports"  : [
+        {
+	        "level"    : "Error",
+	        "line"     : 12,
+	        "title"    : "Include guard doesn't cover the entire file.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 5,
+	        "title"    : "Symbol __BAD_DEFINE invalid.",
+	        "desc"     : "A symbol may not begin with two adjacent underscores."
+        }
+      ]
+    },
+    {
+	    "path"     : "Destructors.cpp",
+	    "errors"   : 0,
+	    "warnings" : 2,
+	    "advice"   : 0,
+	    "reports"  : [
+        {
+	        "level"    : "Warning",
+	        "line"     : 1,
+	        "title"    : "Classes with virtual functions should not have a public non-virtual destructor.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 10,
+	        "title"    : "Classes with virtual functions should not have a public non-virtual destructor.",
+	        "desc"     : ""
+        }
+      ]
+    },
+    {
+	    "path"     : "Error.hpp",
+	    "errors"   : 0,
+	    "warnings" : 0,
+	    "advice"   : 0,
+	    "reports"  : [
+
+      ]
+    },
+    {
+	    "path"     : "Exceptions.cpp",
+	    "errors"   : 0,
+	    "warnings" : 5,
+	    "advice"   : 0,
+	    "reports"  : [
+        {
+	        "level"    : "Warning",
+	        "line"     : 6,
+	        "title"    : "std::exception should be inherited publically (C++ std: 11.2)",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 7,
+	        "title"    : "std::exception should be inherited publically (C++ std: 11.2)",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 8,
+	        "title"    : "std::exception should be inherited publically (C++ std: 11.2)",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 12,
+	        "title"    : "std::exception should be inherited publically (C++ std: 11.2)",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 13,
+	        "title"    : "std::exception should be inherited publically (C++ std: 11.2)",
+	        "desc"     : ""
+        }
+      ]
+    },
+    {
+	    "path"     : "Ifdef.cpp",
+	    "errors"   : 1,
+	    "warnings" : 0,
+	    "advice"   : 0,
+	    "reports"  : [
+        {
+	        "level"    : "Error",
+	        "line"     : 15,
+	        "title"    : "Unmatched #if/#endif.",
+	        "desc"     : ""
+        }
+      ]
+    },
+    {
+	    "path"     : "ImplicitConversion.cpp",
+	    "errors"   : 1,
+	    "warnings" : 0,
+	    "advice"   : 0,
+	    "reports"  : [
+        {
+	        "level"    : "Error",
+	        "line"     : 15,
+	        "title"    : "operator bool() is dangerous.",
+	        "desc"     : "In C++11 use explicit conversion (explicit operator bool()), otherwise use something like the safe-bool idiom if the syntactic convenience is justified in this case, or consider defining a function (see http://www.artima.com/cppsource/safebool.html for more details)."
+        }
+      ]
+    },
+    {
+	    "path"     : "Includes.cpp",
+	    "errors"   : 2,
+	    "warnings" : 1,
+	    "advice"   : 0,
+	    "reports"  : [
+        {
+	        "level"    : "Error",
+	        "line"     : 15,
+	        "title"    : "The associated header file of .cpp files should be included before any other includes.",
+	        "desc"     : "This helps catch missing header file dependencies in the .h"
+        },
+        {
+	        "level"    : "Error",
+	        "line"     : 4,
+	        "title"    : "An -inl file (Wrong-inl.h) was included even though this is not its associated header.",
+	        "desc"     : "Usually files like Foo-inl.h are implementation details and should not be included outside of Foo.h."
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 6,
+	        "title"    : "Including deprecated header 'common/base/Base.h'",
+	        "desc"     : ""
+        }
+      ]
+    },
+    {
+	    "path"     : "Line.hpp",
+	    "errors"   : 0,
+	    "warnings" : 0,
+	    "advice"   : 0,
+	    "reports"  : [
+
+      ]
+    },
+    {
+	    "path"     : "Memset.cpp",
+	    "errors"   : 2,
+	    "warnings" : 0,
+	    "advice"   : 0,
+	    "reports"  : [
+        {
+	        "level"    : "Error",
+	        "line"     : 11,
+	        "title"    : "Did you mean memset(ptr, 0, 4) ?",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Error",
+	        "line"     : 13,
+	        "title"    : "Did you mean memset(ptr, 1, sizeof(int)) ?",
+	        "desc"     : ""
+        }
+      ]
+    },
+    {
+	    "path"     : "Namespace.hpp",
+	    "errors"   : 0,
+	    "warnings" : 10,
+	    "advice"   : 0,
+	    "reports"  : [
+        {
+	        "level"    : "Warning",
+	        "line"     : 6,
+	        "title"    : "Avoid the use of using namespace directives at global/namespace scope in headers",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 9,
+	        "title"    : "Don't use static at global or namespace scopes in headers.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 10,
+	        "title"    : "Don't use static at global or namespace scopes in headers.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 19,
+	        "title"    : "Don't use static at global or namespace scopes in headers.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 20,
+	        "title"    : "Don't use static at global or namespace scopes in headers.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 23,
+	        "title"    : "Don't use static at global or namespace scopes in headers.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 25,
+	        "title"    : "Don't use static at global or namespace scopes in headers.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 27,
+	        "title"    : "Conflicting namespaces: boost and std",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 29,
+	        "title"    : "Conflicting namespaces: ::std and std",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 32,
+	        "title"    : "Conflicting namespaces: ::boost and std",
+	        "desc"     : ""
+        }
+      ]
+    },
+    {
+	    "path"     : "Pointers.cpp",
+	    "errors"   : 6,
+	    "warnings" : 4,
+	    "advice"   : 0,
+	    "reports"  : [
+        {
+	        "level"    : "Error",
+	        "line"     : 39,
+	        "title"    : "Mutex holder variable declared without a name, causing the lock to be released immediately.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Error",
+	        "line"     : 40,
+	        "title"    : "Mutex holder variable declared without a name, causing the lock to be released immediately.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Error",
+	        "line"     : 27,
+	        "title"    : "unique_ptr<T[]> should be used with an array type.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Error",
+	        "line"     : 28,
+	        "title"    : "unique_ptr<T> should be unique_ptr<T[]> when used with an array.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Error",
+	        "line"     : 31,
+	        "title"    : "unique_ptr<T[]> should be used with an array type.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Error",
+	        "line"     : 32,
+	        "title"    : "unique_ptr<T> should be unique_ptr<T[]> when used with an array.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 34,
+	        "title"    : "Consider using 'allocate_shared' which performs better with fewer allocations.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 35,
+	        "title"    : "Consider using 'make_shared' which performs better with fewer allocations.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 36,
+	        "title"    : "Consider using 'make_shared' which performs better with fewer allocations.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 37,
+	        "title"    : "Consider using 'allocate_shared' which performs better with fewer allocations.",
+	        "desc"     : ""
+        }
+      ]
+    },
+    {
+	    "path"     : "Throw.cpp",
+	    "errors"   : 5,
+	    "warnings" : 1,
+	    "advice"   : 0,
+	    "reports"  : [
+        {
+	        "level"    : "Warning",
+	        "line"     : 14,
+	        "title"    : "Symbol 'int' invalid in catch clause. You may only catch user-defined types.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Error",
+	        "line"     : 15,
+	        "title"    : "Symbol 'i' of type ' Foo i' caught by value. Use catch by (preferably const) reference throughout.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Error",
+	        "line"     : 21,
+	        "title"    : "Symbol 'Bar' of type ' Bar' caught by value. Use catch by (preferably const) reference throughout.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Error",
+	        "line"     : 8,
+	        "title"    : "Heap-allocated exception: throw new MyException(); This is usually a mistake in c++.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Error",
+	        "line"     : 10,
+	        "title"    : "Heap-allocated exception: throw new (MyException)(); This is usually a mistake in c++.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Error",
+	        "line"     : 12,
+	        "title"    : "Heap-allocated exception: throw new MyException(); This is usually a mistake in c++.",
+	        "desc"     : ""
+        }
+      ]
+    }
+  ]
+}

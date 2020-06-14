@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <iostream>
 #include <string>
 #include <array>
@@ -38,25 +39,27 @@ namespace flint {
 		*/
 		void print(const std::string &path) const {
 
-			static const std::array<std::string, 6> typeStr
-				{ "[Error  ] ", "[Warning] ", "[Advice ] ", "Error", "Warning", "Advice" };
+			static constexpr std::array<const char *, 3> levelStr
+				{ "[Error  ] ", "[Warning] ", "[Advice ] " };
+			static constexpr std::array<const char *, 3> levelStrJSON
+				{ "Error", "Warning", "Advice" };
 
-			if (Options.LEVEL < m_type) {
-				return;
-			}
+			if (Options.LEVEL < m_type) return;
+			assert(m_type <= 3);
+
 // clang-format off
 			if (Options.JSON) {
 				std::cout <<	"        {\n"
-					"	        \"level\"    : \"" << typeStr[m_type + 3u]  << "\",\n"
-					"	        \"line\"     : "   << std::to_string(m_line)     << ",\n"
-					"	        \"title\"    : \"" << escapeString(m_title) << "\",\n"
-					"	        \"desc\"     : \"" << escapeString(m_desc)  << "\"\n"
+					"\t        \"level\"    : \"" << levelStrJSON[m_type]  << "\",\n"
+					"\t        \"line\"     : "   << std::to_string(m_line)     << ",\n"
+					"\t        \"title\"    : \"" << escapeString(m_title) << "\",\n"
+					"\t        \"desc\"     : \"" << escapeString(m_desc)  << "\"\n"
 					"        }";
 
 				return;
 			}
 // clang-format on
-			std::cout << typeStr[m_type] << path << ':'
+			std::cout << levelStr[m_type] << path << ':'
 				 << std::to_string(m_line) << ": " << m_title << std::endl;
 		};
 	};
@@ -113,18 +116,18 @@ namespace flint {
 		};
 
 		/*
-		* Prints an single file of the report in either
+		* Prints a single file of the report in either
 		* JSON or Pretty Printed format
 		*/
 		void print() const {
 // clang-format off
 			if (Options.JSON) {
 				std::cout << "    {\n"
-					"	    \"path\"     : \"" << escapeString(m_path)     << "\",\n"
-					"	    \"errors\"   : "   << std::to_string(getErrors())   << ",\n"
-					"	    \"warnings\" : "   << std::to_string(getWarnings()) << ",\n"
-					"	    \"advice\"   : "   << std::to_string(getAdvice())   << ",\n"
-					"	    \"reports\"  : [\n";
+					"\t    \"path\"     : \"" << escapeString(m_path)     << "\",\n"
+					"\t    \"errors\"   : "   << std::to_string(getErrors())   << ",\n"
+					"\t    \"warnings\" : "   << std::to_string(getWarnings()) << ",\n"
+					"\t    \"advice\"   : "   << std::to_string(getAdvice())   << ",\n"
+					"\t    \"reports\"  : [\n";
 // clang-format on
 				for (size_t i = 0, size = m_objs.size(); i < size; ++i) {
 					if (i > 0) {
@@ -166,19 +169,16 @@ namespace flint {
 		/*
 		* Prints an entire report in either
 		* JSON or Pretty Printed format
-		*
-		* @return
-		*		Returns a string containing the report output
 		*/
 		void print() const {
 
 			if (Options.JSON) {
 // clang-format off
 				std::cout << "{\n"
-					"	\"errors\"   : " << std::to_string(getErrors())   << ",\n"
-					"	\"warnings\" : " << std::to_string(getWarnings()) << ",\n"
-					"	\"advice\"   : " << std::to_string(getAdvice())   << ",\n"
-					"	\"files\"    : [\n";
+					"\t\"errors\"   : " << std::to_string(getErrors())   << ",\n"
+					"\t\"warnings\" : " << std::to_string(getWarnings()) << ",\n"
+					"\t\"advice\"   : " << std::to_string(getAdvice())   << ",\n"
+					"\t\"files\"    : [\n";
 // clang-format on
 				for (size_t i = 0, size = m_files.size(); i < size; ++i) {
 					if (i > 0) {

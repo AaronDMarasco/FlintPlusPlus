@@ -30,6 +30,8 @@ BINF := flint++
 # Test files
 ACTUAL = tests/actual.txt
 EXPECTED = tests/expected.txt
+JACTUAL = tests/actual.json
+JEXPECTED = tests/expected.json
 
 .PHONY: all check tests
 .SILENT: check tests
@@ -44,8 +46,11 @@ check: tests
 
 tests: $(BINF)
 	-./$(BINF) ./tests > $(ACTUAL)
-	diff -u $(EXPECTED) $(ACTUAL) || (echo "Output DOES NOT MATCH EXPECTED!" && false)
-	echo "Output matches expected"
+	diff -u $(EXPECTED) $(ACTUAL) || (echo "Plaintext output DOES NOT MATCH EXPECTED!" && false)
+	echo "Plaintext output matches expected"
+	-./$(BINF) -j ./tests > $(JACTUAL)
+	diff -u $(JEXPECTED) $(JACTUAL) || (echo "JSON output DOES NOT MATCH EXPECTED!" && false)
+	echo "JSON output matches expected"
 
 # NOTE: Lazy handling of headers - don't do this in a "real" project ;)
 $(OBJS): $(HEADERS)
@@ -54,7 +59,7 @@ $(OBJS): $(HEADERS)
 	$(CXX) $(EXTRA_CXXFLAGS) $(CXXFLAGS) -o $@ -c $<
 
 clean:
-	-rm -rf *.o $(BINF) $(ACTUAL)
+	-rm -rf *.o $(BINF) $(ACTUAL) $(JACTUAL)
 
 .PHONY: install
 INSTALL ?= install
