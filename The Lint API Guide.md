@@ -3,19 +3,19 @@ The Lint API Guide
 
 When writing a Lint Check to add to `Flint++` you are given a Token Stream of the form `vector<Token>` with which you can traverse and analyse in order to detect potential areas for review. To traverse the Token Stream there are several predefined functions to help you move around. The purpose of this document is to enumerate those functions and their purposes to avoid the scenario where contributors feel they have to reinevent functionality which they did not know was already present.
 
+See all functions and documentation in `Check.hpp`.
+
 ## 1. The structure of a Lint Check
 
-A complete Lint Check consists of (at least) **3** file modifications. These are:
+A complete Lint Check consists of (at least) **3** modifications. These are:
 
-* A new header definition in the `Checks.hpp` file, of the form
-
-	X(DescriptiveNameOfCheck)
-
-* An implementation of the aforementioned Check in the `Checks.cpp` file, of the form
+* Copy `Check_Template.txt` to `Checks/DescriptiveNameOfCheck.cpp`. Add your code as appropriate using others as examples. The standard signature is:
 
 	void checkDescriptiveNameOfCheck(ErrorFile &errors, const string &path, const vector<Token> &tokens);
 
-* And finally, an addition to the list of Checks to be run in the `Main.cpp` file, where the function call to the new Lint Check is placed in the approriate scope.
+* Re-run `make clean` and then `make` to add your new file to the build system.
+
+* An addition to the list of Checks to be run in the `Main.cpp` file, where the function call to the new Lint Check is placed in the approriate scope.
 
 ## 2. Reporting Errors
 
