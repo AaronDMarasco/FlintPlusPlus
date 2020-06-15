@@ -64,7 +64,7 @@ before_install:
         export PATH="/usr/local/opt/gnu-tar/libexec/gnubin:$PATH"
         ;;
       linux)
-        if [ x"${CC}" == "clang" ]; then
+        if [ x"${CC}" == "xclang" ]; then
           sudo apt-get update
           sudo apt-get -y install libc++-dev
         fi
