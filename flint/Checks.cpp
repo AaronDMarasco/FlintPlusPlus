@@ -18,7 +18,12 @@ inline bool cmpStr(const S& a, const T& b) {
   return equal(a.begin(), a.end(), b.begin());
 }
 inline bool cmpStr(const StringFragment& a, const StringFragment& b) { return (a == b); }
-inline bool cmpStr(const StringFragment& a, const char* b) { return (a == StringFragment(b)); }
+// This version fails on OSX because it's SPECIAL:
+/* inline bool cmpStr(const StringFragment& a, const char* b) { return (a == StringFragment{b}); }
+ */
+inline bool cmpStr(const StringFragment& a, const char* b) {
+  return (to_string(a) == std::string{b});
+}
 inline bool cmpStr(const string& a, const string& b) { return a == b; }
 inline bool cmpToks(const Token& a, const Token& b) { return cmpStr(a.value_, b.value_); };
 

@@ -11,10 +11,10 @@
 namespace flint {
 
 #ifdef _MSC_VER
-static const std::string FS_SEP{"\\"};
+const std::string FS_SEP{"\\"};
 #define NOEXCEPT
 #else
-static const std::string FS_SEP{"/"};
+const std::string FS_SEP{"/"};
 #define NOEXCEPT noexcept
 #endif
 

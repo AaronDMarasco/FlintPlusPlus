@@ -237,7 +237,8 @@ struct StringFragment {
   citerator end_;
 
   inline StringFragment(citerator begin, citerator end) NOEXCEPT : begin_(begin), end_(end) {}
-  explicit StringFragment(const char* instr) : begin_(instr), end_(instr + strlen(instr)) {}
+  // This blows up on libc++:
+  /* explicit StringFragment(const char* instr) : begin_(instr), end_(instr + strlen(instr)) {} */
 
   citerator       begin() const { return begin_; }
   citerator       end() const { return end_; }
