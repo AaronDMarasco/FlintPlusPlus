@@ -1,4 +1,5 @@
 #include "../Checks.hpp"
+using namespace std;
 
 namespace flint {
 

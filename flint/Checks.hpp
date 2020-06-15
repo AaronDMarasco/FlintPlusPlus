@@ -1,5 +1,6 @@
 #pragma once
 
+// There are a lot included here because this header is common across ALL checks
 #include <cassert>
 #include <numeric>
 #include <stack>
@@ -308,12 +309,4 @@ struct Argument {
     assert(first <= last);
   };
 };
-
 }  // namespace flint
-
-// All Checks get this "for free"
-// %flint: pause
-#ifndef IS_CHECK_CPP
-using namespace std;
-#endif
-// %flint: resume

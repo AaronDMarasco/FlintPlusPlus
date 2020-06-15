@@ -1,6 +1,4 @@
-#define IS_CHECK_CPP
 #include "Checks.hpp"
-#undef IS_CHECK_CPP
 
 using namespace std;
 
