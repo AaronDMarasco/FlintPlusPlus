@@ -25,7 +25,7 @@ using namespace flint;
  * @return
  *        Returns the number of errors found
  */
-void checkEntry(ErrorReport& errors, const string& path, size_t& loc, uint depth = 0) {
+void checkEntry(ErrorReport& errors, const string& path, size_t& loc, size_t depth = 0) {
   const auto fsType = fsObjectExists(path);
   if (fsType == FSType::NO_ACCESS) return;
 
