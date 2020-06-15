@@ -7,7 +7,7 @@ See all functions and documentation in `Check.hpp`.
 
 ## 1. The structure of a Lint Check
 
-A complete Lint Check consists of (at least) **3** modifications. These are:
+A complete Lint Check consists of (at least) **4** modifications. These are:
 
 * Copy `Check_Template.txt` to `Checks/DescriptiveNameOfCheck.cpp`. Add your code as appropriate using others as examples. The standard signature is:
 
@@ -16,6 +16,8 @@ A complete Lint Check consists of (at least) **3** modifications. These are:
 * Re-run `make clean` and then `make` to add your new file to the build system.
 
 * An addition to the list of Checks to be run in the `Main.cpp` file, where the function call to the new Lint Check is placed in the approriate scope.
+
+* Add a test case (expected pass and fail) to `tests/` subdirectory and updated the expected results files appropriately.
 
 ## 2. Reporting Errors
 
