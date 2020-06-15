@@ -24,6 +24,11 @@ ifdef USEASAN
 EXTRA_CXXFLAGS += -fsanitize=address
 ASANLINK := -lasan
 endif
+ifeq ($(CXX),clang++)
+EXTRA_CXXFLAGS += -stdlib=libc++
+EXTRA_LDFLAGS := -lc++
+# -nostdinc++ -I/usr/include/c++/v1/ -L/usr/lib64/
+endif
 
 HEADERS := $(sort $(wildcard *.hpp))
 # Inputs (grab all .cpp files, and assume change to .o)
@@ -45,7 +50,7 @@ JEXPECTED = tests/expected.json
 all: $(BINF)
 
 $(BINF): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $(BINF) $(OBJS) $(ASANLINK)
+	$(CXX) $(CXXFLAGS) -o $(BINF) $(OBJS) $(ASANLINK) $(LD_FLAGS) $(EXTRA_LDFLAGS)
 
 # More standard alias
 check: tests
