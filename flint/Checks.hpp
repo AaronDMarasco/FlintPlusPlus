@@ -275,54 +275,20 @@ size_t skipTemplateSpec(const std::vector<Token>& tokens, size_t pos, bool* cont
 
 // ******************************* End of helper functions for the checkers
 
+// Bring in all the checks from the two directories...
+
+// Most checks get just the tokenized file
 #define X(func) void check##func(ErrorFile& errors, const std::string& path, const std::vector<Token>& tokens)
 
+// More advanced checks get access to a list of identified structs/classes/unions
 #define X_struct(func)                                \
   void check##func(ErrorFile&                 errors, \
                    const std::string&         path,   \
                    const std::vector<Token>&  tokens, \
                    const std::vector<size_t>& structures)
 
-// Deprecated due to too many false positives
-// X(Incrementers);
-// Merged into banned identifiers
-// X(UpcaseNull);
-
-// These checks get access to a list of identified
-// structs/class/unions's
-X_struct(ThrowSpecification);
-X_struct(Constructors);
-X_struct(ProtectedInheritance);
-X_struct(ImplicitCast);
-X_struct(ExceptionInheritance);
-X_struct(VirtualDestructors);
-
-// Blacklisted Terms
-X(DefinedNames);
-X(BlacklistedSequences);
-X(BlacklistedIdentifiers);
-
-// Common Mistakes
-X(CatchByReference);
-X(Memset);
-X(ThrowsHeapException);
-X(InitializeFromItself);
-X(IfEndifBalance);
-X(NamespaceScopedStatics);
-X(MutexHolderHasName);
-
-// Include Errors
-X(IncludeGuard);
-X(DeprecatedIncludes);
-X(IncludeAssociatedHeader);
-X(InlHeaderInclusions);
-
-// Pointer Errors
-X(SmartPtrUsage);
-X(UniquePtrUsage);
-
-// To be implemented...
-X(UsingNamespaceDirectives);
+// Makefile automatically regenerates this when you do "make clean"
+#include "Checks.inc"
 
 #undef X_struct
 #undef X
