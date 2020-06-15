@@ -79,12 +79,12 @@ Additional information can be found by examining `.travis.yml`.
 ## Flinting Flint
 All good.
 
-	$ flint++ ./
+	$ flint++ ./ Checks/ AdvancedChecks/ # NOT -r or test cases included
 
-	Lint Summary: 14 files
+	Lint Summary: 37 files
 	Errors: 0 Warnings: 0 Advice: 0
 
-	Estimated Lines of Code: 3797
+	Estimated Lines of Code: 3953
 
 ## Choosing Compiler
 `make` will use your system-default compiler and C++ library. On `GCC`-based systems, you can explicitly force `clang` (and `libc++`) by calling `CXX=clang++ make -j`. This may fail and may require additional packages, _e.g._ `libcxx-devel` on Fedora or `libc++-dev` on Ubuntu.

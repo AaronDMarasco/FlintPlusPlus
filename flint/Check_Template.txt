@@ -1,0 +1,9 @@
+#include "../Checks.hpp"
+using namespace std;
+
+namespace flint {
+
+void checkDescriptiveNameOfCheck(ErrorFile& errors, const string& path, const vector<Token>& tokens) {
+};
+
+}

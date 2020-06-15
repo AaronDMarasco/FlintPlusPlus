@@ -35,7 +35,9 @@ endif
 
 HEADERS := $(sort $(wildcard *.hpp))
 # Inputs (grab all .cpp files, and assume change to .o)
-SOURCES := $(sort $(wildcard *.cpp))
+ADV_CHECKS := $(sort $(wildcard AdvancedChecks/*.cpp))
+REG_CHECKS := $(sort $(wildcard Checks/*.cpp))
+SOURCES := $(sort $(wildcard *.cpp)) $(ADV_CHECKS) $(REG_CHECKS)
 OBJS := $(SOURCES:.cpp=.o)
 
 # Output binary
@@ -67,13 +69,23 @@ tests: $(BINF)
 	echo "JSON output matches expected"
 
 # NOTE: Lazy handling of headers - don't do this in a "real" project ;)
-$(OBJS): $(HEADERS)
+$(OBJS): $(HEADERS) Checks.inc
+
+.SILENT: Checks.inc
+# This needs to transform AdvancedChecks/*.cpp to "X_struct(CheckName);"
+# and Checks/*.cpp to "X(DefinedNames);"
+Checks.inc: ADV_CHECK_NAMES := $(patsubst AdvancedChecks/%.cpp,%,$(ADV_CHECKS))
+Checks.inc: REG_CHECK_NAMES := $(patsubst Checks/%.cpp,%,$(REG_CHECKS))
+Checks.inc:
+	rm -rf $@
+	for test in $(ADV_CHECK_NAMES); do echo "X_struct($${test});" >> $@; done
+	for test in $(REG_CHECK_NAMES); do echo "X($${test});" >> $@; done
 
 .cpp.o: $<
 	$(CXX) $(EXTRA_CXXFLAGS) $(CXXFLAGS) -o $@ -c $<
 
 clean:
-	-rm -rf *.o $(BINF) $(ACTUAL) $(JACTUAL)
+	-rm -rf $(OBJS) $(BINF) $(ACTUAL) $(JACTUAL) Checks.inc
 
 .PHONY: install
 INSTALL ?= install

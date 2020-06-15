@@ -1,3 +1,4 @@
+*.inc
 *.o
 flint++
 flint/tests/actual.*
