@@ -74,8 +74,8 @@ $(OBJS): $(HEADERS) Checks.inc
 .SILENT: Checks.inc
 # This needs to transform AdvancedChecks/*.cpp to "X_struct(CheckName);"
 # and Checks/*.cpp to "X(DefinedNames);"
-Checks.inc: ADV_CHECK_NAMES := $(patsubst AdvancedChecks/Check_%.cpp,%,$(ADV_CHECKS))
-Checks.inc: REG_CHECK_NAMES := $(patsubst Checks/Check_%.cpp,%,$(REG_CHECKS))
+Checks.inc: ADV_CHECK_NAMES := $(patsubst AdvancedChecks/%.cpp,%,$(ADV_CHECKS))
+Checks.inc: REG_CHECK_NAMES := $(patsubst Checks/%.cpp,%,$(REG_CHECKS))
 Checks.inc:
 	rm -rf $@
 	for test in $(ADV_CHECK_NAMES); do echo "X_struct($${test});" >> $@; done
