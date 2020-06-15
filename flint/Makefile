@@ -24,6 +24,9 @@ ifdef USEASAN
 EXTRA_CXXFLAGS += -fsanitize=address
 ASANLINK := -lasan
 endif
+# Undocumented feature if you are building with clang use libc++ even on gcc-based systems
+# This allows quicker diagnosing of issues on OSX even when building on Linux
+# On Fedora, this required the libcxx-devel RPMs.
 ifeq ($(CXX),clang++)
 EXTRA_CXXFLAGS += -stdlib=libc++
 EXTRA_LDFLAGS := -lc++
