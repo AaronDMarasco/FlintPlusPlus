@@ -1,4 +1,7 @@
 # See https://config.travis-ci.com/explore
+# I could not figure out how to use the "addons: apt" format to tell them to ALWAYS install stuff...
+# If anybody knows, feel free to help - see fe3b06e8
+
 language: cpp
 
 os:
@@ -23,13 +26,6 @@ compiler:
   - clang
 
 jobs:
-  include:
-    - os: linux
-      compiler: clang
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test']
-          packages: ['clang', 'libc++-dev']
   exclude:
     - os: osx
       compiler: gcc
@@ -66,6 +62,12 @@ before_install:
         brew update
         brew install gnu-tar
         export PATH="/usr/local/opt/gnu-tar/libexec/gnubin:$PATH"
+        ;;
+      linux)
+        if [ x"$(CC)" -- "clang"]; then
+          sudo apt-get update
+          sudo apt-get -y install libc++-dev
+        fi
         ;;
     esac
 
