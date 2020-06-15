@@ -1139,7 +1139,7 @@ void checkConstructors(ErrorFile& errors, const string& path, const vector<Token
 
   // Check for constructor specifications inside classes
   const size_t toksize = tokens.size();
-  for (unsigned long pos : structures) {
+  for (auto pos : structures) {
     if (!(isTok(tokens[pos], TK_STRUCT) || isTok(tokens[pos], TK_CLASS))) continue;
 
     ++pos;
