@@ -1,7 +1,7 @@
 # Top-level Makefile
 
 # Arbitrary version number:
-VERSION := 0.5
+VERSION := 2.0
 
 define HELP
 Flint++ $(VERSION) top-level Makefile options:
