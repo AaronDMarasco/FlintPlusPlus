@@ -50,8 +50,7 @@ class ErrorObject {
       return;
     }
     // clang-format on
-    std::cout << levelStr[m_type] << path << ':' << std::to_string(m_line) << ": " << m_title
-              << std::endl;
+    std::cout << levelStr[m_type] << path << ':' << std::to_string(m_line) << ": " << m_title << std::endl;
   };
 };
 
@@ -75,14 +74,14 @@ class ErrorBase {
 /*
  * Class to represent a single file's "Errors" that were found during linting
  */
-class ErrorFile : public ErrorBase {
+class ErrorFile: public ErrorBase {
  private:
   // Members
   std::vector<ErrorObject> m_objs;
   const std::string        m_path;
 
  public:
-  explicit ErrorFile(std::string path) : ErrorBase(), m_path(move(path)){};
+  explicit ErrorFile(std::string path): ErrorBase(), m_path(move(path)){};
 
   void addError(ErrorObject&& error) {
     switch (error.getType()) {
@@ -122,14 +121,14 @@ class ErrorFile : public ErrorBase {
       return;
     }
 
-    for (const auto& m_obj : m_objs) { m_obj.print(m_path); }
+    for (const auto& m_obj: m_objs) { m_obj.print(m_path); }
   };
 };
 
 /*
  * Class to represent the whole report and all "Errors" that were found during linting
  */
-class ErrorReport : public ErrorBase {
+class ErrorReport: public ErrorBase {
  private:
   // Members
   std::vector<ErrorFile> m_files;
@@ -165,7 +164,7 @@ class ErrorReport : public ErrorBase {
       return;
     }
 
-    for (const auto& m_file : m_files) {
+    for (const auto& m_file: m_files) {
       if (m_file.getTotal() > 0) { m_file.print(); }
     }
 

@@ -12,17 +12,16 @@ OptionsInfo Options;
  * Prints the usage information for the program, then exits with error.
  */
 void __attribute__((noreturn)) printHelp() {
-  printf(
-      "Usage: flint++ [options] [files]\n\n"
-      "\t-r, --recursive\t\t: Search subfolders for files.\n"
-      "\t-c, --cmode\t\t: Only perform C based lint checks.\n"
-      "\t-j, --json\t\t: Output report in JSON format.\n"
-      "\t-v, --verbose\t\t: Print full file paths.\n"
-      "\t-l, --level [def=3] : Set the lint level.\n"
-      "\t\t\t          1 : Errors only\n"
-      "\t\t\t          2 : Errors & Warnings\n"
-      "\t\t\t          3 : All feedback\n"
-      "\t-h, --help\t\t: Print usage.\n\n");
+  printf("Usage: flint++ [options] [files]\n\n"
+         "\t-r, --recursive\t\t: Search subfolders for files.\n"
+         "\t-c, --cmode\t\t: Only perform C based lint checks.\n"
+         "\t-j, --json\t\t: Output report in JSON format.\n"
+         "\t-v, --verbose\t\t: Print full file paths.\n"
+         "\t-l, --level [def=3] : Set the lint level.\n"
+         "\t\t\t          1 : Errors only\n"
+         "\t\t\t          2 : Errors & Warnings\n"
+         "\t\t\t          3 : All feedback\n"
+         "\t-h, --help\t\t: Print usage.\n\n");
 #ifdef _DEBUG
   // Stop visual studio from closing the window...
   system("PAUSE");

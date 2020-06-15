@@ -6,14 +6,15 @@
 using namespace std;
 
 namespace std {
-template <>
+template<>
 struct hash<flint::StringFragment> {
   typedef flint::StringFragment argument_type;
   using value_type = uint64_t;
 
   inline value_type operator()(const argument_type& fragment) const {
-    return accumulate(fragment.begin(), fragment.end(), uint64_t(5381),
-                      [](uint64_t curr, char next) { return ((curr << 5) + curr) + next; });
+    return accumulate(fragment.begin(), fragment.end(), uint64_t(5381), [](uint64_t curr, char next) {
+      return ((curr << 5) + curr) + next;
+    });
   };
 };
 };  // namespace std
@@ -32,7 +33,7 @@ static unordered_map<StringFragment, TokenType> initializeKeywords() {
   CPPLINT_FORALL_KEYWORDS(CPPLINT_ASSIGN)
 #undef CPPLINT_ASSIGN
 
-  for (const auto& item : root) {
+  for (const auto& item: root) {
     auto& key                                      = item.first;
     result[StringFragment{key.begin(), key.end()}] = item.second;
   }
@@ -119,7 +120,8 @@ static StringFragment munchComment(string::const_iterator& pc, size_t& line) {
  * munches it from pc and returns it.
  */
 static StringFragment munchSingleLineComment(string::const_iterator& pc,
-                                             string::const_iterator inputEnd, size_t& line) {
+                                             string::const_iterator  inputEnd,
+                                             size_t&                 line) {
   assert(pc[0] == '/' && pc[1] == '/');
 
   size_t size = distance(pc, inputEnd);
@@ -212,8 +214,7 @@ static StringFragment munchCharLiteral(string::const_iterator& pc, size_t& line)
  * it from pc and returns it. A reference to line is passed in order
  * to track multiline strings correctly.
  */
-static StringFragment munchString(string::const_iterator& pc, size_t& line,
-                                  bool isIncludeLiteral = false) {
+static StringFragment munchString(string::const_iterator& pc, size_t& line, bool isIncludeLiteral = false) {
   const char stringEnd = isIncludeLiteral ? '>' : '"';
 
   assert(pc[0] == (isIncludeLiteral ? '<' : '"'));
@@ -251,8 +252,8 @@ static StringFragment munchSpaces(string::const_iterator& pc) {
  * Given the contents of a C++ file and a filename, tokenizes the
  * contents and places it in output.
  */
-size_t tokenize(const string& input, const string& file, vector<Token>& output,
-                vector<size_t>& structures, ErrorFile& errors) {
+size_t tokenize(
+    const string& input, const string& file, vector<Token>& output, vector<size_t>& structures, ErrorFile& errors) {
   output.clear();
   structures.clear();
 
@@ -264,9 +265,10 @@ size_t tokenize(const string& input, const string& file, vector<Token>& output,
   size_t line = 1;
   if (startsWith(pc, "\xEF\xBB\xBF")) {  // UTF-8 BOM
     pc += 3;
-    errors.addError(ErrorObject(
-        Lint::WARNING, line, "UTF-8 BOM found",
-        "The Unicode Standard permits this, but does not require nor recommend its use"));
+    errors.addError(ErrorObject(Lint::WARNING,
+                                line,
+                                "UTF-8 BOM found",
+                                "The Unicode Standard permits this, but does not require nor recommend its use"));
   }
 
   TokenType      t;
@@ -467,7 +469,7 @@ size_t tokenize(const string& input, const string& file, vector<Token>& output,
       case '7':
       case '8':
       case '9':
-      ITS_A_NUMBER : {
+      ITS_A_NUMBER: {
         auto symbol = munchNumber(pc);
         assert(symbol.size() > 0);
         output.emplace_back(TK_NUMBER, move(symbol), line, whitespace);
@@ -588,8 +590,7 @@ string toString(const TokenType t) {
 #define CPPLINT_X2(c1, t1, c2, t2)         CPPLINT_X1(c1, t1) CPPLINT_X1(c2, t2)
 #define CPPLINT_X3(c1, t1, c2, t2, c3, t3) CPPLINT_X1(c1, t1) CPPLINT_X2(c2, t2, c3, t3)
 
-#define CPPLINT_X4(c1, t1, c2, t2, c3, t3, c4, t4) \
-  CPPLINT_X2(c1, t1, c2, t2) CPPLINT_X2(c3, t3, c4, t4)
+#define CPPLINT_X4(c1, t1, c2, t2, c3, t3, c4, t4) CPPLINT_X2(c1, t1, c2, t2) CPPLINT_X2(c3, t3, c4, t4)
 
   // Expansion
   CPPLINT_FOR_ALL_TOKENS(CPPLINT_X1, CPPLINT_X2, CPPLINT_X3, CPPLINT_X4)

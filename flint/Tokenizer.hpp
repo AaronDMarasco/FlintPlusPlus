@@ -236,7 +236,7 @@ struct StringFragment {
   citerator begin_;
   citerator end_;
 
-  inline StringFragment(citerator begin, citerator end) NOEXCEPT : begin_(begin), end_(end) {}
+  inline StringFragment(citerator begin, citerator end) NOEXCEPT: begin_(begin), end_(end) {}
   // This blows up on libc++:
   /* explicit StringFragment(const char* instr) : begin_(instr), end_(instr + strlen(instr)) {} */
 
@@ -258,15 +258,14 @@ struct StringFragment {
   bool empty() const { return begin_ == end_; }
 };
 
-inline std::string to_string(const StringFragment& fragment) {
-  return std::string{fragment.begin(), fragment.end()};
-}
+inline std::string to_string(const StringFragment& fragment) { return std::string{fragment.begin(), fragment.end()}; }
 
 inline bool operator==(const StringFragment& a, const StringFragment& b) {
   return a.size() == b.size() and equal(a.begin(), a.end(), b.begin());
 }
 
-inline bool contains(const StringFragment& fragment, StringFragment::citerator stringBegin,
+inline bool contains(const StringFragment&     fragment,
+                     StringFragment::citerator stringBegin,
                      StringFragment::citerator stringEnd) {
   return search(fragment.begin(), fragment.end(), stringBegin, stringEnd) != fragment.end();
 }
@@ -282,10 +281,7 @@ struct Token {
   size_t         line_;
 
   Token(TokenType type, StringFragment value, size_t line, StringFragment whitespace)
-      : type_(type),
-        value_(std::move(value)),
-        precedingWhitespace_(std::move(whitespace)),
-        line_(line){};
+      : type_(type), value_(std::move(value)), precedingWhitespace_(std::move(whitespace)), line_(line){};
 
   std::string toString() const {
     std::string result{"Line:" + std::to_string(line_) + ':'};
@@ -299,21 +295,22 @@ struct Token {
  * code and a filename, fills output with the tokens in the
  * file.
  */
-size_t tokenize(const std::string& input, const std::string& initialFilename,
-                std::vector<Token>& output, std::vector<size_t>& structures, ErrorFile& errors);
+size_t tokenize(const std::string&   input,
+                const std::string&   initialFilename,
+                std::vector<Token>&  output,
+                std::vector<size_t>& structures,
+                ErrorFile&           errors);
 
 /**
  * Prevent the use of temporaries for input and filename
  * because the resulting tokens contain StringPiece objects pointing
  * into them.
  */
-size_t tokenize(std::string&&, const std::string&, std::vector<Token>&, std::vector<size_t>&,
-                ErrorFile&) = delete;
-size_t tokenize(const std::string&, std::string&&, std::vector<Token>&, std::vector<size_t>&,
-                ErrorFile&) = delete;
+size_t tokenize(std::string&&, const std::string&, std::vector<Token>&, std::vector<size_t>&, ErrorFile&) = delete;
+size_t tokenize(const std::string&, std::string&&, std::vector<Token>&, std::vector<size_t>&, ErrorFile&) = delete;
 };  // namespace flint
 
 namespace std {
-template <>
+template<>
 struct hash<flint::StringFragment>;
 };

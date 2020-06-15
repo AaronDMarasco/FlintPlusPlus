@@ -26,8 +26,7 @@ static const array<string, 7> extsSourceCpp{".C", ".cc", ".cpp", ".CPP", ".c++",
  *        Returns true if str ends with an instance of suffix
  */
 bool hasSuffix(const string& str, const string& suffix) {
-  return (str.size() >= suffix.size()) &&
-         (str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0);
+  return (str.size() >= suffix.size()) && (str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0);
 }
 
 /**
@@ -40,10 +39,9 @@ bool hasSuffix(const string& str, const string& suffix) {
  * @return
  *        Returns true if str ends with an instance of a suffix found within the container
  */
-template <class Container>
+template<class Container>
 bool containsSuffix(const string& str, Container suffixes) {
-  return find_if(begin(suffixes), end(suffixes), bind(hasSuffix, cref(str), placeholders::_1)) !=
-         end(suffixes);
+  return find_if(begin(suffixes), end(suffixes), bind(hasSuffix, cref(str), placeholders::_1)) != end(suffixes);
 }
 
 /**
@@ -56,7 +54,7 @@ bool containsSuffix(const string& str, Container suffixes) {
  */
 FileCategory getFileCategory(const string& path) {
   // Test header extensions
-  for (const auto& ext : extsHeader) {
+  for (const auto& ext: extsHeader) {
     if (hasSuffix(path, ("-inl" + ext)))
       return FileCategory::INL_HEADER;
     else if (hasSuffix(path, ext))
@@ -110,7 +108,7 @@ bool isSource(const string& path) {
  */
 string getFileNameBase(const string& path) {
   // Test header extensions
-  for (const auto& ext : extsHeader) {
+  for (const auto& ext: extsHeader) {
     const string inlext{"-inl" + ext};
     if (hasSuffix(path, inlext))
       return path.substr(0, path.size() - inlext.size());
@@ -119,11 +117,11 @@ string getFileNameBase(const string& path) {
   }
 
   // Test C extensions
-  for (const auto& ext : extsSourceC)
+  for (const auto& ext: extsSourceC)
     if (hasSuffix(path, ext)) return path.substr(0, path.size() - ext.size());
 
   // Test CPP extensions
-  for (const auto& ext : extsSourceCpp)
+  for (const auto& ext: extsSourceCpp)
     if (hasSuffix(path, ext)) return path.substr(0, path.size() - ext.size());
 
   // No extension to strip

@@ -18,12 +18,12 @@ using namespace std;
 namespace flint {
 
 // Quick checks for path names (previously macros)
-template <typename T>
+template<typename T>
 inline bool fs_isnot_specialdir(const T& file) {  // was FS_ISNOT_LINK (???)
   return file.compare(".") and file.compare("..");
 }
 
-template <typename T>
+template<typename T>
 inline bool fs_isnot_git(const T& file) {
   return file.compare(".git");
 }
@@ -100,8 +100,7 @@ bool fsGetDirContents(const string& path, vector<string>& dirs) {
   if (DIR* pDIR = opendir(path.c_str())) {
     while (struct dirent* entry = readdir(pDIR)) {
       const string fsObj{entry->d_name};
-      if (fs_isnot_specialdir(fsObj) && fs_isnot_git(fsObj))
-        dirs.emplace_back(path + FS_SEP + fsObj);
+      if (fs_isnot_specialdir(fsObj) && fs_isnot_git(fsObj)) dirs.emplace_back(path + FS_SEP + fsObj);
     }
     closedir(pDIR);
   }
@@ -181,7 +180,7 @@ string escapeString(const string& input) {
   string output;
   output.reserve(input.length());
 
-  for (const auto c : input) {
+  for (const auto c: input) {
     switch (c) {
       case '\n':
         output += R"(\n)";

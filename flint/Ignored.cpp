@@ -48,8 +48,12 @@ string removeIgnoredCode(const string& file, const string& path) {
         auto lineNo = count(file.begin(), file.begin() + posPause, '\n');
         ++lineNo;
 
-        fprintf(stderr, "%s(%zu): No matching \"%s\" found for \"%s\"\n", path.c_str(), lineNo,
-                kIgnoreResume.c_str(), kIgnorePause.c_str());
+        fprintf(stderr,
+                "%s(%zu): No matching \"%s\" found for \"%s\"\n",
+                path.c_str(),
+                lineNo,
+                kIgnoreResume.c_str(),
+                kIgnorePause.c_str());
 
         result += file.substr(pos);
         break;

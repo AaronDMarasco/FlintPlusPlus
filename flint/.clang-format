@@ -1,12 +1,59 @@
+# Some of these options ARE the default Google, but I explicitly wanted noted
+# Others are just my preferences
+
 Language: Cpp
+Standard: c++11
 BasedOnStyle: Google
+
 AlignConsecutiveAssignments: true
 # AlignConsecutiveBitFields: true
 AlignConsecutiveDeclarations: true
 AlignConsecutiveMacros: true
+AlignEscapedNewlines: Left
+
+# AllowAllArgumentsOnNextLine: true
+BinPackArguments: false
+BinPackParameters: false
+
 AllowShortBlocksOnASingleLine: Empty
 AllowShortFunctionsOnASingleLine: true
 AllowShortIfStatementsOnASingleLine: true
-ColumnLimit: 100
+AllowShortLoopsOnASingleLine: true
+AlwaysBreakBeforeMultilineStrings: false
+AlwaysBreakTemplateDeclarations: Yes
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterCaseLabel:  false
+  AfterClass:      false
+  AfterControlStatement: Never
+  AfterEnum:       false
+  AfterFunction:   false
+  AfterNamespace:  false
+  AfterObjCDeclaration: false
+  AfterStruct:     false
+  AfterUnion:      false
+  AfterExternBlock: false
+  BeforeCatch:     true
+  BeforeElse:      false
+  IndentBraces:    false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: true
+ColumnLimit: 120
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+# IndentCaseBlocks: true
+IndentCaseLabels: true
+KeepEmptyLinesAtTheStartOfBlocks: false
+PenaltyBreakBeforeFirstCallParameter: 15
+SpacesBeforeTrailingComments: 2
+SpaceAfterCStyleCast: true
+SpaceAfterLogicalNot: false
+SpaceAfterTemplateKeyword: false
+# SpaceBeforeAssignmentOperators: true
+# SpaceBeforeCpp11BracedList: false
+SpaceBeforeCtorInitializerColon: false
+SpaceBeforeInheritanceColon: false
+SpaceBeforeRangeBasedForLoopColon: false
+SpacesInContainerLiterals: false
 DerivePointerAlignment: false
 PointerAlignment: Left

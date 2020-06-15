@@ -8,11 +8,12 @@
 
 namespace flint {
 
-#define X(func) \
-  void check##func(ErrorFile& errors, const std::string& path, const std::vector<Token>& tokens)
+#define X(func) void check##func(ErrorFile& errors, const std::string& path, const std::vector<Token>& tokens)
 
-#define X_struct(func)                                                                           \
-  void check##func(ErrorFile& errors, const std::string& path, const std::vector<Token>& tokens, \
+#define X_struct(func)                                \
+  void check##func(ErrorFile&                 errors, \
+                   const std::string&         path,   \
+                   const std::vector<Token>&  tokens, \
                    const std::vector<size_t>& structures)
 
 // Deprecated due to too many false positives

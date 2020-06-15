@@ -36,7 +36,7 @@ void checkEntry(ErrorReport& errors, const string& path, size_t& loc, size_t dep
     vector<string> dirs;
     if (!fsGetDirContents(path, dirs)) return;
 
-    for (const auto& dir : dirs) checkEntry(errors, dir, loc, depth + 1);
+    for (const auto& dir: dirs) checkEntry(errors, dir, loc, depth + 1);
 
     return;
   }
@@ -107,7 +107,8 @@ void checkEntry(ErrorReport& errors, const string& path, size_t& loc, size_t dep
 #endif
 
     errors.addFile(move(errorFile));
-  } catch (exception const& e) {
+  }
+  catch (exception const& e) {
     fprintf(stderr, "Exception thrown during checks on %s.\n%s\n\n", path.c_str(), e.what());
   }
 };
@@ -123,7 +124,7 @@ int main(int argc, char* argv[]) {
   size_t totalLOC = 0;
   // Check each file
   ErrorReport errors;
-  for (auto& path : paths) checkEntry(errors, path, totalLOC);
+  for (auto& path: paths) checkEntry(errors, path, totalLOC);
 
   // Print summary
   errors.print();

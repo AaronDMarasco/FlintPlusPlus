@@ -13,7 +13,7 @@ using namespace std;
 namespace flint {
 
 // Shorthand for comparing two strings (or fragments)
-template <class S, class T>
+template<class S, class T>
 inline bool cmpStr(const S& a, const T& b) {
   return equal(a.begin(), a.end(), b.begin());
 }
@@ -21,13 +21,11 @@ inline bool cmpStr(const StringFragment& a, const StringFragment& b) { return (a
 // This version fails on OSX because it's SPECIAL:
 /* inline bool cmpStr(const StringFragment& a, const char* b) { return (a == StringFragment{b}); }
  */
-inline bool cmpStr(const StringFragment& a, const char* b) {
-  return (to_string(a) == std::string{b});
-}
+inline bool cmpStr(const StringFragment& a, const char* b) { return (to_string(a) == std::string{b}); }
 inline bool cmpStr(const string& a, const string& b) { return a == b; }
 inline bool cmpToks(const Token& a, const Token& b) { return cmpStr(a.value_, b.value_); };
 
-template <class S, class T>
+template<class S, class T>
 inline bool cmpTok(const S& a, const T& b) {
   return cmpStr(a.value_, b);
 };
@@ -54,24 +52,27 @@ const string emptyString;
  */
 
 // C++17 these should be tagged [[maybe_unused]]
-void __attribute__((unused)) inline lintError(ErrorFile& errors, const Token& tok,
+void __attribute__((unused)) inline lintError(ErrorFile&    errors,
+                                              const Token&  tok,
                                               const string& title,
                                               const string& desc = emptyString) {
   errors.addError(ErrorObject(Lint::ERROR, tok.line_, title, desc));
 };
-void __attribute__((unused)) inline lintWarning(ErrorFile& errors, const Token& tok,
+void __attribute__((unused)) inline lintWarning(ErrorFile&    errors,
+                                                const Token&  tok,
                                                 const string& title,
                                                 const string& desc = emptyString) {
   errors.addError(ErrorObject(Lint::WARNING, tok.line_, title, desc));
 };
-void __attribute__((unused)) inline lintAdvice(ErrorFile& errors, const Token& tok,
+void __attribute__((unused)) inline lintAdvice(ErrorFile&    errors,
+                                               const Token&  tok,
                                                const string& title,
                                                const string& desc = emptyString) {
   errors.addError(ErrorObject(Lint::ADVICE, tok.line_, title, desc));
 };
 
-void inline lint(ErrorFile& errors, const Token& tok, const Lint level, const string& title,
-                 const string& desc = emptyString) {
+void inline lint(
+    ErrorFile& errors, const Token& tok, const Lint level, const string& title, const string& desc = emptyString) {
   errors.addError(ErrorObject(level, tok.line_, title, desc));
 };
 
@@ -87,10 +88,11 @@ void inline lint(ErrorFile& errors, const Token& tok, const Lint level, const st
  * @return
  *        Returns true if we were at the start of a given sequence
  */
-template <class Container>
+template<class Container>
 inline bool atSequence(const vector<Token>& tokens, size_t pos, const Container& list) {
-  return equal(begin(list), end(list), begin(tokens) + pos,
-               [](TokenType type, const Token& token) { return type == token.type_; });
+  return equal(begin(list), end(list), begin(tokens) + pos, [](TokenType type, const Token& token) {
+    return type == token.type_;
+  });
 };
 
 /**
@@ -183,9 +185,8 @@ size_t skipTemplateSpec(const vector<Token>& tokens, size_t pos, bool* containsA
  *        Returns true is the token as pos is a built in type
  */
 inline bool atBuiltinType(const vector<Token>& tokens, size_t pos) {
-  static constexpr array<TokenType, 11> builtIns{TK_DOUBLE,   TK_FLOAT,   TK_INT,    TK_SHORT,
-                                                 TK_UNSIGNED, TK_LONG,    TK_SIGNED, TK_VOID,
-                                                 TK_BOOL,     TK_WCHAR_T, TK_CHAR};
+  static constexpr array<TokenType, 11> builtIns{
+      TK_DOUBLE, TK_FLOAT, TK_INT, TK_SHORT, TK_UNSIGNED, TK_LONG, TK_SIGNED, TK_VOID, TK_BOOL, TK_WCHAR_T, TK_CHAR};
 
   return find(begin(builtIns), end(builtIns), tokens[pos].type_) != end(builtIns);
 };
@@ -281,7 +282,7 @@ struct Argument {
   size_t first;
   size_t last;
 
-  inline Argument(size_t a, size_t b) : first(a), last(b) {
+  inline Argument(size_t a, size_t b): first(a), last(b) {
     // Just to check the port hasn't broken Token traversal somehow
     assert(first <= last);
   };
@@ -321,8 +322,7 @@ string formatArg(const vector<Token>& tokens, const Argument& arg) {
  * @return
  *        Returns a string representation of the argument token list
  */
-string formatFunction(const vector<Token>& tokens, const Argument& func,
-                      const vector<Argument>& args) {
+string formatFunction(const vector<Token>& tokens, const Argument& func, const vector<Argument>& args) {
   static const string sep{", "};
 
   string result = formatArg(tokens, func) + '(';
@@ -416,8 +416,7 @@ bool getRealArguments(const vector<Token>& tokens, size_t& pos, vector<Argument>
  *        Returns true if we believe (sorta) that everything went okay,
  *        false if something bad happened (maybe)
  */
-bool getFunctionNameAndArguments(const vector<Token>& tokens, size_t& pos, Argument& func,
-                                 vector<Argument>& args) {
+bool getFunctionNameAndArguments(const vector<Token>& tokens, size_t& pos, Argument& func, vector<Argument>& args) {
   func.first = pos;
   ++pos;
 
@@ -468,23 +467,20 @@ bool matchAcrossTokens(const StringFragment& frag, TokenIter start, TokenIter en
  */
 void checkInitializeFromItself(ErrorFile& errors, const string& path, const vector<Token>& tokens) {
   // Token Sequences for parameter initializers
-  static constexpr array<TokenType, 5> firstInitializer{TK_COLON, TK_IDENTIFIER, TK_LPAREN,
-                                                        TK_IDENTIFIER, TK_RPAREN};
-  static constexpr array<TokenType, 5> nthInitializer{TK_COMMA, TK_IDENTIFIER, TK_LPAREN,
-                                                      TK_IDENTIFIER, TK_RPAREN};
+  static constexpr array<TokenType, 5> firstInitializer{TK_COLON, TK_IDENTIFIER, TK_LPAREN, TK_IDENTIFIER, TK_RPAREN};
+  static constexpr array<TokenType, 5> nthInitializer{TK_COMMA, TK_IDENTIFIER, TK_LPAREN, TK_IDENTIFIER, TK_RPAREN};
 
   for (size_t pos = 0, size = tokens.size(); pos < size; ++pos) {
     if (atSequence(tokens, pos, firstInitializer) || atSequence(tokens, pos, nthInitializer)) {
       const size_t outerPos = ++pos;      // +1 for identifier
       const size_t innerPos = ++(++pos);  // +2 again for the inner identifier
 
-      const bool isMember = tokens[outerPos].value_.back() == '_' ||
-                            startsWith(tokens[outerPos].value_.begin(), "m_");
+      const bool isMember = tokens[outerPos].value_.back() == '_' || startsWith(tokens[outerPos].value_.begin(), "m_");
 
       if (isMember && cmpToks(tokens[outerPos], tokens[innerPos]))
-        lintError(
-            errors, tokens[outerPos],
-            "Initializing class member '" + to_string(tokens[outerPos].value_) + "' with itself.");
+        lintError(errors,
+                  tokens[outerPos],
+                  "Initializing class member '" + to_string(tokens[outerPos].value_) + "' with itself.");
     }
   }
 };
@@ -524,14 +520,14 @@ void checkBlacklistedSequences(ErrorFile& errors, const string& path, const vect
 
   for (size_t pos = 0, size = tokens.size(); pos < size; ++pos) {
     // Make sure we aren't at an exception to the blacklist
-    for (const auto& e : exceptions) {
+    for (const auto& e: exceptions) {
       if (atSequence(tokens, pos, e)) {
         isException = true;
         break;
       }
     }
 
-    for (const BlacklistEntry& entry : blacklist) {
+    for (const BlacklistEntry& entry: blacklist) {
       if (!atSequence(tokens, pos, entry.tokens)) continue;
       if (isException) {
         isException = false;
@@ -554,16 +550,15 @@ void checkBlacklistedSequences(ErrorFile& errors, const string& path, const vect
  * @param tokens
  *        The token list for the file
  */
-void checkBlacklistedIdentifiers(ErrorFile& errors, const string& path,
-                                 const vector<Token>& tokens) {
+void checkBlacklistedIdentifiers(ErrorFile& errors, const string& path, const vector<Token>& tokens) {
   static const unordered_map<string, pair<Lint, string>> blacklist{
       {"strtok", {Lint::ERROR, "'strtok' is not thread safe. Consider 'strtok_r'."}},
 
       {"NULL", {Lint::ADVICE, "Prefer `nullptr' to `NULL' in new C++ code."}}};
 
-  for (const auto& token : tokens)
+  for (const auto& token: tokens)
     if (isTok(token, TK_IDENTIFIER))
-      for (const auto& entry : blacklist)
+      for (const auto& entry: blacklist)
         if (cmpTok(token, entry.first.c_str())) {
           const auto& desc = entry.second;
           lint(errors, token, desc.first, desc.second);
@@ -581,20 +576,17 @@ void checkBlacklistedIdentifiers(ErrorFile& errors, const string& path,
  * @param tokens
  *        The token list for the file
  */
-void checkUsingNamespaceDirectives(ErrorFile& errors, const string& path,
-                                   const vector<Token>& tokens) {
+void checkUsingNamespaceDirectives(ErrorFile& errors, const string& path, const vector<Token>& tokens) {
   vector<StringFragment> namespaces;
   stack<size_t>          scopes;
 
   static constexpr array<TokenType, 2> usingNamespace{TK_USING, TK_NAMESPACE};
 
-  static const array<string, 6> exclusive{"std",   "std::tr1",   "boost",
-                                          "::std", "::std::tr1", "::boost"};
+  static const array<string, 6> exclusive{"std", "std::tr1", "boost", "::std", "::std::tr1", "::boost"};
 
   static const vector<StringFragment> exclusiveFragments = []() -> vector<StringFragment> {
     vector<StringFragment> out;
-    for_each(begin(exclusive), end(exclusive),
-             [&](const string& str) { out.emplace_back(begin(str), end(str)); });
+    for_each(begin(exclusive), end(exclusive), [&](const string& str) { out.emplace_back(begin(str), end(str)); });
     return out;
   }();
 
@@ -616,19 +608,17 @@ void checkUsingNamespaceDirectives(ErrorFile& errors, const string& path,
     if (atSequence(tokens, pos, usingNamespace)) {
       pos += 2;
 
-      const auto isExclusive = find_if(
-          begin(exclusiveFragments), end(exclusiveFragments), [=](const StringFragment& frag) {
+      const auto isExclusive =
+          find_if(begin(exclusiveFragments), end(exclusiveFragments), [=](const StringFragment& frag) {
             return matchAcrossTokens(frag, begin(tokens) + pos, end(tokens));
           });
       if (isExclusive == end(exclusiveFragments)) continue;
 
-      const auto conflict =
-          find_if(begin(namespaces), end(namespaces),
-                  [&](const StringFragment& frag) { return !(frag == *isExclusive); });
+      const auto conflict = find_if(
+          begin(namespaces), end(namespaces), [&](const StringFragment& frag) { return !(frag == *isExclusive); });
       if (conflict != end(namespaces))
         lintWarning(
-            errors, tokens[pos],
-            "Conflicting namespaces: " + to_string(*isExclusive) + " and " + to_string(*conflict));
+            errors, tokens[pos], "Conflicting namespaces: " + to_string(*isExclusive) + " and " + to_string(*conflict));
 
       namespaces.push_back(*isExclusive);
       continue;
@@ -646,8 +636,7 @@ void checkUsingNamespaceDirectives(ErrorFile& errors, const string& path,
  * @param tokens
  *        The token list for the file
  */
-void checkNamespaceScopedStatics(ErrorFile& errors, const string& path,
-                                 const vector<Token>& tokens) {
+void checkNamespaceScopedStatics(ErrorFile& errors, const string& path, const vector<Token>& tokens) {
   if (!isHeader(path)) return;
 
   static constexpr array<TokenType, 3> regularNamespace{TK_NAMESPACE, TK_IDENTIFIER, TK_LCURL};
@@ -674,14 +663,12 @@ void checkNamespaceScopedStatics(ErrorFile& errors, const string& path,
     }
 
     if (isTok(tokens[pos], TK_STATIC))
-      lintWarning(errors, tokens[pos],
-                  "Don't use static at global or namespace scopes in headers.");
+      lintWarning(errors, tokens[pos], "Don't use static at global or namespace scopes in headers.");
 
     // Checking for 'using namespace' violations here as well
     if (atSequence(tokens, pos, usingNamespace))
       lintWarning(
-          errors, tokens[pos],
-          "Avoid the use of using namespace directives at global/namespace scope in headers");
+          errors, tokens[pos], "Avoid the use of using namespace directives at global/namespace scope in headers");
   }
 };
 
@@ -695,12 +682,13 @@ void checkNamespaceScopedStatics(ErrorFile& errors, const string& path,
  * @param tokens
  *        The token list for the file
  */
-void checkVirtualDestructors(ErrorFile& errors, const string& path, const vector<Token>& tokens,
+void checkVirtualDestructors(ErrorFile&            errors,
+                             const string&         path,
+                             const vector<Token>&  tokens,
                              const vector<size_t>& structures) {
   static constexpr array<TokenType, 3> accessSpecifiers{TK_PUBLIC, TK_PRIVATE, TK_PROTECTED};
 
-  static const string msg{
-      "Classes with virtual functions should not have a public non-virtual destructor."};
+  static const string msg{"Classes with virtual functions should not have a public non-virtual destructor."};
 
   auto size        = structures.size();
   auto penultimate = size - 1;
@@ -717,15 +705,14 @@ void checkVirtualDestructors(ErrorFile& errors, const string& path, const vector
     if (endOfClass == endIter || !isTok(*endOfClass, TK_LCURL)) continue;
 
     // Find something virtual
-    const auto virtualLocation = find_if(
-        endOfClass + 1, endIter, [](const Token& token) { return isTok(token, TK_VIRTUAL); });
+    const auto virtualLocation =
+        find_if(endOfClass + 1, endIter, [](const Token& token) { return isTok(token, TK_VIRTUAL); });
     if (virtualLocation == endIter) continue;  // No virtual functions or destructor
 
     // Now that we have something virtual, we need a destructor
-    const auto userDestructor =
-        adjacent_find(startIter, endIter, [](const Token& first, const Token& second) {
-          return isTok(first, TK_TILDE) && isTok(second, TK_IDENTIFIER);
-        });
+    const auto userDestructor = adjacent_find(startIter, endIter, [](const Token& first, const Token& second) {
+      return isTok(first, TK_TILDE) && isTok(second, TK_IDENTIFIER);
+    });
 
     // compiler defined is not virtual
     if (userDestructor == endIter) {
@@ -738,11 +725,10 @@ void checkVirtualDestructors(ErrorFile& errors, const string& path, const vector
 
     // Now what kind of access do we have for our virtual destructor
     using rev_iter        = reverse_iterator<TokenIter>;
-    const auto lastAccess = find_first_of(rev_iter(userDestructor), rev_iter(startIter),
-                                          begin(accessSpecifiers), end(accessSpecifiers), isTok);
-    const auto access     = (lastAccess != rev_iter(startIter))
-                            ? lastAccess->type_
-                            : isTok(tok, TK_STRUCT) ? TK_PUBLIC : TK_PRIVATE;
+    const auto lastAccess = find_first_of(
+        rev_iter(userDestructor), rev_iter(startIter), begin(accessSpecifiers), end(accessSpecifiers), isTok);
+    const auto access =
+        (lastAccess != rev_iter(startIter)) ? lastAccess->type_ : isTok(tok, TK_STRUCT) ? TK_PUBLIC : TK_PRIVATE;
 
     if (access == TK_PUBLIC) lintWarning(errors, *startIter, msg);
   }
@@ -758,22 +744,22 @@ void checkVirtualDestructors(ErrorFile& errors, const string& path, const vector
  * @param tokens
  *        The token list for the file
  */
-void checkExceptionInheritance(ErrorFile& errors, const string& path, const vector<Token>& tokens,
+void checkExceptionInheritance(ErrorFile&            errors,
+                               const string&         path,
+                               const vector<Token>&  tokens,
                                const vector<size_t>& structures) {
-  static constexpr array<TokenType, 4> classMarkersWithColon{TK_EOF, TK_LCURL, TK_SEMICOLON,
-                                                             TK_COLON};
+  static constexpr array<TokenType, 4> classMarkersWithColon{TK_EOF, TK_LCURL, TK_SEMICOLON, TK_COLON};
 
   static constexpr array<TokenType, 3> accessSpecifiers{TK_PUBLIC, TK_PRIVATE, TK_PROTECTED};
 
-  for (unsigned long structure : structures) {
+  for (unsigned long structure: structures) {
     // Start pos at the index of each identified structure
     const auto  pos = begin(tokens) + structure;
     const auto& tok = *pos;
 
     if (isTok(tok, TK_UNION)) continue;
 
-    const auto colon = find_first_of(pos, end(tokens), begin(classMarkersWithColon),
-                                     end(classMarkersWithColon), isTok);
+    const auto colon = find_first_of(pos, end(tokens), begin(classMarkersWithColon), end(classMarkersWithColon), isTok);
 
     if (colon == end(tokens)) return;
 
@@ -786,25 +772,21 @@ void checkExceptionInheritance(ErrorFile& errors, const string& path, const vect
 
     if (exceptionPos == endOfClass) continue;
 
-    const auto usingStdException =
-        !isTok(*(exceptionPos - 1), TK_DOUBLE_COLON) ||
-        (isTok(*(exceptionPos - 2), TK_IDENTIFIER) && cmpTok(*(exceptionPos - 2), "std"));
+    const auto usingStdException = !isTok(*(exceptionPos - 1), TK_DOUBLE_COLON) ||
+                                   (isTok(*(exceptionPos - 2), TK_IDENTIFIER) && cmpTok(*(exceptionPos - 2), "std"));
     if (!usingStdException) continue;
 
     // OK, we're going with the last access specifier before the exception token
-    const auto lastAccess = accumulate(
-        colon + 1, exceptionPos, TK_PROTECTED,
-        [](const TokenType& curr, const Token& next) -> TokenType {
+    const auto lastAccess =
+        accumulate(colon + 1, exceptionPos, TK_PROTECTED, [](const TokenType& curr, const Token& next) -> TokenType {
           if (isTok(next, TK_COMMA)) { return TK_PROTECTED; }
 
           const auto access = find(begin(accessSpecifiers), end(accessSpecifiers), next.type_);
           return access == end(accessSpecifiers) ? curr : *access;
         });
 
-    if ((isTok(tok, TK_CLASS) && lastAccess != TK_PUBLIC) ||
-        (isTok(tok, TK_STRUCT) && lastAccess == TK_PRIVATE))
-      lintWarning(errors, *exceptionPos,
-                  "std::exception should be inherited publically (C++ std: 11.2)");
+    if ((isTok(tok, TK_CLASS) && lastAccess != TK_PUBLIC) || (isTok(tok, TK_STRUCT) && lastAccess == TK_PRIVATE))
+      lintWarning(errors, *exceptionPos, "std::exception should be inherited publically (C++ std: 11.2)");
   }
 };
 
@@ -824,8 +806,8 @@ void checkExceptionInheritance(ErrorFile& errors, const string& path, const vect
  */
 void checkDefinedNames(ErrorFile& errors, const string& path, const vector<Token>& tokens) {
   // Exceptions to the check
-  static const unordered_set<string> okNames{"__STDC_LIMIT_MACROS", "__STDC_FORMAT_MACROS",
-                                             "_GNU_SOURCE", "_XOPEN_SOURCE"};
+  static const unordered_set<string> okNames{
+      "__STDC_LIMIT_MACROS", "__STDC_FORMAT_MACROS", "_GNU_SOURCE", "_XOPEN_SOURCE"};
 
   for (size_t pos = 0, size = tokens.size(); pos < size; ++pos) {
     if (!isTok(tokens[pos], TK_DEFINE)) continue;
@@ -842,18 +824,17 @@ void checkDefinedNames(ErrorFile& errors, const string& path, const vector<Token
 
     if (sym.size() >= 2 && sym[0] == '_' && isupper(sym[1])) {
       if (okNames.find(sym) != okNames.end()) continue;
-      lintWarning(errors, tok, "Symbol " + sym + " invalid.",
+      lintWarning(errors,
+                  tok,
+                  "Symbol " + sym + " invalid.",
                   "A symbol may not start with an underscore followed by a capital letter.");
     } else if (sym.size() >= 2 && sym[0] == '_' && sym[1] == '_') {
       if (okNames.find(sym) != okNames.end()) continue;
-      lintWarning(errors, tok, "Symbol " + sym + " invalid.",
-                  "A symbol may not begin with two adjacent underscores.");
+      lintWarning(errors, tok, "Symbol " + sym + " invalid.", "A symbol may not begin with two adjacent underscores.");
     } else if (!Options.CMODE &&
-               sym.find("__") !=
-                   string::npos) {  // !FLAGS_c_mode /* C is less restrictive about this */ &&
+               sym.find("__") != string::npos) {  // !FLAGS_c_mode /* C is less restrictive about this */ &&
       if (okNames.find(sym) != okNames.end()) continue;
-      lintWarning(errors, tok, "Symbol " + sym + " invalid. ",
-                  "A symbol may not contain two adjacent underscores.");
+      lintWarning(errors, tok, "Symbol " + sym + " invalid. ", "A symbol may not contain two adjacent underscores.");
     }
   }
 };
@@ -907,7 +888,8 @@ void checkCatchByReference(ErrorFile& errors, const string& path, const vector<T
     // specifier, such as facebook::FancyException<int, string>.
     if (!isTok(tokens[focal], TK_IDENTIFIER)) {
       const Token& tok = tokens[focal];
-      lintWarning(errors, tok,
+      lintWarning(errors,
+                  tok,
                   "Symbol '" + to_string(tok.value_) +
                       "' invalid in catch clause. You may only catch user-defined types.");
       continue;
@@ -951,7 +933,8 @@ void checkCatchByReference(ErrorFile& errors, const string& path, const vector<T
       const auto& val = tokens[j].value_;
       theType.append(val.begin(), val.end());
     }
-    lintError(errors, tok,
+    lintError(errors,
+              tok,
               "Symbol '" + to_string(tok.value_) + "' of type '" + theType +
                   "' caught by value. Use catch by (preferably const) reference throughout.");
   }
@@ -973,18 +956,19 @@ void checkCatchByReference(ErrorFile& errors, const string& path, const vector<T
  * @param tokens
  *        The token list for the file
  */
-void checkThrowSpecification(ErrorFile& errors, const string& path, const vector<Token>& tokens,
+void checkThrowSpecification(ErrorFile&            errors,
+                             const string&         path,
+                             const vector<Token>&  tokens,
                              const vector<size_t>& structures) {
   auto numTokens = tokens.size();
   auto posLimit  = numTokens - 1;
 
   static constexpr array<TokenType, 7> destructorSequence{
       TK_TILDE, TK_IDENTIFIER, TK_LPAREN, TK_RPAREN, TK_THROW, TK_LPAREN, TK_RPAREN};
-  static constexpr array<TokenType, 6> whatSequence{TK_LPAREN, TK_RPAREN, TK_CONST,
-                                                    TK_THROW,  TK_LPAREN, TK_RPAREN};
+  static constexpr array<TokenType, 6> whatSequence{TK_LPAREN, TK_RPAREN, TK_CONST, TK_THROW, TK_LPAREN, TK_RPAREN};
 
   // Check for throw specifications inside classes
-  for (auto pos : structures) {
+  for (auto pos: structures) {
     // Skip to opening '{'
     if (!skipToToken(tokens, pos, TK_LCURL)) { continue; }
     ++pos;
@@ -1036,8 +1020,8 @@ void checkThrowSpecification(ErrorFile& errors, const string& path, const vector
     }
 
     // Skip namespaces, classes, and blocks
-    if (isTok(tok, TK_NAMESPACE) || isTok(tok, TK_CLASS) || isTok(tok, TK_STRUCT) ||
-        isTok(tok, TK_UNION) || isTok(tok, TK_LCURL)) {
+    if (isTok(tok, TK_NAMESPACE) || isTok(tok, TK_CLASS) || isTok(tok, TK_STRUCT) || isTok(tok, TK_UNION) ||
+        isTok(tok, TK_LCURL)) {
       // Move to opening object '{'
       for (; !isTok(tokens[pos], TK_LCURL) && !isTok(tokens[pos], TK_EOF); ++pos) {}
 
@@ -1098,7 +1082,7 @@ void checkIfEndifBalance(ErrorFile& errors, const string& path, const vector<Tok
 
   // Return after the first found error, because otherwise
   // even one missed #if can be cause of a lot of errors.
-  for (const auto& tok : tokens) {
+  for (const auto& tok: tokens) {
     if (isTok(tok, TK_IFNDEF) || isTok(tok, TK_IFDEF) || isTok(tok, TK_POUNDIF)) {
       ++openIf;
     } else if (isTok(tok, TK_ENDIF)) {
@@ -1125,21 +1109,21 @@ void checkIfEndifBalance(ErrorFile& errors, const string& path, const vector<Tok
  * @param tokens
  *        The token list for the file
  */
-void checkConstructors(ErrorFile& errors, const string& path, const vector<Token>& tokens,
+void checkConstructors(ErrorFile&            errors,
+                       const string&         path,
+                       const vector<Token>&  tokens,
                        const vector<size_t>& structures) {
   if (getFileCategory(path) == FileCategory::SOURCE_C) return;
 
   static const string lintOverride{"/* implicit */"};
 
-  static constexpr array<TokenType, 4> stdInitializerSequence{TK_IDENTIFIER, TK_DOUBLE_COLON,
-                                                              TK_IDENTIFIER, TK_LESS};
+  static constexpr array<TokenType, 4> stdInitializerSequence{TK_IDENTIFIER, TK_DOUBLE_COLON, TK_IDENTIFIER, TK_LESS};
   static constexpr array<TokenType, 2> constructorSequence{TK_IDENTIFIER, TK_LPAREN};
-  static constexpr array<TokenType, 4> voidConstructorSequence{TK_IDENTIFIER, TK_LPAREN, TK_VOID,
-                                                               TK_RPAREN};
+  static constexpr array<TokenType, 4> voidConstructorSequence{TK_IDENTIFIER, TK_LPAREN, TK_VOID, TK_RPAREN};
 
   // Check for constructor specifications inside classes
   const size_t toksize = tokens.size();
-  for (auto pos : structures) {
+  for (auto pos: structures) {
     if (!(isTok(tokens[pos], TK_STRUCT) || isTok(tokens[pos], TK_CLASS))) continue;
 
     ++pos;
@@ -1150,8 +1134,7 @@ void checkConstructors(ErrorFile& errors, const string& path, const vector<Token
     const auto& objName = tokens[pos].value_;
 
     // Skip to opening '{'
-    for (; pos < toksize && !(isTok(tokens[pos], TK_LCURL) || isTok(tokens[pos], TK_SEMICOLON));
-         ++pos)
+    for (; pos < toksize && !(isTok(tokens[pos], TK_LCURL) || isTok(tokens[pos], TK_SEMICOLON)); ++pos)
       ;
     if (isTok(tokens[pos], TK_SEMICOLON)) continue;
     ++pos;
@@ -1214,13 +1197,12 @@ void checkConstructors(ErrorFile& errors, const string& path, const vector<Token
           TokenType nextType = (argPos + 1 != args[0].last) ? tokens[argPos + 1].type_ : TK_EOF;
           if (nextType != TK_STAR) {
             if (nextType == TK_AMPERSAND && !isConstArgument) {
-              lintError(errors, tok,
-                        "Copy constructors should take a const argument: " +
-                            formatFunction(tokens, func, args));
+              lintError(
+                  errors, tok, "Copy constructors should take a const argument: " + formatFunction(tokens, func, args));
             } else if (nextType == TK_LOGICAL_AND && isConstArgument) {
-              lintError(errors, tok,
-                        "Move constructors should not take a const argument: " +
-                            formatFunction(tokens, func, args));
+              lintError(errors,
+                        tok,
+                        "Move constructors should not take a const argument: " + formatFunction(tokens, func, args));
             }
 
             pos = skipFunctionDeclaration(tokens, pos);
@@ -1247,7 +1229,8 @@ void checkConstructors(ErrorFile& errors, const string& path, const vector<Token
         }
 
         if (foundConversionCtor)
-          lintError(errors, tok,
+          lintError(errors,
+                    tok,
                     "Single - argument constructor '" + formatFunction(tokens, func, args) +
                         "' may inadvertently be used as a type conversion constructor.",
                     "Prefix the function with the 'explicit' keyword to avoid this, or add an "
@@ -1290,10 +1273,9 @@ void checkMemset(ErrorFile& errors, const string& path, const vector<Token>& tok
     // the number of arguments is correct.
     if (args.size() == 3) {
       // wrong calls include memset(..., ..., 0) and memset(..., sizeof..., 1)
-      const bool error =
-          ((args[2].last - args[2].first) == 1) &&
-          (cmpTok(tokens[args[2].first], "0") ||
-           (cmpTok(tokens[args[2].first], "1") && cmpTok(tokens[args[1].first], "sizeof")));
+      const bool error = ((args[2].last - args[2].first) == 1) &&
+                         (cmpTok(tokens[args[2].first], "0") ||
+                          (cmpTok(tokens[args[2].first], "1") && cmpTok(tokens[args[1].first], "sizeof")));
 
       if (!error) continue;
 
@@ -1315,8 +1297,7 @@ void checkMemset(ErrorFile& errors, const string& path, const vector<Token>& tok
  * @param tokens
  *        The token list for the file
  */
-void checkIncludeAssociatedHeader(ErrorFile& errors, const string& path,
-                                  const vector<Token>& tokens) {
+void checkIncludeAssociatedHeader(ErrorFile& errors, const string& path, const vector<Token>& tokens) {
   if (!isSource(path)) return;
 
   string file(path);
@@ -1343,7 +1324,8 @@ void checkIncludeAssociatedHeader(ErrorFile& errors, const string& path,
 
     if (cmpStr(getFileNameBase(includedFile), fileBase)) {
       if (includesFound > 1) {
-        lintError(errors, tokens[pos - 1],
+        lintError(errors,
+                  tokens[pos - 1],
                   "The associated header file of .cpp "
                   "files should be included before any other includes.",
                   "This helps catch missing header file dependencies in the .h");
@@ -1371,8 +1353,7 @@ void checkIncludeGuard(ErrorFile& errors, const string& path, const vector<Token
   // Allow #pragma once as an include guard
   if (atSequence(tokens, 0, pragmaOnce) && cmpTok(tokens[1], "once")) return;
 
-  static constexpr array<TokenType, 4> includeGuard = {TK_IFNDEF, TK_IDENTIFIER, TK_DEFINE,
-                                                       TK_IDENTIFIER};
+  static constexpr array<TokenType, 4> includeGuard = {TK_IFNDEF, TK_IDENTIFIER, TK_DEFINE, TK_IDENTIFIER};
 
   if (!atSequence(tokens, 0, includeGuard)) {
     lintError(errors, tokens[0], "Missing include guard.");
@@ -1380,7 +1361,8 @@ void checkIncludeGuard(ErrorFile& errors, const string& path, const vector<Token
   }
 
   if (!cmpToks(tokens[1], tokens[3]))
-    lintError(errors, tokens[1],
+    lintError(errors,
+              tokens[1],
               "Include guard name mismatch; expected " + to_string(tokens[1].value_) + ", saw " +
                   to_string(tokens[3].value_));
 
@@ -1389,8 +1371,7 @@ void checkIncludeGuard(ErrorFile& errors, const string& path, const vector<Token
   size_t       pos;
   const size_t size = tokens.size();
   for (pos = 1; pos < size; ++pos) {
-    if (isTok(tokens[pos], TK_IFNDEF) || isTok(tokens[pos], TK_IFDEF) ||
-        isTok(tokens[pos], TK_POUNDIF)) {
+    if (isTok(tokens[pos], TK_IFNDEF) || isTok(tokens[pos], TK_IFDEF) || isTok(tokens[pos], TK_POUNDIF)) {
       ++openIf;
       continue;
     }
@@ -1419,14 +1400,15 @@ void checkIncludeGuard(ErrorFile& errors, const string& path, const vector<Token
  * @param tokens
  *        The token list for the file
  */
-void checkImplicitCast(ErrorFile& errors, const string& path, const vector<Token>& tokens,
+void checkImplicitCast(ErrorFile&            errors,
+                       const string&         path,
+                       const vector<Token>&  tokens,
                        const vector<size_t>& structures) {
   if (getFileCategory(path) == FileCategory::SOURCE_C) return;
 
   static const string lintOverride{"/* implicit */"};
 
-  static constexpr array<TokenType, 3> explicitConstOperator{TK_EXPLICIT, TK_CONSTEXPR,
-                                                             TK_OPERATOR};
+  static constexpr array<TokenType, 3> explicitConstOperator{TK_EXPLICIT, TK_CONSTEXPR, TK_OPERATOR};
   static constexpr array<TokenType, 2> explicitOperator{TK_EXPLICIT, TK_OPERATOR};
   static constexpr array<TokenType, 2> doubleColonOperator{TK_DOUBLE_COLON, TK_OPERATOR};
 
@@ -1436,7 +1418,7 @@ void checkImplicitCast(ErrorFile& errors, const string& path, const vector<Token
 
   // Check for constructor specifications inside classes
   const size_t toksize = tokens.size();
-  for (unsigned long pos : structures) {
+  for (unsigned long pos: structures) {
     if (!(isTok(tokens[pos], TK_STRUCT) || isTok(tokens[pos], TK_CLASS))) continue;
 
     // Skip to opening '{'
@@ -1461,21 +1443,21 @@ void checkImplicitCast(ErrorFile& errors, const string& path, const vector<Token
         ++(++pos);
         continue;
       }
-      if (atSequence(tokens, pos, explicitOperator) ||
-          atSequence(tokens, pos, doubleColonOperator)) {
+      if (atSequence(tokens, pos, explicitOperator) || atSequence(tokens, pos, doubleColonOperator)) {
         ++pos;
         continue;
       }
 
       // bool Operator case
       if (atSequence(tokens, pos, boolOperator)) {
-        if (atSequence(tokens, pos + 4, operatorDelete) ||
-            atSequence(tokens, pos + 4, operatorConstDelete)) {
+        if (atSequence(tokens, pos + 4, operatorDelete) || atSequence(tokens, pos + 4, operatorConstDelete)) {
           // Deleted implicit operators are ok.
           continue;
         }
 
-        lintError(errors, tok, "operator bool() is dangerous.",
+        lintError(errors,
+                  tok,
+                  "operator bool() is dangerous.",
                   "In C++11 use explicit conversion (explicit operator bool()), "
                   "otherwise use something like the safe-bool idiom if the syntactic "
                   "convenience is justified in this case, or consider defining a "
@@ -1485,8 +1467,7 @@ void checkImplicitCast(ErrorFile& errors, const string& path, const vector<Token
       }
 
       // Only want to process operators which do not have the overide
-      if (!isTok(tok, TK_OPERATOR) ||
-          contains(tok.precedingWhitespace_, lintOverride.cbegin(), lintOverride.cend()))
+      if (!isTok(tok, TK_OPERATOR) || contains(tok.precedingWhitespace_, lintOverride.cbegin(), lintOverride.cend()))
         continue;
 
       // Assume it is an implicit conversion unless proven otherwise
@@ -1495,9 +1476,7 @@ void checkImplicitCast(ErrorFile& errors, const string& path, const vector<Token
       for (size_t typePos = pos + 1; typePos < toksize; ++typePos) {
         if (isTok(tokens[typePos], TK_LPAREN)) break;
 
-        if (atBuiltinType(tokens, typePos) || isTok(tokens[typePos], TK_IDENTIFIER)) {
-          isImplicitConversion = true;
-        }
+        if (atBuiltinType(tokens, typePos) || isTok(tokens[typePos], TK_IDENTIFIER)) { isImplicitConversion = true; }
 
         if (!typeString.empty()) typeString += ' ';
         const auto& val = tokens[typePos].value_;
@@ -1507,7 +1486,8 @@ void checkImplicitCast(ErrorFile& errors, const string& path, const vector<Token
       // The operator my not have been an implicit conversion
       if (!isImplicitConversion) continue;
 
-      lintWarning(errors, tok,
+      lintWarning(errors,
+                  tok,
                   "Implicit conversion to '" + typeString + "' may inadvertently be used.",
                   "Prefix the function with the 'explicit' keyword to avoid this,"
                   " or add an /* implicit *"
@@ -1616,9 +1596,9 @@ void checkInlHeaderInclusions(ErrorFile& errors, const string& path, const vecto
 
     if (cmpStr(fileBase, includedBase)) continue;
 
-    lintError(errors, tokens[pos],
-              "An -inl file (" + includedFile +
-                  ") was included even though this is not its associated header.",
+    lintError(errors,
+              tokens[pos],
+              "An -inl file (" + includedFile + ") was included even though this is not its associated header.",
               "Usually files like Foo-inl.h are implementation details and should "
               "not be included outside of Foo.h.");
   }
@@ -1634,17 +1614,21 @@ void checkInlHeaderInclusions(ErrorFile& errors, const string& path, const vecto
  * @param tokens
  *        The token list for the file
  */
-void checkProtectedInheritance(ErrorFile& errors, const string& path, const vector<Token>& tokens,
+void checkProtectedInheritance(ErrorFile&            errors,
+                               const string&         path,
+                               const vector<Token>&  tokens,
                                const vector<size_t>& structures) {
   static constexpr array<TokenType, 3> protectedSequence{TK_COLON, TK_PROTECTED, TK_IDENTIFIER};
 
   const size_t toksize = tokens.size();
-  for (auto pos : structures) {
+  for (auto pos: structures) {
     for (; pos < toksize - 2; ++pos) {
       if (isTok(tokens[pos], TK_LCURL) || isTok(tokens[pos], TK_SEMICOLON)) break;
 
       if (atSequence(tokens, pos, protectedSequence))
-        lintWarning(errors, tokens[pos], "Protected inheritance is sometimes not a good idea.",
+        lintWarning(errors,
+                    tokens[pos],
+                    "Protected inheritance is sometimes not a good idea.",
                     "Read "
                     "http://stackoverflow.com/questions/6484306/"
                     "effective-c-discouraging-protected-inheritance "
@@ -1723,15 +1707,13 @@ void checkUniquePtrUsage(ErrorFile& errors, const string& path, const vector<Tok
       } else {
         while (atBuiltinType(tokens, i)) ++i;
       }
-      while (isTok(tokens[i], TK_STAR) || isTok(tokens[i], TK_CONST) ||
-             isTok(tokens[i], TK_VOLATILE))
-        ++i;
+      while (isTok(tokens[i], TK_STAR) || isTok(tokens[i], TK_CONST) || isTok(tokens[i], TK_VOLATILE)) ++i;
 
       if (isTok(tokens[i], TK_LSQUARE) != uniquePtrHasArray)
-        lintError(errors, tokens[uniquePtrIt],
-                  (uniquePtrHasArray
-                       ? "unique_ptr<T[]> should be used with an array type."
-                       : "unique_ptr<T> should be unique_ptr<T[]> when used with an array."));
+        lintError(errors,
+                  tokens[uniquePtrIt],
+                  (uniquePtrHasArray ? "unique_ptr<T[]> should be used with an array type."
+                                     : "unique_ptr<T> should be unique_ptr<T[]> when used with an array."));
       break;
     }
   }
@@ -1798,8 +1780,8 @@ void checkSmartPtrUsage(ErrorFile& errors, const string& path, const vector<Toke
       // case an allocator is used and thus suggests allocate_shared.
       const string newFn{(args.size() == 3) ? "allocate_shared" : "make_shared"};
 
-      lintWarning(errors, tokens[sharedPtrIt],
-                  "Consider using '" + newFn + "' which performs better with fewer allocations.");
+      lintWarning(
+          errors, tokens[sharedPtrIt], "Consider using '" + newFn + "' which performs better with fewer allocations.");
     }
   }
 };
@@ -1829,7 +1811,8 @@ void checkMutexHolderHasName(ErrorFile& errors, const string& path, const vector
     if (atSequence(tokens, pos, mutexSequence) && cmpTok(tokens[pos], mutexHolder)) {
       pos = skipTemplateSpec(tokens, ++pos);
       if (atSequence(tokens, pos, mutexConstructor))
-        lintError(errors, tokens[pos],
+        lintError(errors,
+                  tokens[pos],
                   "Mutex holder variable declared without a name, "
                   "causing the lock to be released immediately.");
     }
