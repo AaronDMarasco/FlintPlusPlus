@@ -8,11 +8,11 @@ namespace flint {
 enum Lint { ERROR, WARNING, ADVICE };
 
 struct OptionsInfo {
-  bool RECURSIVE;
-  bool CMODE;
-  bool JSON;
-  bool VERBOSE;
-  int  LEVEL;
+  bool RECURSIVE{false};
+  bool CMODE{false};
+  bool JSON{false};
+  bool VERBOSE{false};
+  int  LEVEL{Lint::ADVICE};
 };
 extern OptionsInfo Options;
 

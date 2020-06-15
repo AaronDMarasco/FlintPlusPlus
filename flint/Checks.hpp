@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "ErrorReport.hpp"
-#include "Polyfill.hpp"
 #include "Tokenizer.hpp"
 
 namespace flint {

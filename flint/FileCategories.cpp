@@ -1,8 +1,8 @@
 #include "FileCategories.hpp"
 
 #include <algorithm>
+#include <array>
 #include <functional>
-#include <vector>
 
 #include "Polyfill.hpp"
 
@@ -11,9 +11,9 @@ using namespace std;
 namespace flint {
 
 // File Extensions to lint
-const vector<string> extsHeader    = {".h", ".hpp", ".hh"};
-const vector<string> extsSourceC   = {".c"};
-const vector<string> extsSourceCpp = {".C", ".cc", ".cpp", ".CPP", ".c++", ".cp", ".cxx"};
+static const array<string, 3> extsHeader{".h", ".hpp", ".hh"};
+static const array<string, 1> extsSourceC{".c"};
+static const array<string, 7> extsSourceCpp{".C", ".cc", ".cpp", ".CPP", ".c++", ".cp", ".cxx"};
 
 /**
  * Tests if a given string ends with a suffix
@@ -47,8 +47,7 @@ bool containsSuffix(const string& str, Container suffixes) {
 }
 
 /**
- * Attempts to discern whether what type the given file is
- * based on it's extension
+ * Attempts to discern whether what type the given file is based on it's extension
  *
  * @param path
  *        The path of the file to identify
@@ -57,19 +56,18 @@ bool containsSuffix(const string& str, Container suffixes) {
  */
 FileCategory getFileCategory(const string& path) {
   // Test header extensions
-  for (const string& ext : extsHeader) {
-    if (hasSuffix(path, ("-inl" + ext))) {
+  for (const auto& ext : extsHeader) {
+    if (hasSuffix(path, ("-inl" + ext)))
       return FileCategory::INL_HEADER;
-    } else if (hasSuffix(path, ext)) {
+    else if (hasSuffix(path, ext))
       return FileCategory::HEADER;
-    }
   }
 
   // Test C extensions
-  if (containsSuffix(path, extsSourceC)) { return FileCategory::SOURCE_C; }
+  if (containsSuffix(path, extsSourceC)) return FileCategory::SOURCE_C;
 
   // Test CPP extensions
-  if (containsSuffix(path, extsSourceCpp)) { return FileCategory::SOURCE_CPP; }
+  if (containsSuffix(path, extsSourceCpp)) return FileCategory::SOURCE_CPP;
 
   return FileCategory::UNKNOWN;
 };
@@ -84,7 +82,7 @@ FileCategory getFileCategory(const string& path) {
  *        Returns true if the file is a header or inline header file
  */
 bool isHeader(const string& path) {
-  FileCategory fCat = getFileCategory(path);
+  const auto fCat = getFileCategory(path);
   return (fCat == FileCategory::INL_HEADER || fCat == FileCategory::HEADER);
 };
 
@@ -98,7 +96,7 @@ bool isHeader(const string& path) {
  *        Returns true if the file is a source or c source file
  */
 bool isSource(const string& path) {
-  FileCategory fCat = getFileCategory(path);
+  const auto fCat = getFileCategory(path);
   return (fCat == FileCategory::SOURCE_C || fCat == FileCategory::SOURCE_CPP);
 };
 
@@ -106,30 +104,27 @@ bool isSource(const string& path) {
  * Strips the extension off of the given string and returns the file name
  *
  * @param path
- *        The path of the file trim
+ *        The path of the file to trim
  * @return
  *        Returns the file name without any linter extensions
  */
 string getFileNameBase(const string& path) {
   // Test header extensions
-  for (const string& ext : extsHeader) {
-    string inlext = "-inl" + ext;
-    if (hasSuffix(path, inlext)) {
+  for (const auto& ext : extsHeader) {
+    const string inlext{"-inl" + ext};
+    if (hasSuffix(path, inlext))
       return path.substr(0, path.size() - inlext.size());
-    } else if (hasSuffix(path, ext)) {
+    else if (hasSuffix(path, ext))
       return path.substr(0, path.size() - ext.size());
-    }
   }
 
   // Test C extensions
-  for (const string& ext : extsSourceC) {
-    if (hasSuffix(path, ext)) { return path.substr(0, path.size() - ext.size()); }
-  }
+  for (const auto& ext : extsSourceC)
+    if (hasSuffix(path, ext)) return path.substr(0, path.size() - ext.size());
 
   // Test CPP extensions
-  for (const string& ext : extsSourceCpp) {
-    if (hasSuffix(path, ext)) { return path.substr(0, path.size() - ext.size()); }
-  }
+  for (const auto& ext : extsSourceCpp)
+    if (hasSuffix(path, ext)) return path.substr(0, path.size() - ext.size());
 
   // No extension to strip
   return path;
@@ -139,14 +134,14 @@ string getFileNameBase(const string& path) {
  * Strips the path off of a file name
  *
  * @param path
- *        The path of the file trim
+ *        The path of the file to process
  * @return
- *        Returns the file name without any linter extensions
+ *        Returns everything before FS_SEP
  */
 string getFileName(const string& path) {
-  size_t pos = path.find_last_of(FS_SEP);
+  const size_t pos = path.find_last_of(FS_SEP);
 
-  if (pos == string::npos || pos == path.size() - 2) { return path; }
+  if (pos == string::npos || pos == path.size() - 2) return path;
   return path.substr(pos + 1);
 };
 };  // namespace flint

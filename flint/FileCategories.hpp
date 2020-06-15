@@ -5,7 +5,7 @@
 namespace flint {
 
 // Indentifiers for files marked for linting
-enum class FileCategory {
+enum FileCategory {
   HEADER,
   INL_HEADER,
   SOURCE_C,

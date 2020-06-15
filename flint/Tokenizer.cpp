@@ -1,12 +1,7 @@
 #include "Tokenizer.hpp"
 
-#include <algorithm>
-#include <cinttypes>
 #include <numeric>
-#include <stdexcept>
 #include <unordered_map>
-
-#include "Polyfill.hpp"
 
 using namespace std;
 
@@ -78,7 +73,7 @@ static StringFragment munchChars(string::const_iterator& pc, size_t howMany) {
  * from pc and returns it.
  */
 static StringFragment munchIdentifier(string::const_iterator& pc, string::const_iterator inputEnd) {
-  size_t size = distance(pc, inputEnd);
+  const size_t size = distance(pc, inputEnd);
   for (size_t i = 0; i < size; ++i) {
     assert(i < size);
     const char c = pc[i];
@@ -135,6 +130,7 @@ static StringFragment munchSingleLineComment(string::const_iterator& pc,
       ++line;
       if (i > 0 && pc[i - 1] == '\\') {
         // multiline single-line comment (sic)
+        // TODO: This should probably be a warning
         continue;
       }
       // end of comment
@@ -155,7 +151,7 @@ static StringFragment munchNumber(string::const_iterator& pc) {
   bool sawDot = false, sawExp = false, sawX = false, sawSuffix = false;
   for (size_t i = 0;; ++i) {
     // assert(i < pc.size());
-    auto const c = pc[i];
+    const auto c = pc[i];
     if (c == '.' && !sawDot && !sawExp && !sawSuffix) {
       sawDot = true;
     } else if (isdigit(c)) {
@@ -166,10 +162,9 @@ static StringFragment munchNumber(string::const_iterator& pc) {
       // number!
     } else if (c == '+' || c == '-') {
       // Sign may appear at the start or right after E or P
-      if (i > 0 && !strchr("EePp", pc[i - 1])) {
+      if (i > 0 && !strchr("EePp", pc[i - 1]))
         // Done, the sign is the next token
         return munchChars(pc, i);
-      }
     } else if (!sawX && !sawExp && !sawSuffix && (c == 'e' || c == 'E')) {
       sawExp = true;
     } else if (sawX && !sawExp && !sawSuffix && (c == 'p' || c == 'P')) {
@@ -198,7 +193,7 @@ static StringFragment munchNumber(string::const_iterator& pc) {
 static StringFragment munchCharLiteral(string::const_iterator& pc, size_t& line) {
   assert(pc[0] == '\'');
   for (size_t i = 1;; ++i) {
-    auto const c = pc[i];
+    const auto c = pc[i];
     if (c == '\'') {
       // That's about it
       return munchChars(pc, i + 1);
@@ -219,18 +214,17 @@ static StringFragment munchCharLiteral(string::const_iterator& pc, size_t& line)
  */
 static StringFragment munchString(string::const_iterator& pc, size_t& line,
                                   bool isIncludeLiteral = false) {
-  char stringEnd = (isIncludeLiteral ? '>' : '"');
+  const char stringEnd = isIncludeLiteral ? '>' : '"';
 
   assert(pc[0] == (isIncludeLiteral ? '<' : '"'));
   for (size_t i = 1;; ++i) {
-    auto const c = pc[i];
-    if (c == stringEnd) {
+    const auto c = pc[i];
+    if (c == stringEnd)
       // That's about it
       return munchChars(pc, i + 1);
-    }
     if (c == '\\') {
       ++i;
-      if (pc[i] == '\n') { ++line; }
+      if (pc[i] == '\n') ++line;
       continue;
     }
     ENFORCE(c, "Unterminated string constant: " + string(&*pc));
@@ -239,7 +233,7 @@ static StringFragment munchString(string::const_iterator& pc, size_t& line,
 
 /**
  * Munches horizontal spaces from pc. If we want to disallow tabs in
- * sources, here is the place. No need for end=of-input checks as the
+ * sources, here is the place. No need for end-of-input checks as the
  * input always has a '\0' at the end.
  */
 static StringFragment munchSpaces(string::const_iterator& pc) {
@@ -262,8 +256,8 @@ size_t tokenize(const string& input, const string& file, vector<Token>& output,
   output.clear();
   structures.clear();
 
-  static const string         eof("\0");
-  static const string         empty("");
+  static const string         eof{"\0"};
+  static const string         empty{};
   static const StringFragment nothing{begin(empty), end(empty)};
 
   auto   pc   = input.begin();
@@ -283,16 +277,16 @@ size_t tokenize(const string& input, const string& file, vector<Token>& output,
     const char c = pc[0];
 
     if (output.size() > 0) {
-      const TokenType tok = output.back().type_;
+      const auto tok = output.back().type_;
       if ((tok == TK_CLASS || tok == TK_STRUCT || tok == TK_UNION) &&
           (structures.empty() || structures.back() != output.size() - 1)) {
-        // If the last token added was the start of a structure push it onto
+        // If the last token added was the start of a structure, push it onto
         // the list of structures
         structures.push_back(output.size() - 1);
       } else if (c == '<' && tok == TK_INCLUDE) {
         // Special case for parsing #include <...>
         // Previously the include path would not be captured as a string literal
-        auto str = munchString(pc, line, true);
+        const auto str = munchString(pc, line, true);
         output.emplace_back(TK_STRING_LITERAL, move(str), line, whitespace);
         whitespace = nothing;
         continue;
@@ -320,7 +314,6 @@ size_t tokenize(const string& input, const string& file, vector<Token>& output,
       tokenLen = 1;                            \
     }                                          \
     goto INSERT_TOKEN;
-      // Insert a bunch of code here
       CPPLINT_FORALL_ONE_OR_TWO_CHAR_TOKENS(CPPLINT_INTRODUCE_CASE);
 #undef CPPLINT_INTRODUCE_CASE
 #define CPPLINT_INTRODUCE_CASE(c1, t1, c2, t2, c3, t3) \
@@ -336,7 +329,6 @@ size_t tokenize(const string& input, const string& file, vector<Token>& output,
       tokenLen = 1;                                    \
     }                                                  \
     goto INSERT_TOKEN;
-      // Insert a bunch of code here
       CPPLINT_FORALL_ONE_OR_TWO_CHAR_TOKENS2(CPPLINT_INTRODUCE_CASE);
 #undef CPPLINT_INTRODUCE_CASE
 #define CPPLINT_INTRODUCE_CASE(c1, t1, c2, t2, c3, t3, c4, t4) \
@@ -357,7 +349,6 @@ size_t tokenize(const string& input, const string& file, vector<Token>& output,
       tokenLen = 1;                                            \
     }                                                          \
     goto INSERT_TOKEN;
-      // Insert a bunch of code here
       CPPLINT_FORALL_ONE_TO_THREE_CHAR_TOKENS(CPPLINT_INTRODUCE_CASE);
 #undef CPPLINT_INTRODUCE_CASE
         // *** Everything starting with a slash: /, /=, single- and
@@ -451,6 +442,20 @@ size_t tokenize(const string& input, const string& file, vector<Token>& output,
         // cerr << ("Invalid character: " + string(1, c) + " in " + string(file + ":" +
         // to_string(line))) << endl;
         break;
+        // *** Number, member selector, ellipsis, or .*
+      case '.':
+        if (isdigit(pc[1])) { goto ITS_A_NUMBER; }
+        if (pc[1] == '*') {
+          t        = TK_DOT_STAR;
+          tokenLen = 2;
+        } else if (pc[1] == '.' && pc[2] == '.') {
+          t        = TK_ELLIPSIS;
+          tokenLen = 3;
+        } else {
+          t        = TK_DOT;
+          tokenLen = 1;
+        }
+        goto INSERT_TOKEN;
         // *** Numbers
       case '0':
       case '1':
@@ -468,20 +473,6 @@ size_t tokenize(const string& input, const string& file, vector<Token>& output,
         output.emplace_back(TK_NUMBER, move(symbol), line, whitespace);
         whitespace = nothing;
       } break;
-        // *** Number, member selector, ellipsis, or .*
-      case '.':
-        if (isdigit(pc[1])) { goto ITS_A_NUMBER; }
-        if (pc[1] == '*') {
-          t        = TK_DOT_STAR;
-          tokenLen = 2;
-        } else if (pc[1] == '.' && pc[2] == '.') {
-          t        = TK_ELLIPSIS;
-          tokenLen = 3;
-        } else {
-          t        = TK_DOT;
-          tokenLen = 1;
-        }
-        goto INSERT_TOKEN;
         // *** Character literal
       case '\'': {
         auto charLit = munchCharLiteral(pc, line);
@@ -560,7 +551,7 @@ size_t tokenize(const string& input, const string& file, vector<Token>& output,
           auto symbol = munchIdentifier(pc, input.cend());
           auto iter   = keywords.find(symbol);
           if (iter != keywords.end()) {
-            // keyword, baby
+            // keyword
             output.emplace_back(iter->second, move(symbol), line, whitespace);
             whitespace = nothing;
           } else {

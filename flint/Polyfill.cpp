@@ -1,7 +1,6 @@
 #include "Polyfill.hpp"
 
 #include <sys/stat.h>
-#include <sys/types.h>
 
 #include <algorithm>
 #include <fstream>
@@ -18,6 +17,17 @@ using namespace std;
 
 namespace flint {
 
+// Quick checks for path names (previously macros)
+template <typename T>
+inline bool fs_isnot_specialdir(const T& file) {  // was FS_ISNOT_LINK (???)
+  return file.compare(".") and file.compare("..");
+}
+
+template <typename T>
+inline bool fs_isnot_git(const T& file) {
+  return file.compare(".git");
+}
+
 /**
  * Checks if a given path is a file or directory
  *
@@ -28,16 +38,15 @@ namespace flint {
  */
 FSType fsObjectExists(const string& path) {
   struct stat info;
-  if (stat(path.c_str(), &info) != 0) {
+  if (stat(path.c_str(), &info))
     // Cannot Access
     return FSType::NO_ACCESS;
-  } else if (info.st_mode & S_IFDIR) {
+  if (info.st_mode & S_IFDIR)
     // Is a Directory
     return FSType::IS_DIR;
-  } else if (info.st_mode & S_IFREG) {
+  if (info.st_mode & S_IFREG)
     // Is a File
     return FSType::IS_FILE;
-  }
   return FSType::NO_ACCESS;
 };
 
@@ -51,7 +60,7 @@ FSType fsObjectExists(const string& path) {
  */
 bool fsContainsNoLint(const string& path) {
   const string fileName{path + FS_SEP + ".nolint"};
-  return (fsObjectExists(fileName) == FSType::IS_FILE);
+  return fsObjectExists(fileName) == FSType::IS_FILE;
 };
 
 /**
@@ -68,9 +77,7 @@ bool fsGetDirContents(const string& path, vector<string>& dirs) {
   dirs.clear();
 
 #ifdef _WIN32
-  //
   // windows.h Implementation of directory traversal for Windows systems
-  //
   HANDLE          dir;
   WIN32_FIND_DATA fileData;
 
@@ -81,7 +88,7 @@ bool fsGetDirContents(const string& path, vector<string>& dirs) {
   do {
     const string fsObj = fileData.cFileName;
 
-    if (FS_ISNOT_LINK(fsObj) && FS_ISNOT_GIT(fsObj)) {
+    if (fs_isnot_specialdir(fsObj) && fs_isnot_git(fsObj)) {
       const string fileName = path + FS_SEP + fsObj;
       dirs.push_back(move(fileName));
     }
@@ -89,13 +96,12 @@ bool fsGetDirContents(const string& path, vector<string>& dirs) {
 
   FindClose(dir);
 #else
-  //
   // dirent.h Implementation of directory traversal for POSIX systems
-  //
   if (DIR* pDIR = opendir(path.c_str())) {
     while (struct dirent* entry = readdir(pDIR)) {
-      const string fsObj = entry->d_name;
-      if (FS_ISNOT_LINK(fsObj) && FS_ISNOT_GIT(fsObj)) dirs.emplace_back(path + FS_SEP + fsObj);
+      const string fsObj{entry->d_name};
+      if (fs_isnot_specialdir(fsObj) && fs_isnot_git(fsObj))
+        dirs.emplace_back(path + FS_SEP + fsObj);
     }
     closedir(pDIR);
   }
@@ -126,6 +132,7 @@ bool getFileContents(const string& path, string& file) {
   }
   return false;
 };
+
 #if 0
 /**
  * Tests if a given string starts with a prefix
@@ -142,6 +149,7 @@ bool startsWith(const T& str, const T& prefix) {
   return equal(begin(prefix), end(prefix), begin(str));
 };
 #endif
+
 /**
  * Tests if a given string starts with a C-string prefix
  *

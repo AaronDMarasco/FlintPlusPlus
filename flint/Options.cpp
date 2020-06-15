@@ -1,6 +1,5 @@
 #include "Options.hpp"
 
-#include <iostream>
 #include <unordered_map>
 
 using namespace std;
@@ -10,9 +9,9 @@ namespace flint {
 OptionsInfo Options;
 
 /**
- * Prints the usage information for the program, then exits.
+ * Prints the usage information for the program, then exits with error.
  */
-void printHelp() {
+void __attribute__((noreturn)) printHelp() {
   printf(
       "Usage: flint++ [options] [files]\n\n"
       "\t-r, --recursive\t\t: Search subfolders for files.\n"
@@ -38,40 +37,33 @@ void printHelp() {
  * @param argc
  *        The number of arguments
  * @param argv
- *        The list of cmd line arguments
+ *        The list of cmdline arguments
  * @param paths
  *        A vector of strings to be filled with lint paths
  */
 void parseArgs(int argc, char* argv[], vector<string>& paths) {
-  // Set default values
-  Options.RECURSIVE = false;
-  Options.CMODE     = false;
-  Options.JSON      = false;
-  Options.VERBOSE   = false;
-  Options.LEVEL     = Lint::ADVICE;
-  bool HELP         = false;
+  bool HELP = false;
+  bool l1   = false;
+  bool l2   = false;
+  bool l3   = false;
 
-  bool l1 = false;
-  bool l2 = false;
-  bool l3 = false;
-
+  // TODO: C++17 std::variant
   enum ArgType { BOOL, INT };
   struct Arg {
-    ArgType     type;
-    const void* ptr;
+    ArgType type;
+    void*   ptr;
   };
 
-  // Map values to their cmd line flags
+  // Map values to their cmdline flags
   Arg argHelp      = {ArgType::BOOL, &HELP};
   Arg argRecursive = {ArgType::BOOL, &Options.RECURSIVE};
   Arg argCMode     = {ArgType::BOOL, &Options.CMODE};
   Arg argJSON      = {ArgType::BOOL, &Options.JSON};
   Arg argVerbose   = {ArgType::BOOL, &Options.VERBOSE};
-
-  Arg argLevel = {ArgType::INT, &Options.LEVEL};
-  Arg argL1    = {ArgType::BOOL, &l1};
-  Arg argL2    = {ArgType::BOOL, &l2};
-  Arg argL3    = {ArgType::BOOL, &l3};
+  Arg argLevel     = {ArgType::INT, &Options.LEVEL};
+  Arg argL1        = {ArgType::BOOL, &l1};
+  Arg argL2        = {ArgType::BOOL, &l2};
+  Arg argL3        = {ArgType::BOOL, &l3};
   // clang-format off
   static const unordered_map<string, Arg &> params {
     { "-h", argHelp },
@@ -100,16 +92,15 @@ void parseArgs(int argc, char* argv[], vector<string>& paths) {
   for (int i = 1; i < argc; ++i) {
     // If the current argument is in the map
     // then set its value to true
-    auto it = params.find(string(argv[i]));
+    const auto it = params.find(string(argv[i]));
     if (it != params.end()) {
       if (it->second.type == ArgType::BOOL) {
-        bool* arg = (bool*)it->second.ptr;
-        *arg      = true;
+        auto arg = static_cast<bool*>(it->second.ptr);
+        *arg     = true;
       } else if (it->second.type == ArgType::INT) {
-        int* arg = (int*)it->second.ptr;
+        auto arg = static_cast<int*>(it->second.ptr);
 
-        ++i;
-        if (i >= argc) {
+        if (++i >= argc) {
           printf("Missing (int) value for parameter: %s\n\n", it->first.c_str());
           printHelp();
         }
@@ -121,26 +112,24 @@ void parseArgs(int argc, char* argv[], vector<string>& paths) {
     } else {
       // Push another path onto the lint list
       string p = argv[i];
-      if (p.back() == '/' || p.back() == '\\') { p.erase(p.end() - 1, p.end()); }
+      if (p.back() == '/' || p.back() == '\\') p.erase(p.end() - 1, p.end());
       paths.push_back(move(p));
     }
   }
 
-  if (l1) {
+  if (HELP) printHelp();
+
+  if (l1)
     Options.LEVEL = Lint::ERROR;
-  } else if (l2) {
+  else if (l2)
     Options.LEVEL = Lint::WARNING;
-  } else if (l3) {
+  else if (l3)
     Options.LEVEL = Lint::ADVICE;
-  }
 
-  // Make sure level was given a correct value
-  Options.LEVEL = ((Options.LEVEL > Lint::ADVICE)
-                       ? Lint::ADVICE
-                       : ((Options.LEVEL < Lint::ERROR) ? Lint::ERROR : Options.LEVEL));
+  // Make sure level was given a valid value
+  Options.LEVEL = std::min(Options.LEVEL, static_cast<int>(Lint::ADVICE));
+  Options.LEVEL = std::max(Options.LEVEL, static_cast<int>(Lint::ERROR));
 
-  if (paths.size() == 0) { paths.emplace_back("."); }
-
-  if (HELP) { printHelp(); }
+  if (paths.empty()) paths.emplace_back(".");
 };
 };  // namespace flint

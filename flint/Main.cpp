@@ -1,14 +1,11 @@
 #include <iostream>
 #include <string>
-#include <vector>
 
 #include "Checks.hpp"
 #include "ErrorReport.hpp"
 #include "FileCategories.hpp"
 #include "Ignored.hpp"
 #include "Options.hpp"
-#include "Polyfill.hpp"
-#include "Tokenizer.hpp"
 
 using namespace std;
 using namespace flint;
@@ -29,36 +26,36 @@ using namespace flint;
  *        Returns the number of errors found
  */
 void checkEntry(ErrorReport& errors, const string& path, size_t& loc, uint depth = 0) {
-  FSType fsType = fsObjectExists(path);
-  if (fsType == FSType::NO_ACCESS) { return; }
+  const auto fsType = fsObjectExists(path);
+  if (fsType == FSType::NO_ACCESS) return;
 
   if (fsType == FSType::IS_DIR) {
-    if ((!Options.RECURSIVE && depth > 0) || fsContainsNoLint(path)) { return; }
+    if ((!Options.RECURSIVE && depth > 0) || fsContainsNoLint(path)) return;
 
     // For each object in the directory
     vector<string> dirs;
-    if (!fsGetDirContents(path, dirs)) { return; }
+    if (!fsGetDirContents(path, dirs)) return;
 
-    for (auto& dir : dirs) { checkEntry(errors, dir, loc, depth + 1); }
+    for (const auto& dir : dirs) checkEntry(errors, dir, loc, depth + 1);
+
     return;
   }
 
-  FileCategory srcType = getFileCategory(path);
-  if (srcType == FileCategory::UNKNOWN) { return; }
+  if (getFileCategory(path) == FileCategory::UNKNOWN) return;
 
-  string file;
-  if (!getFileContents(path, file)) { return; }
+  string fileContents;
+  if (!getFileContents(path, fileContents)) return;
 
   // Remove code that occurs in pairs of
   // "// %flint: pause" & "// %flint: resume"
-  file = removeIgnoredCode(file, path);
+  fileContents = removeIgnoredCode(fileContents, path);
 
   try {
     ErrorFile errorFile((Options.VERBOSE ? path : getFileName(path)));
 
     vector<Token>  tokens;
     vector<size_t> structures;
-    loc += tokenize(file, path, tokens, structures, errorFile);
+    loc += tokenize(fileContents, path, tokens, structures, errorFile);
 
     // Checks which note Errors
     checkBlacklistedIdentifiers(errorFile, path, tokens);
@@ -96,6 +93,7 @@ void checkEntry(ErrorReport& errors, const string& path, size_t& loc, uint depth
       }
     }
 
+#if 0
     // Checks which note Advice
     if (Options.LEVEL >= Lint::ADVICE) {
       // Deprecated due to too many false positives
@@ -106,9 +104,9 @@ void checkEntry(ErrorReport& errors, const string& path, size_t& loc, uint depth
         // checkUpcaseNull(errorFile, path, tokens);
       }
     }
+#endif
 
     errors.addFile(move(errorFile));
-
   } catch (exception const& e) {
     fprintf(stderr, "Exception thrown during checks on %s.\n%s\n\n", path.c_str(), e.what());
   }
@@ -125,18 +123,16 @@ int main(int argc, char* argv[]) {
   size_t totalLOC = 0;
   // Check each file
   ErrorReport errors;
-  for (auto& path : paths) { checkEntry(errors, path, totalLOC); }
+  for (auto& path : paths) checkEntry(errors, path, totalLOC);
 
   // Print summary
   errors.print();
-  if (!Options.JSON) { cout << endl << "Estimated Lines of Code: " << to_string(totalLOC) << endl; }
+  if (!Options.JSON) cout << endl << "Estimated Lines of Code: " << to_string(totalLOC) << endl;
 
 #ifdef _DEBUG
   // Stop visual studio from closing the window...
   system("PAUSE");
 #endif
 
-  if (errors.getWarnings() || errors.getErrors()) { return 1; }
-
-  return 0;
+  return errors.getWarnings() or errors.getErrors();  // POSIX standard is zero for success
 };

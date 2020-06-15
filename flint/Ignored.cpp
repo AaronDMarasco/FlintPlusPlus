@@ -2,15 +2,13 @@
 
 #include <algorithm>
 
-#include "Polyfill.hpp"
-
 using namespace std;
 
 namespace flint {
 
 // Constants
-const string kIgnorePause  = "// %flint: pause";
-const string kIgnoreResume = "// %flint: resume";
+static const string kIgnorePause{R"(// %flint: pause)"};
+static const string kIgnoreResume{R"(// %flint: resume)"};
 
 /**
  * Removed code between lint tags
@@ -47,10 +45,10 @@ string removeIgnoredCode(const string& file, const string& path) {
       // If no instance of ignoreResume was found, then show an error to the
       // user, with the line number for ignorePause.
       if (posResume == string::npos) {
-        uint lineNo = (uint)count(file.begin(), file.begin() + posPause, '\n');
+        auto lineNo = count(file.begin(), file.begin() + posPause, '\n');
         ++lineNo;
 
-        fprintf(stderr, "%s(%d): No matching \"%s\" found for \"%s\"\n", path.c_str(), lineNo,
+        fprintf(stderr, "%s(%zu): No matching \"%s\" found for \"%s\"\n", path.c_str(), lineNo,
                 kIgnoreResume.c_str(), kIgnorePause.c_str());
 
         result += file.substr(pos);
@@ -62,8 +60,8 @@ string removeIgnoredCode(const string& file, const string& path) {
         // position after ignoreResume.
         result += file.substr(pos, posPause - pos);
 
-        uint emptyLinesToAdd = (uint)count(file.begin() + posPause,
-                                           file.begin() + posResume + kIgnoreResume.size(), '\n');
+        const auto emptyLinesToAdd =
+            count(file.begin() + posPause, file.begin() + posResume + kIgnoreResume.size(), '\n');
 
         result += string(emptyLinesToAdd, '\n');
         pos = posResume + kIgnoreResume.size();

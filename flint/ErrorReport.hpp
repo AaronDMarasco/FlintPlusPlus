@@ -1,14 +1,11 @@
 #pragma once
-
 #include <array>
 #include <cassert>
 #include <iostream>
 #include <string>
-#include <vector>
 
 #include "Options.hpp"
 #include "Polyfill.hpp"
-
 namespace flint {
 
 /*
@@ -27,7 +24,7 @@ class ErrorObject {
       : m_type(type), m_line(line), m_title(move(title)), m_desc(move(desc)){};
 
   // Getter
-  uint getType() const { return m_type; };
+  size_t getType() const { return m_type; };
 
   /*
    * Prints a single error of the report in either
@@ -64,15 +61,15 @@ class ErrorObject {
 class ErrorBase {
  protected:
   // Members
-  uint m_errors{0}, m_warnings{0}, m_advice{0};
+  size_t m_errors{0}, m_warnings{0}, m_advice{0};
 
  public:
   ErrorBase(){};
 
-  uint getErrors() const { return m_errors; };
-  uint getWarnings() const { return m_warnings; };
-  uint getAdvice() const { return m_advice; };
-  uint getTotal() const { return m_advice + m_warnings + m_errors; };
+  size_t getErrors() const { return m_errors; };
+  size_t getWarnings() const { return m_warnings; };
+  size_t getAdvice() const { return m_advice; };
+  size_t getTotal() const { return m_advice + m_warnings + m_errors; };
 };
 
 /*
@@ -88,12 +85,16 @@ class ErrorFile : public ErrorBase {
   explicit ErrorFile(std::string path) : ErrorBase(), m_path(move(path)){};
 
   void addError(ErrorObject&& error) {
-    if (error.getType() == Lint::ERROR) {
-      ++m_errors;
-    } else if (error.getType() == Lint::WARNING) {
-      ++m_warnings;
+    switch (error.getType()) {
+      case Lint::WARNING:
+        ++m_warnings;
+        break;
+      case Lint::ADVICE:
+        ++m_advice;
+        break;
+      default:  // Lint::ERROR
+        ++m_errors;
     }
-    if (error.getType() == Lint::ADVICE) { ++m_advice; }
     m_objs.push_back(std::move(error));
   };
 
@@ -106,20 +107,17 @@ class ErrorFile : public ErrorBase {
     if (Options.JSON) {
       std::cout <<
                 "    {\n"
-                "\t    \"path\"     : \"" << escapeString(m_path)     << "\",\n"
+                "\t    \"path\"     : \"" << escapeString(m_path)          << "\",\n"
                 "\t    \"errors\"   : "   << std::to_string(getErrors())   << ",\n"
                 "\t    \"warnings\" : "   << std::to_string(getWarnings()) << ",\n"
                 "\t    \"advice\"   : "   << std::to_string(getAdvice())   << ",\n"
                 "\t    \"reports\"  : [\n";
       // clang-format on
       for (size_t i = 0, size = m_objs.size(); i < size; ++i) {
-        if (i > 0) { std::cout << ',' << std::endl; }
-
+        if (i > 0) std::cout << ',' << std::endl;
         m_objs[i].print(m_path);
       }
-
-      std::cout << "\n      ]\n"
-                   "    }";
+      std::cout << "\n      ]\n    }";
 
       return;
     }
@@ -159,13 +157,10 @@ class ErrorReport : public ErrorBase {
                 "\t\"files\"    : [\n";
       // clang-format on
       for (size_t i = 0, size = m_files.size(); i < size; ++i) {
-        if (i > 0) { std::cout << ',' << std::endl; }
-
+        if (i > 0) std::cout << ',' << std::endl;
         m_files[i].print();
       }
-
-      std::cout << "\n  ]\n"
-                   "}";
+      std::cout << "\n  ]\n}";
 
       return;
     }
@@ -175,14 +170,10 @@ class ErrorReport : public ErrorBase {
     }
 
     std::cout << "\nLint Summary: " << std::to_string(m_files.size())
-              << " files\n"
-                 "Errors: "
-              << std::to_string(getErrors());
+              << " files\nErrors: " << std::to_string(getErrors());
 
-    if (Options.LEVEL >= Lint::WARNING) {
-      std::cout << " Warnings: " << std::to_string(getWarnings());
-    }
-    if (Options.LEVEL >= Lint::ADVICE) { std::cout << " Advice: " << std::to_string(getAdvice()); }
+    if (Options.LEVEL >= Lint::WARNING) std::cout << " Warnings: " << std::to_string(getWarnings());
+    if (Options.LEVEL >= Lint::ADVICE) std::cout << " Advice: " << std::to_string(getAdvice());
     std::cout << std::endl;
   };
 };

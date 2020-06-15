@@ -1,15 +1,17 @@
 #pragma once
-
 #include <algorithm>
 #include <cassert>
 #include <cstring>
 #include <string>
-#include <vector>
 
 #include "ErrorReport.hpp"
+#include "Polyfill.hpp"
 
 namespace flint {
 // clang-format off
+
+// If this file is hard to follow, see https://en.wikipedia.org/wiki/X_Macro
+
 /**
  * Higher-order macro that applies "apply" (which itself is usually a
  * macro) to each C++ token that consists of one character and is not
@@ -81,80 +83,80 @@ namespace flint {
  * Higher-order macro that applies "apply" (which itself is usually a
  * macro) to each C++ alphanumeric token.
 */
-#define CPPLINT_FORALL_KEYWORDS(apply)                            \
-  apply("auto", TK_AUTO)                                          \
-  apply("const", TK_CONST)                                        \
-  apply("constexpr", TK_CONSTEXPR)                                \
-  apply("double", TK_DOUBLE)                                      \
-  apply("float", TK_FLOAT)                                        \
-  apply("int", TK_INT)                                            \
-  apply("short", TK_SHORT)                                        \
-  apply("struct", TK_STRUCT)                                      \
-  apply("unsigned", TK_UNSIGNED)                                  \
-  apply("break", TK_BREAK)                                        \
-  apply("continue", TK_CONTINUE)                                  \
-  apply("else", TK_ELSE)                                          \
-  apply("for", TK_FOR)                                            \
-  apply("long", TK_LONG)                                          \
-  apply("signed", TK_SIGNED)                                      \
-  apply("switch", TK_SWITCH)                                      \
-  apply("void", TK_VOID)                                          \
-  apply("case", TK_CASE)                                          \
-  apply("default", TK_DEFAULT)                                    \
-  apply("enum", TK_ENUM)                                          \
-  apply("goto", TK_GOTO)                                          \
-  apply("register", TK_REGISTER)                                  \
-  apply("sizeof", TK_SIZEOF)                                      \
-  apply("typedef", TK_TYPEDEF)                                    \
-  apply("volatile", TK_VOLATILE)                                  \
-  apply("char", TK_CHAR)                                          \
-  apply("do", TK_DO)                                              \
-  apply("extern", TK_EXTERN)                                      \
-  apply("if", TK_IF)                                              \
-  apply("return", TK_RETURN)                                      \
-  apply("static", TK_STATIC)                                      \
-  apply("union", TK_UNION)                                        \
-  apply("while", TK_WHILE)                                        \
-  apply("asm", TK_ASM)                                            \
-  apply("dynamic_cast", TK_DYNAMIC_CAST)                          \
-  apply("namespace", TK_NAMESPACE)                                \
-  apply("reinterpret_cast", TK_REINTERPRET_CAST)                  \
-  apply("try", TK_TRY)                                            \
-  apply("bool", TK_BOOL)                                          \
-  apply("explicit", TK_EXPLICIT)                                  \
-  apply("new", TK_NEW)                                            \
-  apply("static_cast", TK_STATIC_CAST)                            \
-  apply("typeid", TK_TYPEID)                                      \
-  apply("catch", TK_CATCH)                                        \
-  apply("false", TK_FALSE)                                        \
-  apply("operator", TK_OPERATOR)                                  \
-  apply("template", TK_TEMPLATE)                                  \
-  apply("typename", TK_TYPENAME)                                  \
-  apply("class", TK_CLASS)                                        \
-  apply("friend", TK_FRIEND)                                      \
-  apply("private", TK_PRIVATE)                                    \
-  apply("this", TK_THIS)                                          \
-  apply("using", TK_USING)                                        \
-  apply("const_cast", TK_CONST_CAST)                              \
-  apply("inline", TK_INLINE)                                      \
-  apply("public", TK_PUBLIC)                                      \
-  apply("throw", TK_THROW)                                        \
-  apply("virtual", TK_VIRTUAL)                                    \
-  apply("delete", TK_DELETE)                                      \
-  apply("mutable", TK_MUTABLE)                                    \
-  apply("protected", TK_PROTECTED)                                \
-  apply("true", TK_TRUE)                                          \
-  apply("wchar_t", TK_WCHAR_T)                                    \
-  apply("and", TK_AND)                                            \
-  apply("bitand", TK_BITAND)                                      \
-  apply("compl", TK_COMPL)                                        \
-  apply("not_eq", TK_NOT_EQ_CLEARTEXT)                            \
-  apply("or_eq", TK_OR_EQ)                                        \
-  apply("xor_eq", TK_XOR_ASSIGN_CLEARTEXT)                        \
-  apply("and_eq", TK_AND_EQ)                                      \
-  apply("bitor", TK_BITOR)                                        \
-  apply("not", TK_NOT_CLEARTEXT)                                  \
-  apply("or", TK_OR)                                              \
+#define CPPLINT_FORALL_KEYWORDS(apply)           \
+  apply("auto", TK_AUTO)                         \
+  apply("const", TK_CONST)                       \
+  apply("constexpr", TK_CONSTEXPR)               \
+  apply("double", TK_DOUBLE)                     \
+  apply("float", TK_FLOAT)                       \
+  apply("int", TK_INT)                           \
+  apply("short", TK_SHORT)                       \
+  apply("struct", TK_STRUCT)                     \
+  apply("unsigned", TK_UNSIGNED)                 \
+  apply("break", TK_BREAK)                       \
+  apply("continue", TK_CONTINUE)                 \
+  apply("else", TK_ELSE)                         \
+  apply("for", TK_FOR)                           \
+  apply("long", TK_LONG)                         \
+  apply("signed", TK_SIGNED)                     \
+  apply("switch", TK_SWITCH)                     \
+  apply("void", TK_VOID)                         \
+  apply("case", TK_CASE)                         \
+  apply("default", TK_DEFAULT)                   \
+  apply("enum", TK_ENUM)                         \
+  apply("goto", TK_GOTO)                         \
+  apply("register", TK_REGISTER)                 \
+  apply("sizeof", TK_SIZEOF)                     \
+  apply("typedef", TK_TYPEDEF)                   \
+  apply("volatile", TK_VOLATILE)                 \
+  apply("char", TK_CHAR)                         \
+  apply("do", TK_DO)                             \
+  apply("extern", TK_EXTERN)                     \
+  apply("if", TK_IF)                             \
+  apply("return", TK_RETURN)                     \
+  apply("static", TK_STATIC)                     \
+  apply("union", TK_UNION)                       \
+  apply("while", TK_WHILE)                       \
+  apply("asm", TK_ASM)                           \
+  apply("dynamic_cast", TK_DYNAMIC_CAST)         \
+  apply("namespace", TK_NAMESPACE)               \
+  apply("reinterpret_cast", TK_REINTERPRET_CAST) \
+  apply("try", TK_TRY)                           \
+  apply("bool", TK_BOOL)                         \
+  apply("explicit", TK_EXPLICIT)                 \
+  apply("new", TK_NEW)                           \
+  apply("static_cast", TK_STATIC_CAST)           \
+  apply("typeid", TK_TYPEID)                     \
+  apply("catch", TK_CATCH)                       \
+  apply("false", TK_FALSE)                       \
+  apply("operator", TK_OPERATOR)                 \
+  apply("template", TK_TEMPLATE)                 \
+  apply("typename", TK_TYPENAME)                 \
+  apply("class", TK_CLASS)                       \
+  apply("friend", TK_FRIEND)                     \
+  apply("private", TK_PRIVATE)                   \
+  apply("this", TK_THIS)                         \
+  apply("using", TK_USING)                       \
+  apply("const_cast", TK_CONST_CAST)             \
+  apply("inline", TK_INLINE)                     \
+  apply("public", TK_PUBLIC)                     \
+  apply("throw", TK_THROW)                       \
+  apply("virtual", TK_VIRTUAL)                   \
+  apply("delete", TK_DELETE)                     \
+  apply("mutable", TK_MUTABLE)                   \
+  apply("protected", TK_PROTECTED)               \
+  apply("true", TK_TRUE)                         \
+  apply("wchar_t", TK_WCHAR_T)                   \
+  apply("and", TK_AND)                           \
+  apply("bitand", TK_BITAND)                     \
+  apply("compl", TK_COMPL)                       \
+  apply("not_eq", TK_NOT_EQ_CLEARTEXT)           \
+  apply("or_eq", TK_OR_EQ)                       \
+  apply("xor_eq", TK_XOR_ASSIGN_CLEARTEXT)       \
+  apply("and_eq", TK_AND_EQ)                     \
+  apply("bitor", TK_BITOR)                       \
+  apply("not", TK_NOT_CLEARTEXT)                 \
+  apply("or", TK_OR)                             \
   apply("xor", TK_XOR_CLEARTEXT)
 
 /**
@@ -195,7 +197,6 @@ namespace flint {
 
 /**
  * Defines all token types TK_XYZ.
- * If this is hard to follow, see https://en.wikipedia.org/wiki/X_Macro
  */
 enum TokenType {
 #define CPPLINT_X1(c1, t1)                         t1,
@@ -219,7 +220,7 @@ std::string toString(const TokenType t);
 
 /**
  * Defines a substring of an existing string.  Lifetime is limited to the lifetime of the enclosing
- * string In other words, a StringFragment will take no ownership of any memory.
+ * string In other words, a StringFragment will take NO ownership of any memory.
  *
  * Note: Remember to respect the range of most C++ iterators, which operate on [begin, end) (so end
  * expected to be out of range)
@@ -227,24 +228,24 @@ std::string toString(const TokenType t);
  * TODO: Compare to std::string_view
  */
 struct StringFragment {
-  typedef std::string::const_iterator iterator;
-  using value_type      = char;
   using const_reference = const char&;
+  using citerator       = std::string::const_iterator;
   using size_type       = size_t;
+  using value_type      = char;
 
-  iterator begin_;
-  iterator end_;
+  citerator begin_;
+  citerator end_;
 
-  inline StringFragment(iterator begin, iterator end) NOEXCEPT : begin_(begin), end_(end) {}
+  inline StringFragment(citerator begin, citerator end) NOEXCEPT : begin_(begin), end_(end) {}
   explicit StringFragment(const char* instr) : begin_(instr), end_(instr + strlen(instr)) {}
 
+  citerator       begin() const { return begin_; }
+  citerator       end() const { return end_; }
   value_type      back() const { return *(end_ - 1); }
-  iterator        begin() const { return begin_; }
-  iterator        end() const { return end_; }
-  const_reference operator[](size_type pos) const { return *(begin_ + pos); }
-  const_reference operator[](size_type pos) { return *(begin_ + pos); }
-  size_type       size() const { return end_ - begin_; }
-  void            append(iterator startPos, iterator endPos) {
+  const_reference operator[](const size_type pos) const { return *(begin_ + pos); }
+  // const_reference operator[](const size_type pos) { return *(begin_ + pos); }
+  size_type size() const { return end_ - begin_; }
+  void      append(citerator startPos, citerator endPos) {
     assert(begin_ == end_ || end_ == startPos);
 
     if (begin_ == end_) {
@@ -257,21 +258,21 @@ struct StringFragment {
 };
 
 inline std::string to_string(const StringFragment& fragment) {
-  return std::string(fragment.begin(), fragment.end());
+  return std::string{fragment.begin(), fragment.end()};
 }
 
 inline bool operator==(const StringFragment& a, const StringFragment& b) {
-  return a.size() == b.size() && equal(a.begin(), a.end(), b.begin());
+  return a.size() == b.size() and equal(a.begin(), a.end(), b.begin());
 }
 
-inline bool contains(const StringFragment& fragment, StringFragment::iterator stringBegin,
-                     StringFragment::iterator stringEnd) {
+inline bool contains(const StringFragment& fragment, StringFragment::citerator stringBegin,
+                     StringFragment::citerator stringEnd) {
   return search(fragment.begin(), fragment.end(), stringBegin, stringEnd) != fragment.end();
 }
 
 /**
  * Defines one token together with file and line information. The
- * precedingComment_ is set if there was one comment before the token.
+ * precedingWhitespace_ is set if there was leading whitespace.
  */
 struct Token {
   TokenType      type_;
@@ -286,7 +287,7 @@ struct Token {
         line_(line){};
 
   std::string toString() const {
-    std::string result = std::string("Line:" + std::to_string(line_) + ':');
+    std::string result{"Line:" + std::to_string(line_) + ':'};
     result.append(value_.begin(), value_.end());
     return result;
   };
