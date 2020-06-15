@@ -5,7 +5,7 @@ When writing a Lint Check to add to `Flint++` you are given a Token Stream of th
 
 ## 1. The structure of a Lint Check
 
-A complete Lint Check consists of (atleast) **3** file modifications. These are:
+A complete Lint Check consists of (at least) **3** file modifications. These are:
 
 * A new header definition in the `Checks.hpp` file, of the form
 
@@ -21,16 +21,16 @@ A complete Lint Check consists of (atleast) **3** file modifications. These are:
 
 As your function Lints through the given token stream you'll want a way to announce that an error has been found. This is done using one of three functions which reflect the severity of the Lint Error.
 
-[Referenced from Lines 25-46 of Checks.cpp](https://github.com/L2Program/FlintPlusPlus/blob/master/flint/Checks.cpp#L25-L46) the three report functions are `lintError`, `lintWarning`, and `lintAdvice`. These functions have the form:
+Within `Checks.cpp`, the three report functions are `lintError`, `lintWarning`, and `lintAdvice`. These functions have the form:
 
 	lintError(ErrorFile &errors, const Token &token, const string title, const string desc = "")
 
-Where `errors` is the report struct given to your function to be passed along, `token` is the first token of the sequence which broke the rules of your Lint Check, and `title` which refers to the main message of the error with an optional `desc` field for an extended description. 
+Where `errors` is the report struct given to your function to be passed along, `token` is the first token of the sequence which broke the rules of your Lint Check, and `title` which refers to the main message of the error with an optional `desc` field for an extended description.
 
 ## 3. How to traverse the Token Stream
 
 ### atSequence
-	
+
 ```cpp
 /**
 * Returns whether the current token is at the start of a given sequence
@@ -114,4 +114,4 @@ size_t skipTemplateSpec(const vector<Token> &tokens, size_t pos, bool *containsA
 string getIncludedPath(const string &path)
 ```
 
-#### There is more to come but I'm busy. Sorry
+Many more... see `Checks.hpp` for additional API...

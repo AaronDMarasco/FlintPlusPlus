@@ -14,8 +14,10 @@ The original `flint` is published on [Github](https://github.com/facebook/flint)
 * [@vix597]( https://github.com/vix597/FlintPlusPlus ) - more sane makefile, debian packaging, return values (#63)
 * [@warmsocks]( https://github.com/warmsocks/FlintPlusPlus ) - allow spaces (#60)
 
-Future Ideas
-------------
+# Why Lint?
+Linting is a form of *static-code analysis* by which common errors and bad practices are flagged for review. This can help to both optimize poorly written code and to set a unified code style for all the code in a project. For large organizations this can be tremendously powerful as it helps to keep the whole codebase consistent.
+
+# Future Ideas
 * More lint tests
 * Visual Studio Integration
 * Command line options for level of error in return values
@@ -24,9 +26,7 @@ Future Ideas
 	* Enable/Disable certain tests
 	* Track the config file with Git to give everyone on your team the same Lint checks
 
-Current Lint Checks
--------------------
-
+# Current Lint Checks
 * Errors
 	* Blacklisted Identifiers
 	* Initialization from Self
@@ -55,8 +55,7 @@ Current Lint Checks
 * Advice
 	* `nullptr` over `NULL`
 
-Usage
------
+# Usage
 
 	$ flint++ --help
 	Usage: flint++ [options:] [files:]
@@ -72,38 +71,36 @@ Usage
 
 	-h, --help		      : Print usage.
 
-Does it pass Linting itself?
--------------------------
+# Compiling `Flint++` from source
+From the `flint` subdirectory, use `make` with the included `Makefile` to build. To run the simple output test cases, run `make check` after compilation. This will run `Flint++` on the test directory and compare its output to the text stored in `tests/expected.txt`.
 
-### Yes!
+Additional information can be found by examining `.travis.yml`.
+
+## Flinting Flint
+All good.
 
 	$ flint++ ./
 
 	Lint Summary: 14 files
 	Errors: 0 Warnings: 0 Advice: 0
 
-	Estimated Lines of Code: 4395
+	Estimated Lines of Code: 3797
 
-Compiling `Flint++` from source
--------------------------------
+## Choosing Compiler
+`make` will use your system-default compiler and C++ library. On `GCC`-based systems, you can explicitly force `clang` (and `libc++`) by calling `CXX=clang++ make -j`. This may fail and may require additional packages, _e.g._ `libcxx-devel` on Fedora or `libc++-dev` on Ubuntu.
 
-From the `flint` subdirectory, use `make` with the included makefile to build using G++ or clang. To run the simple output test case run `make check` after compilation. This will run `Flint++` on the test directory and compare its output to the text stored in `tests/expected.txt`.
+## Packaging
+### TAR
+To create a tarball of the source, `make dist` at the top-level.
+ * *Note*: This requires GNU `tar` so OSX and other BSD systems will need to ensure their `$PATH` is configured properly!
 
-Why Lint?
----------
+### RPM
+An RPM package can be built by calling `make rpm` at the top-level.
 
-Linting is a form of *static-code analysis* by which common errors and bad practices are flagged for review. This can help to both optimize poorly written code and to set a unified code style for all the code in a project. For large organizations this can be tremendously powerful as it helps to keep the whole codebase consistent.
+### DEB
+There are contributed files in `packaging/debian` but they are untested by the current maintainer. Assistance is always welcome!
 
-Dependencies
-------------
-**None!** You're good to go! Happy linting :)
+# Tested On
+Current maintainer develops with G++ 10.1.1 (Fedora 32) and Travis CI currently tests [10 different configurations](https://travis-ci.com/github/AaronDMarasco/FlintPlusPlus/) using GCC and clang on Linux, MacOS X, and Windows.
 
-*Edit:* It's not really a dependency, but it's worth noting that this project makes extensive use of C\+\+11. You won't be able to compile it on a Pre-C\+\+11 version of your compiler.
-
-Tested On
----------
-Current maintainer develops with G++ 10.1.1 (Fedora 32) and Travis CI currently tests [10 different configurations](https://travis-ci.com/github/AaronDMarasco/FlintPlusPlus/) using gcc and clang on Linux, MacOS X, and Windows.
-
-
----
-## Pull Requests Welcome!
+## Pull Requests Welcomed!
