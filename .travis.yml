@@ -33,9 +33,19 @@ jobs:
       compiler: clang
 
 script:
-  - ${MAKEPREFIX}make dist
-  - cd flint
-  - ${MAKEPREFIX}make check
+  - |-
+    # All platforms attempt to make a tarball
+    ${MAKEPREFIX}make dist
+    # Ubuntu makes deb packages. No automated RPM tests at this time.
+    case $TRAVIS_OS_NAME in
+        linux)
+            ${MAKEPREFIX}make deb
+            ;;
+        *)
+            cd flint
+            ${MAKEPREFIX}make check
+            ;;
+        esac
 
 # https://docs.travis-ci.com/user/reference/windows/
 # https://stackoverflow.com/questions/39930171/cache-brew-builds-with-travis-ci

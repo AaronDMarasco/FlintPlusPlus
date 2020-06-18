@@ -34,4 +34,4 @@ cd flint
 %{_bindir}/%{name}
 %license LICENSE
 %{_mandir}/man1/%{name}.1*
-%doc README.md "The Lint API Guide.md"
+%doc README.md The_Lint_API_Guide.md

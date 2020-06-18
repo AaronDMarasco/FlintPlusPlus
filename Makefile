@@ -2,10 +2,12 @@
 
 # Arbitrary version number:
 VERSION := 2.0
+# NOTE: If changed, need to manually update packaging/debian/changelog; RPM is automatic
 
 define HELP
 Flint++ $(VERSION) top-level Makefile options:
 
+deb     - create deb package
 dist    - create tarball
 rpm     - create RPM
 manpage - regenerate man page (requires asciidoc)
@@ -31,6 +33,17 @@ dist:
 	git ls-tree -r --name-only -z HEAD | tar --null --files-from=- --owner=0 --group=0 --transform 's/^/flint++-$(VERSION)\//' -cJf flint++.tar
 	ls -halF flint++.tar
 	$(and $(VERBOSE),tar tvf flint++.tar)
+
+# Note: I inherited the deb package stuff and just tried to make it not break. Any help is welcome if there are better ways to do this!
+.PHONY: deb
+.SILENT: deb
+deb: DEBIAN_FRONTEND=noninteractive
+deb:
+	sudo apt-get update
+	sudo apt-get install -yq devscripts build-essential fakeroot
+	cd packaging && sudo apt-get build-dep -yq .
+	cd packaging && debuild -i -us -uc -b --lintian-opts --profile debian
+	# By default debuild dumps results one directory up, which is where we wanted it anyway, so no copy like RPM does
 
 .PHONY: rpm
 .SILENT: rpm
