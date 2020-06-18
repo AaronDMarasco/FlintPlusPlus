@@ -4,7 +4,7 @@ using namespace std;
 
 namespace flint {
 
-string formatArg(const vector<Token>& tokens, const Argument& arg) {
+auto formatArg(const vector<Token>& tokens, const Argument& arg) -> string {
   string result;
 
   for (size_t pos = arg.first; pos < arg.last; ++pos) {
@@ -16,7 +16,7 @@ string formatArg(const vector<Token>& tokens, const Argument& arg) {
   return result;
 };
 
-string formatFunction(const vector<Token>& tokens, const Argument& func, const vector<Argument>& args) {
+auto formatFunction(const vector<Token>& tokens, const Argument& func, const vector<Argument>& args) -> string {
   static const string sep{", "};
 
   string result = formatArg(tokens, func) + '(';
@@ -29,7 +29,8 @@ string formatFunction(const vector<Token>& tokens, const Argument& func, const v
   return result;
 };
 
-bool getFunctionNameAndArguments(const vector<Token>& tokens, size_t& pos, Argument& func, vector<Argument>& args) {
+auto getFunctionNameAndArguments(const vector<Token>& tokens, size_t& pos, Argument& func, vector<Argument>& args)
+    -> bool {
   func.first = pos;
   ++pos;
 
@@ -44,7 +45,7 @@ bool getFunctionNameAndArguments(const vector<Token>& tokens, size_t& pos, Argum
   return getRealArguments(tokens, pos, args);
 };
 
-bool getRealArguments(const vector<Token>& tokens, size_t& pos, vector<Argument>& args) {
+auto getRealArguments(const vector<Token>& tokens, size_t& pos, vector<Argument>& args) -> bool {
   assert(isTok(tokens[pos], TK_LPAREN));
 
   ++pos;
@@ -93,13 +94,13 @@ bool getRealArguments(const vector<Token>& tokens, size_t& pos, vector<Argument>
   return true;
 };
 
-string getIncludedPath(const StringFragment& path) {
+auto getIncludedPath(const StringFragment& path) -> string {
   assert(*path.begin() == '<' or *path.begin() == '"');
   assert(path.back() == '>' or path.back() == '"');
   return string(path.begin() + 1, path.end() - 1);
 };
 
-bool matchAcrossTokens(const StringFragment& frag, TokenIter start, TokenIter end_iter) {
+auto matchAcrossTokens(const StringFragment& frag, TokenIter start, TokenIter end_iter) -> bool {
   auto f_pos       = frag.begin();
   auto f_end       = frag.end();
   auto f_token_pos = start->value_.begin();
@@ -115,7 +116,7 @@ bool matchAcrossTokens(const StringFragment& frag, TokenIter start, TokenIter en
   return (f_pos == f_end);
 };
 
-vector<StringFragment> readQualifiedIdentifier(const vector<Token>& tokens, size_t& pos) {
+auto readQualifiedIdentifier(const vector<Token>& tokens, size_t& pos) -> vector<StringFragment> {
   vector<StringFragment> ret;
   for (; isTok(tokens[pos], TK_IDENTIFIER) || isTok(tokens[pos], TK_DOUBLE_COLON); ++pos)
     if (isTok(tokens[pos], TK_IDENTIFIER)) ret.push_back(tokens[pos].value_);
@@ -123,7 +124,7 @@ vector<StringFragment> readQualifiedIdentifier(const vector<Token>& tokens, size
   return ret;
 };
 
-size_t skipBlock(const vector<Token>& tokens, size_t pos) {
+auto skipBlock(const vector<Token>& tokens, size_t pos) -> size_t {
   assert(isTok(tokens[pos], TK_LCURL));
 
   size_t openBraces = 1;  // Because we began on the leading '{'
@@ -145,7 +146,7 @@ size_t skipBlock(const vector<Token>& tokens, size_t pos) {
   return pos;
 };
 
-size_t skipFunctionDeclaration(const vector<Token>& tokens, size_t pos) {
+auto skipFunctionDeclaration(const vector<Token>& tokens, size_t pos) -> size_t {
   for (const size_t size = tokens.size(); pos < size && !isTok(tokens[pos], TK_EOF); ++pos) {
     TokenType tok = tokens[pos].type_;
 
@@ -160,13 +161,13 @@ size_t skipFunctionDeclaration(const vector<Token>& tokens, size_t pos) {
   return pos;
 };
 
-bool skipToToken(const vector<Token>& tokens, size_t& pos, TokenType target) {
+auto skipToToken(const vector<Token>& tokens, size_t& pos, TokenType target) -> bool {
   const size_t size = tokens.size();
   for (; pos < size && !isTok(tokens[pos], target); ++pos) {}
   return (pos < size && isTok(tokens[pos], target));
 };
 
-size_t skipTemplateSpec(const vector<Token>& tokens, size_t pos, bool* containsArray /* = nullptr */) {
+auto skipTemplateSpec(const vector<Token>& tokens, size_t pos, bool* containsArray /* = nullptr */) -> size_t {
   assert(isTok(tokens[pos], TK_LESS));
 
   size_t angleNest = 1;  // Because we began on the leading '<'

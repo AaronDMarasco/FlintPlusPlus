@@ -97,6 +97,7 @@ install: $(BINF)
 .SILENT: format
 format:
 	clang-format -fallback-style=none -i --verbose $(HEADERS) $(SOURCES)
+	# clang-tidy --checks='modernize-*' *.hpp *.cpp -- -std=c++11
 	-git grep -P "\t" *.hpp *.cpp
 
 .PHONY: help

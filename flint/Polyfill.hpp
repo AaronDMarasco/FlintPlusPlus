@@ -21,19 +21,19 @@ const std::string FS_SEP{"/"};
 // File System object types
 enum FSType { NO_ACCESS, IS_FILE, IS_DIR };
 
-FSType fsObjectExists(const std::string& path);
+auto fsObjectExists(const std::string& path) -> FSType;
 
-bool fsContainsNoLint(const std::string& path);
+auto fsContainsNoLint(const std::string& path) -> bool;
 
-bool fsGetDirContents(const std::string& path, std::vector<std::string>& dir);
+auto fsGetDirContents(const std::string& path, std::vector<std::string>& dir) -> bool;
 
-bool getFileContents(const std::string& path, std::string& file);
+auto getFileContents(const std::string& path, std::string& file) -> bool;
 
 #if 0
 bool startsWith(const std::string &str, const std::string &prefix);
 #endif
 
-bool startsWith(std::string::const_iterator str_iter, const char* prefix);
+auto startsWith(std::string::const_iterator str_iter, const char* prefix) -> bool;
 
-std::string escapeString(const std::string& input);
+auto escapeString(const std::string& input) -> std::string;
 };  // namespace flint

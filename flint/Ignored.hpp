@@ -9,5 +9,5 @@ namespace flint {
  * "// %flint: resume", so that intentionally written code, that may
  * generate warnings, can be ignored by lint.
  */
-std::string removeIgnoredCode(const std::string& file, const std::string& path);
+auto removeIgnoredCode(const std::string& file, const std::string& path) -> std::string;
 };  // namespace flint

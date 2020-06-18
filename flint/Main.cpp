@@ -27,7 +27,10 @@ using namespace flint;
  */
 void checkEntry(ErrorReport& errors, const string& path, size_t& loc, size_t depth = 0) {
   const auto fsType = fsObjectExists(path);
-  if (fsType == FSType::NO_ACCESS) return;
+  if (fsType == FSType::NO_ACCESS) {
+    if (0 == depth) fprintf(stderr, "Explicitly requested file/path '%s' does not exist.\n\n", path.c_str());
+    return;
+  }
 
   if (fsType == FSType::IS_DIR) {
     if ((!Options.RECURSIVE && depth > 0) || fsContainsNoLint(path)) return;
@@ -116,7 +119,7 @@ void checkEntry(ErrorReport& errors, const string& path, size_t& loc, size_t dep
 /**
  * Program entry point
  */
-int main(int argc, char* argv[]) {
+auto main(int argc, char* argv[]) -> int {
   // Parse commandline flags
   vector<string> paths;
   parseArgs(argc, argv, paths);

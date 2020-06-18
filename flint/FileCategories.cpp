@@ -25,7 +25,7 @@ static const array<string, 7> extsSourceCpp{".C", ".cc", ".cpp", ".CPP", ".c++",
  * @return
  *        Returns true if str ends with an instance of suffix
  */
-bool hasSuffix(const string& str, const string& suffix) {
+auto hasSuffix(const string& str, const string& suffix) -> bool {
   return (str.size() >= suffix.size()) && (str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0);
 }
 
@@ -40,7 +40,7 @@ bool hasSuffix(const string& str, const string& suffix) {
  *        Returns true if str ends with an instance of a suffix found within the container
  */
 template<class Container>
-bool containsSuffix(const string& str, Container suffixes) {
+auto containsSuffix(const string& str, Container suffixes) -> bool {
   return find_if(begin(suffixes), end(suffixes), bind(hasSuffix, cref(str), placeholders::_1)) != end(suffixes);
 }
 
@@ -52,7 +52,7 @@ bool containsSuffix(const string& str, Container suffixes) {
  * @return
  *        Returns an identifier flag of enum type FileCategory
  */
-FileCategory getFileCategory(const string& path) {
+auto getFileCategory(const string& path) -> FileCategory {
   // Test header extensions
   for (const auto& ext: extsHeader) {
     if (hasSuffix(path, ("-inl" + ext)))
@@ -79,7 +79,7 @@ FileCategory getFileCategory(const string& path) {
  * @return
  *        Returns true if the file is a header or inline header file
  */
-bool isHeader(const string& path) {
+auto isHeader(const string& path) -> bool {
   const auto fCat = getFileCategory(path);
   return (fCat == FileCategory::INL_HEADER || fCat == FileCategory::HEADER);
 };
@@ -93,7 +93,7 @@ bool isHeader(const string& path) {
  * @return
  *        Returns true if the file is a source or c source file
  */
-bool isSource(const string& path) {
+auto isSource(const string& path) -> bool {
   const auto fCat = getFileCategory(path);
   return (fCat == FileCategory::SOURCE_C || fCat == FileCategory::SOURCE_CPP);
 };
@@ -106,7 +106,7 @@ bool isSource(const string& path) {
  * @return
  *        Returns the file name without any linter extensions
  */
-string getFileNameBase(const string& path) {
+auto getFileNameBase(const string& path) -> string {
   // Test header extensions
   for (const auto& ext: extsHeader) {
     const string inlext{"-inl" + ext};
@@ -136,7 +136,7 @@ string getFileNameBase(const string& path) {
  * @return
  *        Returns everything before FS_SEP
  */
-string getFileName(const string& path) {
+auto getFileName(const string& path) -> string {
   const size_t pos = path.find_last_of(FS_SEP);
 
   if (pos == string::npos || pos == path.size() - 2) return path;

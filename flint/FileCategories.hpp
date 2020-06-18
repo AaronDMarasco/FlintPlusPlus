@@ -14,11 +14,11 @@ enum FileCategory {
 };
 
 // File identifying functions...
-FileCategory getFileCategory(const std::string& path);
+auto getFileCategory(const std::string& path) -> FileCategory;
 
-bool isHeader(const std::string& path);
-bool isSource(const std::string& path);
+auto isHeader(const std::string& path) -> bool;
+auto isSource(const std::string& path) -> bool;
 
-std::string getFileNameBase(const std::string& path);
-std::string getFileName(const std::string& path);
+auto getFileNameBase(const std::string& path) -> std::string;
+auto getFileName(const std::string& path) -> std::string;
 };  // namespace flint

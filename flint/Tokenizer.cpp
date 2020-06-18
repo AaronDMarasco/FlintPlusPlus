@@ -5,13 +5,14 @@
 
 using namespace std;
 
+// Tell map and unordered_map how to store StringFragments
 namespace std {
 template<>
 struct hash<flint::StringFragment> {
-  typedef flint::StringFragment argument_type;
-  using value_type = uint64_t;
+  using argument_type = flint::StringFragment;
+  using value_type    = uint64_t;
 
-  inline value_type operator()(const argument_type& fragment) const {
+  inline auto operator()(const argument_type& fragment) const -> value_type {
     return accumulate(fragment.begin(), fragment.end(), uint64_t(5381), [](uint64_t curr, char next) {
       return ((curr << 5) + curr) + next;
     });
@@ -22,14 +23,13 @@ struct hash<flint::StringFragment> {
 namespace flint {
 
 namespace {  // Anonymous Namespace for Tokenizing and munching functions
+using str_iter = string::const_iterator;
 
-// Black magic code expansion from Token Definitions
-// See header...
-static unordered_map<StringFragment, TokenType> initializeKeywords() {
-  static unordered_map<string, TokenType>  root;  // Will own all the strings
+static auto initializeKeywords() -> unordered_map<StringFragment, TokenType> {
+  static unordered_map<string, TokenType>  root;  // Will own all the strings; everybody else has StringFragments
   unordered_map<StringFragment, TokenType> result;
 
-#define CPPLINT_ASSIGN(s, tk) root[string(s)] = tk;
+#define CPPLINT_ASSIGN(s, tk) root[string{s}] = tk;
   CPPLINT_FORALL_KEYWORDS(CPPLINT_ASSIGN)
 #undef CPPLINT_ASSIGN
 
@@ -61,7 +61,7 @@ static unordered_map<StringFragment, TokenType> keywords = initializeKeywords();
  * Eats howMany characters out of pc, advances pc appropriately, and
  * returns the eaten portion.
  */
-static StringFragment munchChars(string::const_iterator& pc, size_t howMany) {
+static auto munchChars(str_iter& pc, size_t howMany) -> StringFragment {
   // assert(pc.size() >= howMany);
   assert(howMany > 0);
   auto result = StringFragment{pc, pc + howMany};
@@ -73,7 +73,7 @@ static StringFragment munchChars(string::const_iterator& pc, size_t howMany) {
  * Assuming pc is positioned at the start of an identifier, munches it
  * from pc and returns it.
  */
-static StringFragment munchIdentifier(string::const_iterator& pc, string::const_iterator inputEnd) {
+static auto munchIdentifier(str_iter& pc, str_iter inputEnd) -> StringFragment {
   const size_t size = distance(pc, inputEnd);
   for (size_t i = 0; i < size; ++i) {
     assert(i < size);
@@ -87,7 +87,6 @@ static StringFragment munchIdentifier(string::const_iterator& pc, string::const_
       return munchChars(pc, i);
     }
   }
-
   return munchChars(pc, size);
 };
 
@@ -95,7 +94,7 @@ static StringFragment munchIdentifier(string::const_iterator& pc, string::const_
  * Assuming pc is positioned at the start of a C-style comment,
  * munches it from pc and returns it.
  */
-static StringFragment munchComment(string::const_iterator& pc, size_t& line) {
+static auto munchComment(str_iter& pc, size_t& line) -> StringFragment {
   assert(pc[0] == '/' && pc[1] == '*');
   for (size_t i = 2;; ++i) {
     // assert(i < pc.size());
@@ -119,9 +118,7 @@ static StringFragment munchComment(string::const_iterator& pc, size_t& line) {
  * Assuming pc is positioned at the start of a single-line comment,
  * munches it from pc and returns it.
  */
-static StringFragment munchSingleLineComment(string::const_iterator& pc,
-                                             string::const_iterator  inputEnd,
-                                             size_t&                 line) {
+static auto munchSingleLineComment(str_iter& pc, str_iter inputEnd, size_t& line) -> StringFragment {
   assert(pc[0] == '/' && pc[1] == '/');
 
   size_t size = distance(pc, inputEnd);
@@ -149,7 +146,7 @@ static StringFragment munchSingleLineComment(string::const_iterator& pc,
  * number is assumed to be correct so a number of checks are not
  * necessary.
  */
-static StringFragment munchNumber(string::const_iterator& pc) {
+static auto munchNumber(str_iter& pc) -> StringFragment {
   bool sawDot = false, sawExp = false, sawX = false, sawSuffix = false;
   for (size_t i = 0;; ++i) {
     // assert(i < pc.size());
@@ -192,7 +189,7 @@ static StringFragment munchNumber(string::const_iterator& pc) {
  * order to track multiline character literals (yeah, that can
  * actually happen) correctly.
  */
-static StringFragment munchCharLiteral(string::const_iterator& pc, size_t& line) {
+static auto munchCharLiteral(str_iter& pc, size_t& line) -> StringFragment {
   assert(pc[0] == '\'');
   for (size_t i = 1;; ++i) {
     const auto c = pc[i];
@@ -214,7 +211,7 @@ static StringFragment munchCharLiteral(string::const_iterator& pc, size_t& line)
  * it from pc and returns it. A reference to line is passed in order
  * to track multiline strings correctly.
  */
-static StringFragment munchString(string::const_iterator& pc, size_t& line, bool isIncludeLiteral = false) {
+static auto munchString(str_iter& pc, size_t& line, bool isIncludeLiteral = false) -> StringFragment {
   const char stringEnd = isIncludeLiteral ? '>' : '"';
 
   assert(pc[0] == (isIncludeLiteral ? '<' : '"'));
@@ -237,7 +234,7 @@ static StringFragment munchString(string::const_iterator& pc, size_t& line, bool
  * sources, here is the place. No need for end-of-input checks as the
  * input always has a '\0' at the end.
  */
-static StringFragment munchSpaces(string::const_iterator& pc) {
+static auto munchSpaces(str_iter& pc) -> StringFragment {
   size_t i;
   for (i = 0; pc[i] == ' ' || pc[i] == '\t'; ++i) {}
 
@@ -252,8 +249,11 @@ static StringFragment munchSpaces(string::const_iterator& pc) {
  * Given the contents of a C++ file and a filename, tokenizes the
  * contents and places it in output.
  */
-size_t tokenize(
-    const string& input, const string& file, vector<Token>& output, vector<size_t>& structures, ErrorFile& errors) {
+auto tokenize(const string&   input,
+              const string&   file,
+              vector<Token>&  output,
+              vector<size_t>& structures,
+              ErrorFile&      errors) -> size_t {
   output.clear();
   structures.clear();
 
@@ -583,7 +583,7 @@ size_t tokenize(
 /**
  * Converts e.g. TK_VIRTUAL to "TK_VIRTUAL".
  */
-string toString(const TokenType t) {
+auto toString(const TokenType t) -> string {
 // Build up macros that take 2, 4, 6, or 8 inputs
 #define CPPLINT_X1(c1, t1) \
   if ((t1) == t) return (#t1);

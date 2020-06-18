@@ -59,24 +59,24 @@ void inline lint(ErrorFile&         errors,
 
 // Shorthand for comparing two strings (or fragments)
 template<class S, class T>
-inline bool cmpStr(const S& a, const T& b) {
+inline auto cmpStr(const S& a, const T& b) -> bool {
   return equal(a.begin(), a.end(), b.begin());
 }
-inline bool cmpStr(const StringFragment& a, const StringFragment& b) { return (a == b); }
+inline auto cmpStr(const StringFragment& a, const StringFragment& b) -> bool { return (a == b); }
 // This version fails on OSX because it's SPECIAL:
 /* inline bool cmpStr(const StringFragment& a, const char* b) { return (a == StringFragment{b}); }
  */
-inline bool cmpStr(const StringFragment& a, const char* b) { return (to_string(a) == std::string{b}); }
-inline bool cmpStr(const std::string& a, const std::string& b) { return a == b; }
-inline bool cmpToks(const Token& a, const Token& b) { return cmpStr(a.value_, b.value_); };
+inline auto cmpStr(const StringFragment& a, const char* b) -> bool { return (to_string(a) == std::string{b}); }
+inline auto cmpStr(const std::string& a, const std::string& b) -> bool { return a == b; }
+inline auto cmpToks(const Token& a, const Token& b) -> bool { return cmpStr(a.value_, b.value_); };
 
 template<class S, class T>
-inline bool cmpTok(const S& a, const T& b) {
+inline auto cmpTok(const S& a, const T& b) -> bool {
   return cmpStr(a.value_, b);
 };
 
 // Shorthand for comparing a Token and TokenType
-inline bool isTok(const Token& token, TokenType type) { return token.type_ == type; }
+inline auto isTok(const Token& token, TokenType type) -> bool { return token.type_ == type; }
 
 /**
  * Returns whether the current token is a built-in type
@@ -88,7 +88,7 @@ inline bool isTok(const Token& token, TokenType type) { return token.type_ == ty
  * @return
  *        Returns true is the token at pos is a built-in type
  */
-inline bool atBuiltinType(const std::vector<Token>& tokens, size_t pos) {
+inline auto atBuiltinType(const std::vector<Token>& tokens, size_t pos) -> bool {
   static constexpr std::array<TokenType, 11> builtIns{
       TK_DOUBLE, TK_FLOAT, TK_INT, TK_SHORT, TK_UNSIGNED, TK_LONG, TK_SIGNED, TK_VOID, TK_BOOL, TK_WCHAR_T, TK_CHAR};
 
@@ -108,7 +108,7 @@ inline bool atBuiltinType(const std::vector<Token>& tokens, size_t pos) {
  *        Returns true if we were at the start of a given sequence
  */
 template<class Container>
-inline bool atSequence(const std::vector<Token>& tokens, size_t pos, const Container& list) {
+inline auto atSequence(const std::vector<Token>& tokens, size_t pos, const Container& list) -> bool {
   return equal(std::begin(list), std::end(list), std::begin(tokens) + pos, [](TokenType type, const Token& token) {
     return type == token.type_;
   });
@@ -124,7 +124,7 @@ inline bool atSequence(const std::vector<Token>& tokens, size_t pos, const Conta
  * @return
  *        Returns a string representation of the argument token list
  */
-std::string formatArg(const std::vector<Token>& tokens, const Argument& arg);
+auto formatArg(const std::vector<Token>& tokens, const Argument& arg) -> std::string;
 
 /**
  * Pretty print a function declaration/prototype to a string
@@ -138,12 +138,13 @@ std::string formatArg(const std::vector<Token>& tokens, const Argument& arg);
  * @return
  *        Returns a string representation of the argument token list
  */
-std::string formatFunction(const std::vector<Token>& tokens, const Argument& func, const std::vector<Argument>& args);
+auto formatFunction(const std::vector<Token>& tokens, const Argument& func, const std::vector<Argument>& args)
+    -> std::string;
 
 /**
  * No description available at this time!
  */
-inline TokenIter getEndOfClass(TokenIter start, TokenIter maxPos) {
+inline auto getEndOfClass(TokenIter start, TokenIter maxPos) -> TokenIter {
   static constexpr std::array<TokenType, 3> classMarkers{TK_EOF, TK_LCURL, TK_SEMICOLON};
 
   return std::find_first_of(start, maxPos, std::begin(classMarkers), std::end(classMarkers), isTok);
@@ -165,10 +166,10 @@ inline TokenIter getEndOfClass(TokenIter start, TokenIter maxPos) {
  *        Returns true if we believe (sorta) that everything went okay,
  *        false if something bad happened (maybe)
  */
-bool getFunctionNameAndArguments(const std::vector<Token>& tokens,
+auto getFunctionNameAndArguments(const std::vector<Token>& tokens,
                                  size_t&                   pos,
                                  Argument&                 func,
-                                 std::vector<Argument>&    args);
+                                 std::vector<Argument>&    args) -> bool;
 
 /**
  * Strips the ""'s or <>'s from an #include path
@@ -178,7 +179,7 @@ bool getFunctionNameAndArguments(const std::vector<Token>& tokens,
  * @return
  *        Returns the include path without it's wrapping quotes/brackets
  */
-std::string getIncludedPath(const StringFragment& path);
+auto getIncludedPath(const StringFragment& path) -> std::string;
 
 /**
  * Get the list of arguments of a function, assuming that the current
@@ -196,12 +197,12 @@ std::string getIncludedPath(const StringFragment& path);
  *        Returns true if we believe (sorta) that everything went okay,
  *        false if something bad happened (maybe)
  */
-bool getRealArguments(const std::vector<Token>& tokens, size_t& pos, std::vector<Argument>& args);
+auto getRealArguments(const std::vector<Token>& tokens, size_t& pos, std::vector<Argument>& args) -> bool;
 
 /**
  * No description available at this time!
  */
-bool matchAcrossTokens(const StringFragment& frag, TokenIter start, TokenIter end_iter);
+auto matchAcrossTokens(const StringFragment& frag, TokenIter start, TokenIter end_iter) -> bool;
 
 /**
  * Heuristically read a potentially namespace-qualified identifier,
@@ -215,7 +216,7 @@ bool matchAcrossTokens(const StringFragment& frag, TokenIter start, TokenIter en
  *        Returns a vector of all the identifier values involved, or an
  *        empty vector if no identifier was detected.
  */
-std::vector<StringFragment> readQualifiedIdentifier(const std::vector<Token>& tokens, size_t& pos);
+auto readQualifiedIdentifier(const std::vector<Token>& tokens, size_t& pos) -> std::vector<StringFragment>;
 
 /**
  * Traverses the token list until the whole code block has been passed
@@ -227,7 +228,7 @@ std::vector<StringFragment> readQualifiedIdentifier(const std::vector<Token>& to
  * @return
  *        Returns the position of the closing curly bracket
  */
-size_t skipBlock(const std::vector<Token>& tokens, size_t pos);
+auto skipBlock(const std::vector<Token>& tokens, size_t pos) -> size_t;
 
 /**
  * Starting from a function name or one of its arguments, skips the entire
@@ -243,7 +244,7 @@ size_t skipBlock(const std::vector<Token>& tokens, size_t pos);
  * @return
  *        Returns the position of the closing curly bracket or semicolon
  */
-size_t skipFunctionDeclaration(const std::vector<Token>& tokens, size_t pos);
+auto skipFunctionDeclaration(const std::vector<Token>& tokens, size_t pos) -> size_t;
 
 /**
  * Moves pos to the next position of the target token
@@ -257,7 +258,7 @@ size_t skipFunctionDeclaration(const std::vector<Token>& tokens, size_t pos);
  * @return
  *        Returns true if we are at the given token
  */
-bool skipToToken(const std::vector<Token>& tokens, size_t& pos, TokenType target);
+auto skipToToken(const std::vector<Token>& tokens, size_t& pos, TokenType target) -> bool;
 
 /**
  * Traverses the token list until the whole template sequence has been passed
@@ -272,7 +273,7 @@ bool skipToToken(const std::vector<Token>& tokens, size_t& pos, TokenType target
  * @return
  *        Returns the position of the closing angle bracket
  */
-size_t skipTemplateSpec(const std::vector<Token>& tokens, size_t pos, bool* containsArray = nullptr);
+auto skipTemplateSpec(const std::vector<Token>& tokens, size_t pos, bool* containsArray = nullptr) -> size_t;
 
 // ******************************* End of helper functions for the checkers
 

@@ -19,12 +19,12 @@ namespace flint {
 
 // Quick checks for path names (previously macros)
 template<typename T>
-inline bool fs_isnot_specialdir(const T& file) {  // was FS_ISNOT_LINK (???)
+inline auto fs_isnot_specialdir(const T& file) -> bool {  // was FS_ISNOT_LINK (???)
   return file.compare(".") and file.compare("..");
 }
 
 template<typename T>
-inline bool fs_isnot_git(const T& file) {
+inline auto fs_isnot_git(const T& file) -> bool {
   return file.compare(".git");
 }
 
@@ -36,7 +36,7 @@ inline bool fs_isnot_git(const T& file) {
  * @return
  *        Returns a flag representing what the path was
  */
-FSType fsObjectExists(const string& path) {
+auto fsObjectExists(const string& path) -> FSType {
   struct stat info;
   if (stat(path.c_str(), &info))
     // Cannot Access
@@ -58,7 +58,7 @@ FSType fsObjectExists(const string& path) {
  * @return
  *        Returns a bool of whether a .nolint file was found or not
  */
-bool fsContainsNoLint(const string& path) {
+auto fsContainsNoLint(const string& path) -> bool {
   const string fileName{path + FS_SEP + ".nolint"};
   return fsObjectExists(fileName) == FSType::IS_FILE;
 };
@@ -73,7 +73,7 @@ bool fsContainsNoLint(const string& path) {
  * @return
  *        Returns true if any valid objects were found
  */
-bool fsGetDirContents(const string& path, vector<string>& dirs) {
+auto fsGetDirContents(const string& path, vector<string>& dirs) -> bool {
   dirs.clear();
 
 #ifdef _WIN32
@@ -120,7 +120,7 @@ bool fsGetDirContents(const string& path, vector<string>& dirs) {
  * @return
  *        Returns a bool of whether the load was successful
  */
-bool getFileContents(const string& path, string& file) {
+auto getFileContents(const string& path, string& file) -> bool {
   ifstream in(path);
   if (in) {
     stringstream buffer;
@@ -159,7 +159,7 @@ bool startsWith(const T& str, const T& prefix) {
  * @return
  *        Returns true if str starts with an instance of prefix
  */
-bool startsWith(string::const_iterator str_iter, const char* prefix) {
+auto startsWith(string::const_iterator str_iter, const char* prefix) -> bool {
   while (*prefix != '\0' && *prefix == *str_iter) {
     ++prefix;
     ++str_iter;
@@ -176,7 +176,7 @@ bool startsWith(string::const_iterator str_iter, const char* prefix) {
  * @return
  *        Returns a string with no escape characters
  */
-string escapeString(const string& input) {
+auto escapeString(const string& input) -> string {
   string output;
   output.reserve(input.length());
 

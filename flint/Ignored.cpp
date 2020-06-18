@@ -20,7 +20,7 @@ static const string kIgnoreResume{R"(// %flint: resume)"};
  * @return
  *        Returns the modified string
  */
-string removeIgnoredCode(const string& file, const string& path) {
+auto removeIgnoredCode(const string& file, const string& path) -> string {
   string result;
   size_t pos = 0;
 

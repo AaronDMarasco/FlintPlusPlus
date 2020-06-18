@@ -41,29 +41,28 @@ void __attribute__((noreturn)) printHelp() {
  *        A vector of strings to be filled with lint paths
  */
 void parseArgs(int argc, char* argv[], vector<string>& paths) {
-  bool HELP = false;
-  bool l1   = false;
-  bool l2   = false;
-  bool l3   = false;
+  bool HELP{false}, l1{false}, l2{false}, l3{false};
 
   // TODO: C++17 std::variant
   enum ArgType { BOOL, INT };
   struct Arg {
-    ArgType type;
-    void*   ptr;
+    bool          set;
+    const ArgType type;
+    void*         ptr;
   };
 
-  // Map values to their cmdline flags
-  Arg argHelp      = {ArgType::BOOL, &HELP};
-  Arg argRecursive = {ArgType::BOOL, &Options.RECURSIVE};
-  Arg argCMode     = {ArgType::BOOL, &Options.CMODE};
-  Arg argJSON      = {ArgType::BOOL, &Options.JSON};
-  Arg argVerbose   = {ArgType::BOOL, &Options.VERBOSE};
-  Arg argLevel     = {ArgType::INT, &Options.LEVEL};
-  Arg argL1        = {ArgType::BOOL, &l1};
-  Arg argL2        = {ArgType::BOOL, &l2};
-  Arg argL3        = {ArgType::BOOL, &l3};
   // clang-format off
+  // Map values to their cmdline flags
+  Arg argHelp     {false, ArgType::BOOL, &HELP};
+  Arg argRecursive{false, ArgType::BOOL, &Options.RECURSIVE};
+  Arg argCMode    {false, ArgType::BOOL, &Options.CMODE};
+  Arg argJSON     {false, ArgType::BOOL, &Options.JSON};
+  Arg argVerbose  {false, ArgType::BOOL, &Options.VERBOSE};
+  Arg argLevel    {false, ArgType::INT, &Options.LEVEL};
+  Arg argL1       {false, ArgType::BOOL, &l1};
+  Arg argL2       {false, ArgType::BOOL, &l2};
+  Arg argL3       {false, ArgType::BOOL, &l3};
+
   static const unordered_map<string, Arg &> params {
     { "-h", argHelp },
     { "--help", argHelp },
@@ -88,35 +87,45 @@ void parseArgs(int argc, char* argv[], vector<string>& paths) {
   };
   // clang-format on
   // Loop over the given argument list
+  // NOTE: If type is INT, it will subtract 1 from the value when storing
   for (int i = 1; i < argc; ++i) {
     // If the current argument is in the map
     // then set its value to true
-    const auto it = params.find(string(argv[i]));
+    auto const it = params.find(string(argv[i]));
     if (it != params.end()) {
-      if (it->second.type == ArgType::BOOL) {
-        auto arg = static_cast<bool*>(it->second.ptr);
-        *arg     = true;
-      } else if (it->second.type == ArgType::INT) {
-        auto arg = static_cast<int*>(it->second.ptr);
-
-        if (++i >= argc) {
-          printf("Missing (int) value for parameter: %s\n\n", it->first.c_str());
-          printHelp();
-        }
-
-        int val = atoi(argv[i]) - 1;
-        *arg    = val;
-        continue;
+      auto const param_str = it->first.c_str();
+      auto       val       = it->second;
+      if (val.set) {
+        printf("Already specified parameter: %s\n\n", param_str);
+        printHelp();
+      }
+      val.set = true;
+      switch (val.type) {
+        case ArgType::INT:
+          if (++i >= argc) {
+            printf("Missing (int) value for parameter: %s\n\n", param_str);
+            printHelp();
+          }
+          *(static_cast<int*>(val.ptr)) = atoi(argv[i]) - 1;
+          continue;
+        default:  // Bool
+          *(static_cast<bool*>(val.ptr)) = true;
       }
     } else {
       // Push another path onto the lint list
-      string p = argv[i];
+      string p{argv[i]};
       if (p.back() == '/' || p.back() == '\\') p.erase(p.end() - 1, p.end());
+      // printf("Pushing %s\n", p.c_str());
       paths.push_back(move(p));
     }
   }
 
   if (HELP) printHelp();
+
+  if ((static_cast<int>(argLevel.set) + static_cast<int>(l1) + static_cast<int>(l2) + static_cast<int>(l3)) > 1) {
+    printf("Multiple level specifications found\n\n");
+    printHelp();
+  }
 
   if (l1)
     Options.LEVEL = Lint::ERROR;

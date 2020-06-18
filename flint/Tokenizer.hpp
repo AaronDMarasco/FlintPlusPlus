@@ -216,7 +216,7 @@ enum TokenType {
 /**
  * Converts e.g. TK_VIRTUAL to "TK_VIRTUAL".
  */
-std::string toString(const TokenType t);
+auto toString(const TokenType t) -> std::string;
 
 /**
  * Defines a substring of an existing string.  Lifetime is limited to the lifetime of the enclosing
@@ -240,13 +240,13 @@ struct StringFragment {
   // This blows up on libc++:
   /* explicit StringFragment(const char* instr) : begin_(instr), end_(instr + strlen(instr)) {} */
 
-  citerator       begin() const { return begin_; }
-  citerator       end() const { return end_; }
-  value_type      back() const { return *(end_ - 1); }
-  const_reference operator[](const size_type pos) const { return *(begin_ + pos); }
+  auto begin() const -> citerator { return begin_; }
+  auto end() const -> citerator { return end_; }
+  auto back() const -> value_type { return *(end_ - 1); }
+  auto operator[](const size_type pos) const -> const_reference { return *(begin_ + pos); }
   // const_reference operator[](const size_type pos) { return *(begin_ + pos); }
-  size_type size() const { return end_ - begin_; }
-  void      append(citerator startPos, citerator endPos) {
+  auto size() const -> size_type { return end_ - begin_; }
+  void append(citerator startPos, citerator endPos) {
     assert(begin_ == end_ || end_ == startPos);
 
     if (begin_ == end_) {
@@ -255,18 +255,20 @@ struct StringFragment {
     }
     end_ = endPos;
   }
-  bool empty() const { return begin_ == end_; }
+  auto empty() const -> bool { return begin_ == end_; }
 };
 
-inline std::string to_string(const StringFragment& fragment) { return std::string{fragment.begin(), fragment.end()}; }
+inline auto to_string(const StringFragment& fragment) -> std::string {
+  return std::string{fragment.begin(), fragment.end()};
+}
 
-inline bool operator==(const StringFragment& a, const StringFragment& b) {
+inline auto operator==(const StringFragment& a, const StringFragment& b) -> bool {
   return a.size() == b.size() and equal(a.begin(), a.end(), b.begin());
 }
 
-inline bool contains(const StringFragment&     fragment,
+inline auto contains(const StringFragment&     fragment,
                      StringFragment::citerator stringBegin,
-                     StringFragment::citerator stringEnd) {
+                     StringFragment::citerator stringEnd) -> bool {
   return search(fragment.begin(), fragment.end(), stringBegin, stringEnd) != fragment.end();
 }
 
@@ -283,7 +285,7 @@ struct Token {
   Token(TokenType type, StringFragment value, size_t line, StringFragment whitespace)
       : type_(type), value_(std::move(value)), precedingWhitespace_(std::move(whitespace)), line_(line){};
 
-  std::string toString() const {
+  auto toString() const -> std::string {
     std::string result{"Line:" + std::to_string(line_) + ':'};
     result.append(value_.begin(), value_.end());
     return result;
@@ -295,19 +297,21 @@ struct Token {
  * code and a filename, fills output with the tokens in the
  * file.
  */
-size_t tokenize(const std::string&   input,
-                const std::string&   initialFilename,
-                std::vector<Token>&  output,
-                std::vector<size_t>& structures,
-                ErrorFile&           errors);
+auto tokenize(const std::string&   input,
+              const std::string&   initialFilename,
+              std::vector<Token>&  output,
+              std::vector<size_t>& structures,
+              ErrorFile&           errors) -> size_t;
 
 /**
  * Prevent the use of temporaries for input and filename
  * because the resulting tokens contain StringPiece objects pointing
  * into them.
  */
-size_t tokenize(std::string&&, const std::string&, std::vector<Token>&, std::vector<size_t>&, ErrorFile&) = delete;
-size_t tokenize(const std::string&, std::string&&, std::vector<Token>&, std::vector<size_t>&, ErrorFile&) = delete;
+auto tokenize(std::string&&, const std::string&, std::vector<Token>&, std::vector<size_t>&, ErrorFile&)
+    -> size_t = delete;
+auto tokenize(const std::string&, std::string&&, std::vector<Token>&, std::vector<size_t>&, ErrorFile&)
+    -> size_t = delete;
 };  // namespace flint
 
 namespace std {

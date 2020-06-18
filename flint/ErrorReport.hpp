@@ -24,7 +24,7 @@ class ErrorObject {
       : m_type(type), m_line(line), m_title(move(title)), m_desc(move(desc)){};
 
   // Getter
-  size_t getType() const { return m_type; };
+  auto getType() const -> size_t { return m_type; };
 
   /*
    * Prints a single error of the report in either
@@ -63,12 +63,10 @@ class ErrorBase {
   size_t m_errors{0}, m_warnings{0}, m_advice{0};
 
  public:
-  ErrorBase(){};
-
-  size_t getErrors() const { return m_errors; };
-  size_t getWarnings() const { return m_warnings; };
-  size_t getAdvice() const { return m_advice; };
-  size_t getTotal() const { return m_advice + m_warnings + m_errors; };
+  auto getErrors() const -> size_t { return m_errors; };
+  auto getWarnings() const -> size_t { return m_warnings; };
+  auto getAdvice() const -> size_t { return m_advice; };
+  auto getTotal() const -> size_t { return m_advice + m_warnings + m_errors; };
 };
 
 /*
