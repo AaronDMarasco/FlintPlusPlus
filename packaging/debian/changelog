@@ -1,5 +1,5 @@
-flintplusplus (2.0-1) unstable; urgency=low
+flintplusplus (2.0.1-1) unstable; urgency=low
 
   * Initial package of my fork
 
- -- Aaron D. Marasco <github-flintplusplus@marascos.net>  Thu, 18 Jun 2020 08:37:21 -0400
+ -- Aaron D. Marasco <github-flintplusplus@marascos.net>  Thu, 18 Jun 2020 10:31:21 -0400

@@ -1,7 +1,7 @@
 # Top-level Makefile
 
 # Arbitrary version number:
-VERSION := 2.0
+VERSION := 2.0.1
 # NOTE: If changed, need to manually update packaging/debian/changelog; RPM is automatic
 
 define HELP
