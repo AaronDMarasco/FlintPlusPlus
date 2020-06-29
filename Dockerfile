@@ -1,7 +1,6 @@
 FROM ubuntu:20.04 AS builder
 
-# The version number  will be handled automatically by "make docker" but not by Docker Hub
-ARG FVERSION=2.0.2
+ARG FVERSION
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update

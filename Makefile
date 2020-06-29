@@ -3,7 +3,7 @@ SHELL := /bin/bash
 
 # Arbitrary version number:
 VERSION := 2.0.2
-# NOTE: If changed, need to manually update packaging/debian/changelog and Dockerfile; RPM is automatic
+# NOTE: If changed, need to manually update packaging/debian/changelog; RPM and Docker are automatic
 
 define HELP
 Flint++ $(VERSION) top-level Makefile options:
@@ -54,12 +54,14 @@ DOCKER_EXE := $(and $(shell type -p docker 2>/dev/null), docker)
 ifeq ($(DOCKER_EXE),)
   DOCKER_EXE := $(and $(shell type -p podman 2>/dev/null), podman)
 endif
+# This variable might be set by Docker Hub
+IMAGE_NAME ?= flint
 docker: dist
 docker:
 ifeq ($(DOCKER_EXE),)
 	$(error No docker or podman executable found!)
 endif
-	$(DOCKER_EXE) build -t flint --build-arg FVERSION="$(VERSION)" .
+	$(DOCKER_EXE) build -t $(IMAGE_NAME) --build-arg FVERSION="$(VERSION)" .
 
 .PHONY: rpm
 .SILENT: rpm
