@@ -1,8 +1,3 @@
 #!/bin/bash
-set -x
-pwd
-ls -alF
 cd ../..
-pwd
-ls -alF
 VERBOSE=1 make docker
