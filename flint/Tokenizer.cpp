@@ -213,8 +213,8 @@ static auto munchCharLiteral(str_iter& pc, size_t& line) -> StringFragment {
  */
 static auto munchString(str_iter& pc, size_t& line, bool isIncludeLiteral = false) -> StringFragment {
   const char stringEnd = isIncludeLiteral ? '>' : '"';
-
   assert(pc[0] == (isIncludeLiteral ? '<' : '"'));
+
   for (size_t i = 1;; ++i) {
     const auto c = pc[i];
     if (c == stringEnd)
@@ -227,6 +227,43 @@ static auto munchString(str_iter& pc, size_t& line, bool isIncludeLiteral = fals
     }
     ENFORCE(c, "Unterminated string constant: " + string(&*pc));
   }
+};
+
+/**
+ * Assuming pc is positioned at the start of a raw string literal, munches
+ * it from pc and returns it. A reference to line is passed in order
+ * to track multiline strings correctly.
+ */
+static auto munchRawString(str_iter& pc, size_t& line) -> StringFragment {
+  assert(pc[0] == 'R');
+  assert(pc[1] == '"');
+  std::string    delim{')'};
+  const str_iter start{pc};
+  pc++;  // Jump to "
+  // Capture the optional delimeter up to the first open '('
+  while (*(++pc) != '(') delim += *pc;
+  delim += '"';  // The string will always end with this
+  // Now we are at the beginning of the "real" string.
+  // We will ignore EVERYTHING that is not the delimeter (or a newline)
+  size_t match_index = 0;  // Very lame character-by-character state machine
+  for (size_t i = 0;; ++i) {
+    const auto c = pc[i];
+    if (c == delim[match_index]) {
+      if (++match_index == delim.length()) {            // Done!
+        pc = start;                                     // Restore original
+        return munchChars(pc, i + 2 + delim.length());  // +2 for the leading R"
+      }
+      continue;  // continue attempting to match delim
+    } else {
+      i -= match_index;  // Rollback to where our attempted match started (then for loop will skip the first)
+      match_index = 0;
+    }
+    // Check if newline to fix line count
+    if (c == '\n') ++line;
+    ENFORCE(c, "Unterminated raw literal: " + string(&*pc));
+  }
+
+  FBEXCEPTION("Raw String unknown error with delimiter=" + delim);
 };
 
 /**
@@ -475,6 +512,15 @@ auto tokenize(const string&   input,
         output.emplace_back(TK_NUMBER, move(symbol), line, whitespace);
         whitespace = nothing;
       } break;
+        // *** C++11 Raw String Literal
+      case 'R':
+        if (pc[1] == '"') {
+          auto str{munchRawString(pc, line)};
+          output.emplace_back(TK_RAW_STRING_LITERAL, move(str), line, whitespace);
+          whitespace = nothing;
+          break;
+        }
+        goto INSERT_TOKEN;
         // *** Character literal
       case '\'': {
         auto charLit = munchCharLiteral(pc, line);

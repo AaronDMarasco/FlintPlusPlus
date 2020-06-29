@@ -76,6 +76,7 @@ namespace flint {
   apply("->", TK_ARROW)                  \
   apply("->*", TK_ARROW_STAR)            \
   apply(".", TK_DOT)                     \
+  apply("R", TK_RAW_STRING_LITERAL)      \
   apply("...", TK_ELLIPSIS)              \
   apply(".*", TK_DOT_STAR)
 

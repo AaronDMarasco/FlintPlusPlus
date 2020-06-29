@@ -401,6 +401,15 @@
       ]
     },
     {
+	    "path"     : "Strings.cpp",
+	    "errors"   : 0,
+	    "warnings" : 0,
+	    "advice"   : 0,
+	    "reports"  : [
+
+      ]
+    },
+    {
 	    "path"     : "Throw.cpp",
 	    "errors"   : 5,
 	    "warnings" : 1,
