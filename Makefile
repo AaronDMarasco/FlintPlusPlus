@@ -61,7 +61,7 @@ docker:
 ifeq ($(DOCKER_EXE),)
 	$(error No docker or podman executable found!)
 endif
-	$(DOCKER_EXE) build -t $(IMAGE_NAME) .
+	$(DOCKER_EXE) build -f packaging/docker/Dockerfile -t $(IMAGE_NAME) .
 
 .PHONY: rpm
 .SILENT: rpm
