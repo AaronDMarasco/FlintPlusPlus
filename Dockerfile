@@ -2,10 +2,10 @@ FROM ubuntu:20.04 AS builder
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-### RUN apt-get update
-### RUN apt-get install -y make sudo
+RUN apt-get update
+RUN apt-get install -y make sudo
 # These are not necessary HERE, but copied from Makefile and help caching when testing locally
-### RUN apt-get install -y --no-install-recommends devscripts build-essential fakeroot
+RUN apt-get install -y --no-install-recommends devscripts build-essential fakeroot
 
 # Now do the "magic"
 ADD ./flint++.tar /workspace/
