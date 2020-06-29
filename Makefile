@@ -38,7 +38,7 @@ dist:
 
 # Note: I inherited the deb package stuff and just tried to make it not break. Any help is welcome if there are better ways to do this!
 .PHONY: deb
-# .SILENT: deb
+.SILENT: deb
 deb: export DEBIAN_FRONTEND=noninteractive
 deb: SUDO=sudo --preserve-env=DEBIAN_FRONTEND
 deb:
@@ -66,7 +66,7 @@ endif
 .PHONY: rpm
 .SILENT: rpm
 # This changes every 6 minutes which is enough for updated releases (snapshots).
-timestamp := $(shell printf %05d $(shell expr `date -u +"%s"` / 360 - 4422363))
+timestamp := $(shell printf %05d $(shell expr `date -u +"%s"` / 360 - 4426261))
 git_hash := $(shell h=`(git tag --points-at HEAD | head -n1) 2>/dev/null`; \
               [ -z "$$h" ] && h=`git rev-list --max-count=1 HEAD`; echo $$h)
 RPM_TEMP := $(CURDIR)/rpmbuild-tmpdir

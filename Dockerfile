@@ -2,15 +2,16 @@ FROM ubuntu:20.04 AS builder
 
 ARG DEBIAN_FRONTEND=noninteractive
 
+# Note: This is bad practice NORMALLY, but we don't care with multi-phase builds:
 RUN apt-get update
 RUN apt-get install -y make sudo
-# These are not necessary HERE, but copied from Makefile and help caching when testing locally
+# These are not necessary HERE, but copied from Makefile and help caching when testing locally:
 RUN apt-get install -y --no-install-recommends devscripts build-essential fakeroot
 
 # Now do the "magic"
 ADD ./flint++.tar /workspace/
-# Make alias to extracted tarball
-RUN cd /workspace && ln -s flint* flint && ls -alFR
+# Make alias to extracted tarball (so we don't care about version number)
+RUN cd /workspace && ln -s flint* flint
 WORKDIR /workspace/flint
 RUN make deb
 RUN cp -l /workspace/flint/flint*.deb /workspace/
