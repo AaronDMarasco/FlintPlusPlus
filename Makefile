@@ -38,7 +38,7 @@ dist:
 
 # Note: I inherited the deb package stuff and just tried to make it not break. Any help is welcome if there are better ways to do this!
 .PHONY: deb
-.SILENT: deb
+# .SILENT: deb
 deb: export DEBIAN_FRONTEND=noninteractive
 deb: SUDO=sudo --preserve-env=DEBIAN_FRONTEND
 deb:
