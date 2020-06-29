@@ -1,0 +1,5 @@
+# Ignore EVERYTHING
+*
+# Except...
+!Dockerfile
+!flint\+\+.tar

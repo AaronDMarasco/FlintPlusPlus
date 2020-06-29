@@ -1,14 +1,16 @@
 # Top-level Makefile
+SHELL := /bin/bash
 
 # Arbitrary version number:
-VERSION := 2.0.1
-# NOTE: If changed, need to manually update packaging/debian/changelog; RPM is automatic
+VERSION := 2.0.2
+# NOTE: If changed, need to manually update packaging/debian/changelog and Dockerfile; RPM is automatic
 
 define HELP
 Flint++ $(VERSION) top-level Makefile options:
 
 deb     - create deb package
 dist    - create tarball
+docker  - create local container image (using docker or podman)
 rpm     - create RPM
 manpage - regenerate man page (requires asciidoc)
 clean   - clean tarballs and RPMs
@@ -37,13 +39,27 @@ dist:
 # Note: I inherited the deb package stuff and just tried to make it not break. Any help is welcome if there are better ways to do this!
 .PHONY: deb
 .SILENT: deb
-deb: DEBIAN_FRONTEND=noninteractive
+deb: export DEBIAN_FRONTEND=noninteractive
+deb: SUDO=sudo --preserve-env=DEBIAN_FRONTEND
 deb:
-	sudo apt-get update
-	sudo apt-get install -yq devscripts build-essential fakeroot
-	cd packaging && sudo apt-get build-dep -yq .
+	$(SUDO) apt-get update
+	$(SUDO) apt-get install -yq --no-install-recommends devscripts build-essential fakeroot
+	cd packaging && $(SUDO) apt-get build-dep -yq .
 	cd packaging && debuild -i -us -uc -b --lintian-opts --profile debian
 	# By default debuild dumps results one directory up, which is where we wanted it anyway, so no copy like RPM does
+
+.PHONY: docker
+.SILENT: docker
+DOCKER_EXE := $(and $(shell type -p docker 2>/dev/null), docker)
+ifeq ($(DOCKER_EXE),)
+  DOCKER_EXE := $(and $(shell type -p podman 2>/dev/null), podman)
+endif
+docker: dist
+docker:
+ifeq ($(DOCKER_EXE),)
+	$(error No docker or podman executable found!)
+endif
+	$(DOCKER_EXE) build -t flint --build-arg FVERSION="$(VERSION)" .
 
 .PHONY: rpm
 .SILENT: rpm

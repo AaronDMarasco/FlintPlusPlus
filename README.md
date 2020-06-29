@@ -98,7 +98,23 @@ To create a tarball of the source, `make dist` at the top-level.
 An RPM package can be built by calling `make rpm` at the top-level.
 
 ### DEB
-There are contributed files in `packaging/debian` but they are untested by the current maintainer. Assistance is always welcome!
+A DEB package can be built by calling `make deb` at the top-level.
+
+### Docker
+An "official" image is [available on Docker Hub](https://hub.docker.com/r/admarasco/flint).
+
+If you would like to locally build an image, it can be built by calling `make docker` at the top-level. It will automatically use the `docker` or `podman` CLI.
+
+#### Using Docker Image:
+_Note_: This document uses `podman`, but every command shown _should_ work using the `docker` executable with the same options if you are using an older Fedora-based system or a non-Fedora-based Linux distribution.
+
+By default, the image will recursively scan `/src` within the container; this must be mounted in the proper manner (_e.g._ SELinux context with `:z`).
+
+Some examples:
+ * Using the "official" image: `podman run --rm -v $(pwd):/src:z admarasco/flint`
+ * Using a locally built image: `podman run --rm -v $(pwd):/src:z flint`
+ * With some pretty JSON output: `podman run --rm -v $(pwd):/src:z flint -j | jq .`
+ * Getting help: `podman run --rm flint -h.`
 
 # Tested On
 Current maintainer develops with G++ 10.1.1 (Fedora 32) and Travis CI currently tests [10 different configurations](https://travis-ci.com/github/AaronDMarasco/FlintPlusPlus/) using GCC and clang on Linux, MacOS X, and Windows.
