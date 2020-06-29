@@ -32,7 +32,7 @@ clean:
 .PHONY: dist
 .SILENT: dist
 dist:
-	git ls-tree -r --name-only -z HEAD | tar --null --files-from=- --owner=0 --group=0 --transform 's/^/flint++-$(VERSION)\//' -cJf flint++.tar
+	git ls-tree -r --name-only -z HEAD | tar --null --files-from=- --owner=0 --group=0 --transform 's|^|flint++-$(VERSION)/|' -cJf flint++.tar
 	ls -halF flint++.tar
 	$(and $(VERBOSE),tar tvf flint++.tar)
 
