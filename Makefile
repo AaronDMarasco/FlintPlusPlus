@@ -61,7 +61,7 @@ docker:
 ifeq ($(DOCKER_EXE),)
 	$(error No docker or podman executable found!)
 endif
-	$(DOCKER_EXE) build -t $(IMAGE_NAME) --build-arg FVERSION="$(VERSION)" .
+	$(DOCKER_EXE) build -t $(IMAGE_NAME) .
 
 .PHONY: rpm
 .SILENT: rpm

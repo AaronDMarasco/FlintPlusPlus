@@ -1,6 +1,5 @@
 FROM ubuntu:20.04 AS builder
 
-ARG FVERSION
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update
@@ -10,11 +9,11 @@ RUN apt-get install -y --no-install-recommends devscripts build-essential fakero
 
 # Now do the "magic"
 ADD ./flint++.tar /workspace/
-WORKDIR /workspace/flint++-${FVERSION}
-RUN pwd && ls -alF
-RUN false
+# Make alias to extracted tarball
+RUN cd /workspace && ln -s flint* flint && ls -alF
+WORKDIR /workspace/flint
 RUN make deb
-RUN cp -l /workspace/flint++-${FVERSION}/flint*.deb /workspace/
+RUN cp -l /workspace/flint/flint*.deb /workspace/
 
 # Now we build the actual image we are distributing so minimize layers
 FROM ubuntu:latest
