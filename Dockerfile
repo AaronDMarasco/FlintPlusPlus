@@ -10,7 +10,7 @@ RUN apt-get install -y --no-install-recommends devscripts build-essential fakero
 # Now do the "magic"
 ADD ./flint++.tar /workspace/
 # Make alias to extracted tarball
-RUN cd /workspace && ln -s flint* flint && ls -alF
+RUN cd /workspace && ln -s flint* flint && ls -alFR
 WORKDIR /workspace/flint
 RUN make deb
 RUN cp -l /workspace/flint/flint*.deb /workspace/
