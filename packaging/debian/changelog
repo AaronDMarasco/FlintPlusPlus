@@ -1,5 +1,6 @@
 flintplusplus (2.0.2-1) unstable; urgency=low
 
+  * Handles C++11 raw string literals
   * Added Dockerfiles
 
  -- Aaron D. Marasco <github-flintplusplus@marascos.net>  Mon, 29 Jun 2020 12:17:33 -0400

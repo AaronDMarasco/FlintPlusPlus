@@ -78,7 +78,7 @@ rpm: dist
   --define="RPM_HASH    $(git_hash)" \
   --define="COMMIT_TAG  _$(timestamp)" \
   --define="_topdir     $(RPM_TEMP)" \
-  packaging/flint++.spec
+  packaging/rpm/flint++.spec
 	find $(RPM_TEMP)/ -name '*.rpm' | xargs cp -v --target-directory=.
 
 .PHONY: manpage

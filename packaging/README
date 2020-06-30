@@ -1,0 +1,5 @@
+These are the support files needed for various packaging:
+ * debian/ - Files needed to make ".deb" - top-level "make deb"
+ * docker/ - Files needed to make container image - top-level "make docker"
+   * Also includes special control files to allow DockerHub to build the image
+ * rpm/ - Files needed to make ".rpm" - top-level "make rpm"
