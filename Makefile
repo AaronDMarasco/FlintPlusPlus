@@ -68,9 +68,12 @@ endif
 # This changes every 6 minutes which is enough for updated releases (snapshots).
 timestamp := $(shell printf %05d $(shell expr `date -u +"%s"` / 360 - 4426261))
 git_hash := $(shell h=`(git tag --points-at HEAD | head -n1) 2>/dev/null`; \
-              [ -z "$$h" ] && h=`git rev-list --max-count=1 HEAD`; echo $$h)
+              [ -z "$$h" ] && h=`git rev-list --max-count=1 HEAD 2>/dev/null`; echo $$h)
 RPM_TEMP := $(CURDIR)/rpmbuild-tmpdir
 rpm: dist
+ifeq ($(git_hash),)
+	$(error Could not create git hash!)
+endif
 	rm -rf $(RPM_TEMP)
 	install -v -D --target-directory $(RPM_TEMP)/SOURCES/ flint++.tar
 	rpmbuild -ba \
