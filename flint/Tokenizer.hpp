@@ -188,6 +188,7 @@ namespace flint {
   a1("#undef", TK_UNDEF)                                                \
   a1("#", TK_POUND)                                                     \
   a1("##", TK_DOUBLEPOUND)                                              \
+  a1("#elif", TK_POUNDELIF)                                             \
   a1("#else", TK_POUNDELSE)                                             \
   a1("#endif", TK_ENDIF)                                                \
   a1("#pragma", TK_PRAGMA)                                              \

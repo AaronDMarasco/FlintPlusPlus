@@ -561,6 +561,9 @@ auto tokenize(const string&   input,
         } else if (startsWith(pc1, "undef")) {
           t = TK_UNDEF;
           tokenLen += 5;  // strlen("undef");
+        } else if (startsWith(pc1, "elif")) {
+          t = TK_POUNDELIF;
+          tokenLen += 4;  // strlen("elif");
         } else if (startsWith(pc1, "else")) {
           t = TK_POUNDELSE;
           tokenLen += 4;  // strlen("else");
@@ -616,6 +619,7 @@ auto tokenize(const string&   input,
         // *** All
       INSERT_TOKEN:
         output.emplace_back(t, munchChars(pc, tokenLen), line, whitespace);
+        t = TK_UNEXPECTED;
         whitespace = nothing;
         break;
     }

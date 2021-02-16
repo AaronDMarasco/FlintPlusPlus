@@ -26,6 +26,8 @@ void checkIfEndifBalance(ErrorFile& errors, const string& path, const vector<Tok
       if (openIf < 0) lintError(errors, tok, "Unmatched #endif.");
     } else if (isTok(tok, TK_POUNDELSE)) {
       if (openIf == 0) lintError(errors, tok, "Unmatched #else.");
+    } else if (isTok(tok, TK_POUNDELIF)) {
+      if (openIf == 0) lintError(errors, tok, "Unmatched #elif.");
     }
   }
 
