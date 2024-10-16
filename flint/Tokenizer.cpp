@@ -312,12 +312,12 @@ auto tokenize(const string&   input,
                                 "The Unicode Standard permits this, but does not require nor recommend its use"));
   }
 
-  TokenType      t;
-  size_t         tokenLen;
+  size_t         tokenLen{0};
   StringFragment whitespace = nothing;
 
   while (pc != input.end()) {
     const char c = pc[0];
+    TokenType  t{TK_UNEXPECTED};
 
     if (output.size() > 0) {
       const auto tok = output.back().type_;
