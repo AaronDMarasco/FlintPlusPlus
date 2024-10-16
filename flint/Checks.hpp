@@ -63,8 +63,7 @@ template<class S, class T>
 inline auto cmpStr(const S& a, const T& b) -> bool {
   auto const len_a = distance(a.begin(), a.end());
   auto const len_b = distance(b.begin(), b.end());
-  if (len_a < len_b)
-    return equal(a.begin(), a.end(), b.begin());
+  if (len_a < len_b) return equal(a.begin(), a.end(), b.begin());
   return equal(b.begin(), b.end(), a.begin());
 }
 inline auto cmpStr(const StringFragment& a, const StringFragment& b) -> bool { return (a == b); }
