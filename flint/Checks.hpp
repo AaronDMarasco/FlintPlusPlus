@@ -2,6 +2,7 @@
 
 // There are a lot included here because this header is common across ALL checks
 #include <cassert>
+#include <iterator>
 #include <numeric>
 #include <stack>
 #include <string>
@@ -60,7 +61,11 @@ void inline lint(ErrorFile&         errors,
 // Shorthand for comparing two strings (or fragments)
 template<class S, class T>
 inline auto cmpStr(const S& a, const T& b) -> bool {
-  return equal(a.begin(), a.end(), b.begin());
+  auto const len_a = distance(a.begin(), a.end());
+  auto const len_b = distance(b.begin(), b.end());
+  if (len_a < len_b)
+    return equal(a.begin(), a.end(), b.begin());
+  return equal(b.begin(), b.end(), a.begin());
 }
 inline auto cmpStr(const StringFragment& a, const StringFragment& b) -> bool { return (a == b); }
 // This version fails on OSX because it's SPECIAL:
