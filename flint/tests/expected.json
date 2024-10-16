@@ -1,6 +1,6 @@
 {
 	"errors"   : 23,
-	"warnings" : 30,
+	"warnings" : 39,
 	"advice"   : 1,
 	"files"    : [
     {
@@ -196,6 +196,15 @@
       ]
     },
     {
+	    "path"     : "Ifdef2.cpp",
+	    "errors"   : 0,
+	    "warnings" : 0,
+	    "advice"   : 0,
+	    "reports"  : [
+
+      ]
+    },
+    {
 	    "path"     : "ImplicitConversion.cpp",
 	    "errors"   : 1,
 	    "warnings" : 0,
@@ -328,6 +337,68 @@
 	        "level"    : "Warning",
 	        "line"     : 32,
 	        "title"    : "Conflicting namespaces: ::boost and std",
+	        "desc"     : ""
+        }
+      ]
+    },
+    {
+	    "path"     : "Numbers.hpp",
+	    "errors"   : 0,
+	    "warnings" : 9,
+	    "advice"   : 0,
+	    "reports"  : [
+        {
+	        "level"    : "Warning",
+	        "line"     : 6,
+	        "title"    : "Don't use static at global or namespace scopes in headers.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 7,
+	        "title"    : "Don't use static at global or namespace scopes in headers.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 8,
+	        "title"    : "Don't use static at global or namespace scopes in headers.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 9,
+	        "title"    : "Don't use static at global or namespace scopes in headers.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 10,
+	        "title"    : "Don't use static at global or namespace scopes in headers.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 11,
+	        "title"    : "Don't use static at global or namespace scopes in headers.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 12,
+	        "title"    : "Don't use static at global or namespace scopes in headers.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 13,
+	        "title"    : "Don't use static at global or namespace scopes in headers.",
+	        "desc"     : ""
+        },
+        {
+	        "level"    : "Warning",
+	        "line"     : 14,
+	        "title"    : "Don't use static at global or namespace scopes in headers.",
 	        "desc"     : ""
         }
       ]
