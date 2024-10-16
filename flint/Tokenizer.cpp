@@ -155,6 +155,10 @@ static auto munchNumber(str_iter& pc) -> StringFragment {
       sawDot = true;
     } else if (isdigit(c)) {
       // Nothing to do
+    } else if (c == '\'' && !sawX && isdigit(pc[i + 1])) {
+      // Nothing to do (numeric separator)
+    } else if (c == '\'' && sawX && pc[i + 1] && strchr("1234567890AaBbCcDdEeFf", pc[i + 1])) {
+      // Nothing to do (hex numeric separator)
     } else if (sawX && !sawExp && c && strchr("AaBbCcDdEeFf", c)) {
       // Hex digit; nothing to do. The condition includes !sawExp
       // because the exponent is decimal even in a hex floating-point
